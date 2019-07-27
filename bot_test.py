@@ -12,9 +12,10 @@ async def on_ready():
 @bot.command() 
 async def help(ctx): 
     embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes :", color=0xeee657)
-    embed.add.field(name="help",value="affiche la liste des commandes",inline=False)
+    embed.add_field(name="help",value="affiche la liste des commandes",inline=False)
     await ctx.send(embed=embed)
     
 @bot.command()
-async def ban(ctx,)
+async def ban(ctx,):
+    pass
 bot.run(token)
