@@ -15,8 +15,9 @@ async def on_ready():
 
 @bot.command() 
 async def help(ctx): 
-    embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes :", color=0x0000FF)
+    embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précées du prefix \"!\") :", color=0x0000FF)
     embed.add_field(name="help",value="affiche la liste des commandes",inline=False)
+    embed.add_field(name="team",value="assigne le rôle DCTeam au(x) membre(s) mentionné(s)",inline=False)
     await ctx.send(embed=embed)
 
 @bot.command()
