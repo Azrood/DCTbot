@@ -18,6 +18,7 @@ async def help(ctx):
     embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précées du prefix \"!\") :", color=0x0000FF)
     embed.add_field(name="help",value="affiche la liste des commandes",inline=False)
     embed.add_field(name="team",value="assigne le rôle DCTeam au(x) membre(s) mentionné(s)",inline=False)
+    embed.add_field(name="getcomics",value="recherche dans getcomics les mots-clés entrés",inline=False)
     await ctx.send(embed=embed)
 
 @bot.command()
@@ -30,4 +31,8 @@ async def team(ctx):
         await ctx.send("Bienvenue dans la Team !")
     else:
         await ctx.send("Bien tenté mais tu n'as pas de pouvoir ici !")
+@bot.command()
+async def getcomics(ctx):
+    user_input= ctx.message.content[11:]
+    await ctx.send(f"https://getcomics.info/?s={user_input.lower().replace(' ', '+')}")
 bot.run(token)
