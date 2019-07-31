@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from secret import token,dcteam_role_id,dcteam_id
+from utils.tools import get_command_input
 
 bot = commands.Bot(command_prefix='!',help_command=None, description=None)
 client=discord.Client()
@@ -33,6 +34,6 @@ async def team(ctx):
         await ctx.send("Bien tenté mais tu n'as pas de pouvoir ici !")
 @bot.command()
 async def getcomics(ctx):
-    user_input= ctx.message.content[11:]
+    user_input = get_command_input(ctx.message.content)
     await ctx.send(f"https://getcomics.info/?s={user_input.lower().replace(' ', '+')}")
 bot.run(token)
