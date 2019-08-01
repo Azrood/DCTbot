@@ -17,7 +17,7 @@ def get_top_def(user_input):
     res.close()
 
     # BeautifulSoup will transform raw HTML in a tree easy to parse
-    soup = BeautifulSoup(res.text, 'html.parser')
+    soup = BeautifulSoup(res.text, 'lxml')
 
     # unquote this if you want to see what is a "soup"
     # print(soup.prettify())
