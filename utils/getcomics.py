@@ -20,5 +20,18 @@ def getcomics_top_link(user_input):
 
     title = first.text
     url = first.a['href']
+    url_dl = getcomics_directlink(url)
+    return title,url_dl
+def getcomics_directlink(comic_url):
 
-    return title,url
+    # get HTML page with requests.get
+    res = requests.get(comic_url)
+    res.close()
+
+    # BeautifulSoup will transform raw HTML in a tree easy to parse
+    soup = BeautifulSoup(res.text, 'lxml')
+
+    direct_download = soup.find('a', class_='aio-red')
+
+    url = direct_download['href']
+    return url

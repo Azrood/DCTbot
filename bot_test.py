@@ -39,7 +39,8 @@ async def team(ctx):
 async def getcomics(ctx):
     user_input = get_command_input(ctx.message.content)
     title,url = getcomics_top_link(user_input)
-    await ctx.send(f"{title}\n{url}")
+    embed = discord.Embed(title=f"{title}",description = "cliquez sur le titre pour télécharger votre comic",color=0x882640,url=url)
+    await ctx.send(embed=embed)
 
 @bot.command()
 async def urban(ctx):
