@@ -3,12 +3,13 @@
 
 import requests  # lib for going on internet
 from bs4 import BeautifulSoup  # html parser
+import urllib.parse
 def get_top_def(user_input):
 
-    urban_url = "https://www.urbandictionary.com/define.php?term={}"
-
+    urban_url = "https://www.urbandictionary.com/define.php?term="
+    formated_input = urllib.parse.quote_plus(user_input.lower(), safe='', encoding=None, errors=None)
     # Make the search url : www.urbandictionary.com/define.php?term=taco+hole
-    search_url = urban_url.format(user_input.lower().replace(' ', '+'))
+    search_url = urban_url+formated_input
 
     # print(search_url)
 

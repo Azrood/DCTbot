@@ -3,6 +3,7 @@ from discord.ext import commands
 from secret import token,dcteam_role_id,dcteam_id
 from utils.tools import get_command_input
 from utils.urban import get_top_def
+from utils.getcomics import getcomics_top_link
 
 bot = commands.Bot(command_prefix='!',help_command=None, description=None)
 client=discord.Client()
@@ -37,7 +38,8 @@ async def team(ctx):
 @bot.command()
 async def getcomics(ctx):
     user_input = get_command_input(ctx.message.content)
-    await ctx.send(f"https://getcomics.info/?s={user_input.lower().replace(' ', '+')}")
+    title,url = getcomics_top_link(user_input)
+    await ctx.send(f"{title}\n{url}")
 
 @bot.command()
 async def urban(ctx):
