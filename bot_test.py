@@ -28,7 +28,7 @@ async def help(ctx):
     embed.add_field(name="clear",value="efface le nombre de message entré en argument (!clear [nombre])",inline=False)
     embed.add_field(name="recrutement",value="donne le lien des tests de DCTrad",inline = False)
     embed.add_field(name="youtube",value="donne le lien du premier résultat de la recherche",inline = False)
-    embed.add_field(name="youtubelist",value="donne une liste ")
+    embed.add_field(name="youtubelist",value="donne une liste de lien cliquables. Syntaxe : !youtubelist [nombre] [recherche]",inline = False)
     await ctx.send(embed=embed)
 
 @bot.command()
