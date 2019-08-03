@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from utils.secret import token,dcteam_role_id,dcteam_id
-from utils.tools import get_command_input
+from utils.tools import get_command_input,string_is_int
 from utils.urban import get_top_def
 from utils.getcomics import getcomics_top_link
 from utils.youtube import youtube_top_link,search_youtube
@@ -24,7 +24,7 @@ async def help(ctx):
     embed.add_field(name="help",value="affiche la liste des commandes",inline=False)
     embed.add_field(name="team",value="assigne le rôle DCTeam au(x) membre(s) mentionné(s)",inline=False)
     embed.add_field(name="getcomics",value="recherche dans getcomics les mots-clés entrés",inline=False)
-    embed.add_field(name="urban",value="fait une recherche du mot éntré sur Urban Dictionary",inline=False)
+    embed.add_field(name="urban",value="fait une recherche du mot entré sur Urban Dictionary",inline=False)
     embed.add_field(name="clear",value="efface le nombre de message entré en argument (!clear [nombre])",inline=False)
     embed.add_field(name="recrutement",value="donne le lien des tests de DCTrad",inline = False)
     embed.add_field(name="youtube",value="donne le lien du premier résultat de la recherche",inline = False)
@@ -92,18 +92,24 @@ async def youtubelist(ctx):
     embed = discord.Embed(color=0xFF0000)
     embed.set_footer(text="Tapez un nombre pour faire votre choix ou dites \"cancel\" pour annuler")
     for s in result:
-        embed.add_field(name=None,value=f"{result.index(s)+1}.[{s['title']}]({url}{s['id']})",inline=False)
-    await ctx.send(embed=embed)
+        embed.add_field(name=f"{result.index(s)+1}.",value=f"[{s['title']}]({url}{s['id']})",inline= False)
+    self_message = await ctx.send(embed=embed)
+    def check(message):
+        return message.author == ctx.author and (message.content =="cancel" or string_is_int(message.content))
     try:
-        msg = await bot.wait_for("message",check=lambda message: message.author == ctx.author,timeout=30)
+        msg = await bot.wait_for("message",check=check,timeout=15)
         if msg.content == "cancel":
             await ctx.send("Annulé !")
+            await self_message.delete(delay=None)
         else:
             num = int(msg.content)
             if num > 1 and num <= len(result):
                 await ctx.send(content=f"{url}{result[num-1]['id']}")
+                await self_message.delete(delay=None)
     except asyncio.TimeoutError:
         await ctx.send("Tu as pris trop de temps pour répondre !")
-        
+        await self_message.delete(delay=None)
     
 bot.run(token)
+
+isinstance("123",int)
