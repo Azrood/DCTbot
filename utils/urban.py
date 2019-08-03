@@ -26,6 +26,9 @@ def get_top_def(user_input):
     # parse the HTML soup to find Top Definition title, meaning, example
     title = soup.select_one('div.def-panel > div.def-header > a.word').text
     meaning = soup.select_one('div.def-panel > div.meaning').text
-    example = soup.select_one('div.def-panel > div.example').text
-
+    example_raw = soup.select_one('div.def-panel > div.example').text
+    if  hasattr(example_raw, 'text'):
+        example = example_raw.text
+    else:
+        example = ""
     return title,meaning,example,search_url
