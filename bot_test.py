@@ -92,7 +92,7 @@ async def youtubelist(ctx):
     embed = discord.Embed(color=0xFF0000)
     embed.set_footer(text="Tapez un nombre pour faire votre choix ou dites \"cancel\" pour annuler")
     for s in result:
-        embed.add_field(name=f"{result.index(s)+1}.[{s['title']}]({url}{s['id']})",value=None,inline=False)
+        embed.add_field(name=None,value=f"{result.index(s)+1}.[{s['title']}]({url}{s['id']})",inline=False)
     await ctx.send(embed=embed)
     try:
         msg = await bot.wait_for("message",check=lambda message: message.author == ctx.author,timeout=30)
