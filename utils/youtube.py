@@ -35,7 +35,10 @@ def search_youtube(user_input,number):
 
     for l in list:
         title = html.unescape(l['snippet']['title'])
-        id = l['id']['videoId']
+        try:
+            id = l['id']['videoId']
+        except KeyError:
+            id = l['id']['playlistId']
         out.append({'title': title, 'id': id})
 
     return out
