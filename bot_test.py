@@ -50,4 +50,15 @@ async def urban(ctx):
     embed.add_field(name="Example",value=example,inline=False)
     embed.set_thumbnail(url="https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5MuDJw8LUbwqZM9BW9oey5I/https/i.imgur.com/VFXr0ID.jpg")
     await ctx.send(embed=embed)
+
+@bot.command()
+async def clear(ctx):
+    role_dcteam = bot.guild.get_role(dcteam_role_id)
+    if ctx.author.top_role >= role_dcteam : #on regarde si le plus haut role de l'auteur est supérieur ou égale hiérarchiquement au role DCT
+        nbr_msg = int(get_command_input(ctx.message.content))
+        messages = await ctx.channel.history(limit=nbr_msg+1).flatten()
+        await ctx.channel.delete_messages(messages)
+        await ctx.send(content=f"J'ai supprimé {nbr_msg} messages",delete_after=5)
+    else:
+        await ctx.send(content="Tu n'as pas le pouvoir !")
 bot.run(token)
