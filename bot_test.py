@@ -111,5 +111,3 @@ async def youtubelist(ctx):
         await self_message.delete(delay=None)
     
 bot.run(token)
-
-isinstance("123",int)
