@@ -131,16 +131,22 @@ async def youtubelist(ctx):
     try:
         msg = await bot.wait_for("message", check=check, timeout=15)
         if msg.content == "cancel":
-            await ctx.send("Annulé !")
+            await ctx.send("Annulé !", delete_after=5)
             await self_message.delete(delay=None)
+            await ctx.message.delete(delay=2)
+            await msg.delete(delay=1)
         else:
             num = int(msg.content)
             if num > 0 and num <= len(result):
                 url = get_youtube_url(result[num-1])
                 await ctx.send(content=f"{url}")
+                await ctx.message.delete(delay=2)
                 await self_message.delete(delay=None)
+                await msg.delete(delay=1)
+
     except asyncio.TimeoutError:
-        await ctx.send("Tu as pris trop de temps pour répondre !")
+        await ctx.send("Tu as pris trop de temps pour répondre !",delete_after=5)
         await self_message.delete(delay=None)
+        await ctx.message.delete(delay=2)
 
 bot.run(token)
