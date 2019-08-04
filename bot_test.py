@@ -1,15 +1,17 @@
 import discord
 from discord.ext import commands
-from utils.secret import token,dcteam_role_id,dcteam_id
-from utils.tools import get_command_input,string_is_int
+from utils.secret import token, dcteam_role_id, dcteam_id
+from utils.tools import get_command_input, string_is_int
 # from utils.urban import get_top_def
 from utils.urban import Urban_search
 from utils.getcomics import getcomics_top_link
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 import asyncio
 
-bot = commands.Bot(command_prefix='!',help_command=None, description=None)
-client=discord.Client()
+
+bot = commands.Bot(command_prefix='!', help_command=None, description=None)
+client = discord.Client()
+
 
 @bot.event
 async def on_ready():
@@ -17,37 +19,42 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-    bot.guild=bot.get_guild(dcteam_id) #se lier au serveur à partir de l'ID
+    bot.guild = bot.get_guild(dcteam_id)  # se lier au serveur à partir de l'ID
+
 
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précées du prefix \"!\") :", color=0x0000FF)
-    embed.add_field(name="help",value="affiche la liste des commandes",inline=False)
-    embed.add_field(name="team",value="assigne le rôle DCTeam au(x) membre(s) mentionné(s)",inline=False)
-    embed.add_field(name="getcomics",value="recherche dans getcomics les mots-clés entrés",inline=False)
-    embed.add_field(name="urban",value="fait une recherche du mot entré sur Urban Dictionary",inline=False)
-    embed.add_field(name="clear",value="efface le nombre de message entré en argument (!clear [nombre])",inline=False)
-    embed.add_field(name="recrutement",value="donne le lien des tests de DCTrad",inline = False)
-    embed.add_field(name="youtube",value="donne le lien du premier résultat de la recherche",inline = False)
-    embed.add_field(name="youtubelist",value="donne une liste de lien cliquables. Syntaxe : !youtubelist [nombre] [recherche]",inline = False)
+    embed.add_field(name="help", value="affiche la liste des commandes", inline=False)
+    embed.add_field(name="team", value="assigne le rôle DCTeam au(x) membre(s) mentionné(s)", inline=False)
+    embed.add_field(name="getcomics", value="recherche dans getcomics les mots-clés entrés", inline=False)
+    embed.add_field(name="urban", value="fait une recherche du mot entré sur Urban Dictionary", inline=False)
+    embed.add_field(name="clear", value="efface le nombre de message entré en argument (!clear [nombre])", inline=False)
+    embed.add_field(name="recrutement", value="donne le lien des tests de DCTrad", inline=False)
+    embed.add_field(name="youtube", value="donne le lien du premier résultat de la recherche", inline=False)
+    embed.add_field(name="youtubelist", value="donne une liste de lien cliquables. Syntaxe : !youtubelist [nombre] [recherche]", inline=False)
     await ctx.send(embed=embed)
+
 
 @bot.command()
 async def team(ctx):
     role_dcteam = bot.guild.get_role(dcteam_role_id)
-    member_list = ctx.message.mentions #une liste d'objets
-    if ctx.author.top_role >= role_dcteam: #on regarde si le plus haut role de l'auteur du message est au dessus du role (ou égal) au role DCT dans la hiérarchie
+    member_list = ctx.message.mentions  # une liste d'objets
+    if ctx.author.top_role >= role_dcteam:  # on regarde si le plus haut role de l'auteur du message est au dessus du role (ou égal) au role DCT dans la hiérarchie
         for member in member_list:
             await member.add_roles(role_dcteam)
         await ctx.send("Bienvenue dans la Team !")
     else:
         await ctx.send("Bien tenté mais tu n'as pas de pouvoir ici !")
+
+
 @bot.command()
 async def getcomics(ctx):
     user_input = get_command_input(ctx.message.content)
-    title,url = getcomics_top_link(user_input)
-    embed = discord.Embed(title=f"{title}",description = "cliquez sur le titre pour télécharger votre comic",color=0x882640,url=url)
+    title, url = getcomics_top_link(user_input)
+    embed = discord.Embed(title=f"{title}", description="cliquez sur le titre pour télécharger votre comic", color=0x882640, url=url)
     await ctx.send(embed=embed)
+
 
 @bot.command()
 async def urban(ctx):
@@ -63,26 +70,29 @@ async def urban(ctx):
         embed = discord.Embed(title=f"Definition of {user_input} doesn't exist")
     await ctx.send(embed=embed)
 
+
 @bot.command()
 async def clear(ctx):
     role_dcteam = bot.guild.get_role(dcteam_role_id)
-    if ctx.author.top_role >= role_dcteam : #on regarde si le plus haut role de l'auteur est supérieur ou égale hiérarchiquement au role DCT
+    if ctx.author.top_role >= role_dcteam:  # on regarde si le plus haut role de l'auteur est supérieur ou égale hiérarchiquement au role DCT
         nbr_msg = int(get_command_input(ctx.message.content))
         messages = await ctx.channel.history(limit=nbr_msg+1).flatten()
         await ctx.channel.delete_messages(messages)
-        await ctx.send(content=f"J'ai supprimé {nbr_msg} messages",delete_after=5)
+        await ctx.send(content=f"J'ai supprimé {nbr_msg} messages", delete_after=5)
     else:
         await ctx.send(content="Tu n'as pas le pouvoir !")
 
+
 @bot.command()
 async def recrutement(ctx):
-    embed=discord.Embed(title="Viens avec nous si tu veux lire",description ="allez n'aies pas peur de cliquer",color=0x0000FF,url="http://www.dctrad.fr/viewforum.php?f=21")
+    embed = discord.Embed(title="Viens avec nous si tu veux lire", description="allez n'aies pas peur de cliquer", color=0x0000FF, url="http://www.dctrad.fr/viewforum.php?f=21")
     embed.set_thumbnail(url="http://www.dctrad.fr/ext/planetstyles/flightdeck/store/logodctweb.png")
     await ctx.send(embed=embed)
 
+
 @bot.command()
 async def youtube(ctx):
-    user_input=get_command_input(ctx.message.content)
+    user_input = get_command_input(ctx.message.content)
     title, url = youtube_top_link(user_input)
     # url=f"https://www.youtube.com/watch?v={id}"
     await ctx.send(content=f"{title}\n{url}")

@@ -10,7 +10,7 @@ from utils.secret import token_youtube
 import googleapiclient.discovery
 
 
-def search_youtube(user_input,number):
+def search_youtube(user_input, number):
     # Disable OAuthlib's HTTPS verification when running locally.
     # *DO NOT* leave this option enabled in production.
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
