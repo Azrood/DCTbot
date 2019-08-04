@@ -38,5 +38,5 @@ class Urban_search:
         if hasattr(example_raw, 'text'):
             example = example_raw.text
         else:
-            example = ""
+            example = "No example"
         return title, meaning, example, self.search_url
