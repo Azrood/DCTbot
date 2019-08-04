@@ -2,7 +2,8 @@ import discord
 from discord.ext import commands
 from utils.secret import token,dcteam_role_id,dcteam_id
 from utils.tools import get_command_input,string_is_int
-from utils.urban import get_top_def
+# from utils.urban import get_top_def
+from utils.urban import Urban_search
 from utils.getcomics import getcomics_top_link
 from utils.youtube import youtube_top_link,search_youtube
 import asyncio
@@ -18,8 +19,8 @@ async def on_ready():
     print('------')
     bot.guild=bot.get_guild(dcteam_id) #se lier au serveur à partir de l'ID
 
-@bot.command() 
-async def help(ctx): 
+@bot.command()
+async def help(ctx):
     embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précées du prefix \"!\") :", color=0x0000FF)
     embed.add_field(name="help",value="affiche la liste des commandes",inline=False)
     embed.add_field(name="team",value="assigne le rôle DCTeam au(x) membre(s) mentionné(s)",inline=False)
@@ -51,10 +52,15 @@ async def getcomics(ctx):
 @bot.command()
 async def urban(ctx):
     user_input = get_command_input(ctx.message.content)
-    title,meaning,example,search_url = get_top_def(user_input)
-    embed = discord.Embed(title=f"Definition of {title}",description = meaning, color=0x00FFFF,url=search_url )
-    embed.add_field(name="Example",value=example,inline=False)
-    embed.set_thumbnail(url="https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5MuDJw8LUbwqZM9BW9oey5I/https/i.imgur.com/VFXr0ID.jpg")
+    # create object urban of class Urban
+    urban = Urban_search(user_input)
+    if urban.valid:
+        title, meaning, example, search_url = urban.get_top_def()
+        embed = discord.Embed(title=f"Definition of {title}", description=meaning, color=0x00FFFF, url=search_url)
+        embed.add_field(name="Example", value=example, inline=False)
+        embed.set_thumbnail(url="https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5MuDJw8LUbwqZM9BW9oey5I/https/i.imgur.com/VFXr0ID.jpg")
+    else:
+        embed = discord.Embed(title=f"Definition of {user_input} doesn't exist")
     await ctx.send(embed=embed)
 
 @bot.command()
@@ -109,5 +115,5 @@ async def youtubelist(ctx):
     except asyncio.TimeoutError:
         await ctx.send("Tu as pris trop de temps pour répondre !")
         await self_message.delete(delay=None)
-    
+
 bot.run(token)
