@@ -18,7 +18,7 @@ dctradlogo = "http://www.dctrad.fr/ext/planetstyles/flightdeck/store/logodctweb.
 
 dctrad_recru = "http://www.dctrad.fr/viewforum.php?f=21"
 
-
+helps = [{'name': 'help', 'value': 'affiche la liste des commandes'}, {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'}, {'name': 'getcomics', 'value': 'recherche dans getcomics les mots-clés entrés'}, {'name': 'urban', 'value': 'fait une recherche du mot entré sur Urban Dictionary'}, {'name': 'clear', 'value': 'efface le nombre de message entré en argument (!clear [nombre])'}, {'name': 'recrutement', 'value': 'donne le lien des tests de DCTrad'}, {'name': 'youtube', 'value': 'donne le lien du premier résultat de la recherche'}, {'name': 'youtubelist', 'value': 'donne une liste de lien cliquables. Syntaxe : !youtubelist [nombre] [recherche]'}]
 @bot.event
 async def on_ready():
     print('Logged in as')
@@ -31,14 +31,9 @@ async def on_ready():
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précées du prefix \"!\") :", color=0x0000FF)
-    embed.add_field(name="help", value="affiche la liste des commandes", inline=False)
-    embed.add_field(name="team", value="assigne le rôle DCTeam au(x) membre(s) mentionné(s)", inline=False)
-    embed.add_field(name="getcomics", value="recherche dans getcomics les mots-clés entrés", inline=False)
-    embed.add_field(name="urban", value="fait une recherche du mot entré sur Urban Dictionary", inline=False)
-    embed.add_field(name="clear", value="efface le nombre de message entré en argument (!clear [nombre])", inline=False)
-    embed.add_field(name="recrutement", value="donne le lien des tests de DCTrad", inline=False)
-    embed.add_field(name="youtube", value="donne le lien du premier résultat de la recherche", inline=False)
-    embed.add_field(name="youtubelist", value="donne une liste de lien cliquables. Syntaxe : !youtubelist [nombre] [recherche]", inline=False)
+    for s in helps:
+        embed.add_field(name=s['name'], value=s['value'], inline=False)
+    
     await ctx.send(embed=embed)
 
 
@@ -148,5 +143,4 @@ async def youtubelist(ctx):
         await ctx.send("Tu as pris trop de temps pour répondre !",delete_after=5)
         await self_message.delete(delay=None)
         await ctx.message.delete(delay=2)
-
 bot.run(token)
