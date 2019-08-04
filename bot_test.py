@@ -60,7 +60,7 @@ async def urban(ctx):
         embed.add_field(name="Example", value=example, inline=False)
         embed.set_thumbnail(url="https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5MuDJw8LUbwqZM9BW9oey5I/https/i.imgur.com/VFXr0ID.jpg")
     else:
-        embed = discord.Embed(title=f"Definition of {title} doesn't exist")
+        embed = discord.Embed(title=f"Definition of {user_input} doesn't exist")
     await ctx.send(embed=embed)
 
 @bot.command()
