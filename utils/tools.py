@@ -10,7 +10,7 @@ def get_command_input(user_input):
 
 def string_is_int(string):
     try:
-        a = int(string)
+        int(string)
         return True
     except ValueError:
         return False

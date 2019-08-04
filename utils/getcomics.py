@@ -5,9 +5,12 @@ import requests  # lib for going on internet
 from bs4 import BeautifulSoup  # html parser
 import urllib.parse
 
+
 def getcomics_top_link(user_input):
 
-    formated_search = urllib.parse.quote_plus(user_input.lower(), safe='', encoding=None, errors=None)
+    formated_search = urllib.parse.quote_plus(user_input.lower(),
+                                              safe='', encoding=None,
+                                              errors=None)
     getcomics_search = f"https://getcomics.info/?s={formated_search}"
     # get HTML page with requests.get
     res = requests.get(getcomics_search)
@@ -21,7 +24,9 @@ def getcomics_top_link(user_input):
     title = first.text
     url = first.a['href']
     url_dl = getcomics_directlink(url)
-    return title,url_dl
+    return title, url_dl
+
+
 def getcomics_directlink(comic_url):
 
     # get HTML page with requests.get
