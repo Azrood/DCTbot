@@ -12,6 +12,12 @@ import asyncio
 bot = commands.Bot(command_prefix='!', help_command=None, description=None)
 client = discord.Client()
 
+urban_logo = "https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5MuDJw8LUbwqZM9BW9oey5I/https/i.imgur.com/VFXr0ID.jpg"
+
+dctradlogo = "http://www.dctrad.fr/ext/planetstyles/flightdeck/store/logodctweb.png"
+
+dctrad_recru = "http://www.dctrad.fr/viewforum.php?f=21"
+
 
 @bot.event
 async def on_ready():
@@ -40,7 +46,9 @@ async def help(ctx):
 async def team(ctx):
     role_dcteam = bot.guild.get_role(dcteam_role_id)
     member_list = ctx.message.mentions  # une liste d'objets
-    if ctx.author.top_role >= role_dcteam:  # on regarde si le plus haut role de l'auteur du message est au dessus du role (ou égal) au role DCT dans la hiérarchie
+    # on regarde si le plus haut role de l'auteur du message est au dessus
+    # du role (ou égal) au role DCT dans la hiérarchie
+    if ctx.author.top_role >= role_dcteam:
         for member in member_list:
             await member.add_roles(role_dcteam)
         await ctx.send("Bienvenue dans la Team !")
@@ -65,7 +73,7 @@ async def urban(ctx):
         title, meaning, example, search_url = urban.get_top_def()
         embed = discord.Embed(title=f"Definition of {title}", description=meaning, color=0x00FFFF, url=search_url)
         embed.add_field(name="Example", value=example, inline=False)
-        embed.set_thumbnail(url="https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5MuDJw8LUbwqZM9BW9oey5I/https/i.imgur.com/VFXr0ID.jpg")
+        embed.set_thumbnail(url=urban_logo)
     else:
         embed = discord.Embed(title=f"Definition of {user_input} doesn't exist")
     await ctx.send(embed=embed)
@@ -74,19 +82,24 @@ async def urban(ctx):
 @bot.command()
 async def clear(ctx):
     role_dcteam = bot.guild.get_role(dcteam_role_id)
-    if ctx.author.top_role >= role_dcteam:  # on regarde si le plus haut role de l'auteur est supérieur ou égale hiérarchiquement au role DCT
+    # on regarde si le plus haut role de l'auteur est supérieur
+    # ou égale hiérarchiquement au role DCT
+    if ctx.author.top_role >= role_dcteam:
         nbr_msg = int(get_command_input(ctx.message.content))
         messages = await ctx.channel.history(limit=nbr_msg+1).flatten()
         await ctx.channel.delete_messages(messages)
-        await ctx.send(content=f"J'ai supprimé {nbr_msg} messages", delete_after=5)
+        await ctx.send(content=f"J'ai supprimé {nbr_msg} messages",
+                       delete_after=5)
     else:
         await ctx.send(content="Tu n'as pas le pouvoir !")
 
 
 @bot.command()
 async def recrutement(ctx):
-    embed = discord.Embed(title="Viens avec nous si tu veux lire", description="allez n'aies pas peur de cliquer", color=0x0000FF, url="http://www.dctrad.fr/viewforum.php?f=21")
-    embed.set_thumbnail(url="http://www.dctrad.fr/ext/planetstyles/flightdeck/store/logodctweb.png")
+    embed = discord.Embed(title="Viens avec nous si tu veux lire",
+                          description="allez n'aies pas peur de cliquer",
+                          color=0x0000FF, url=dctrad_recru)
+    embed.set_thumbnail(url=dctradlogo)
     await ctx.send(embed=embed)
 
 
@@ -94,7 +107,6 @@ async def recrutement(ctx):
 async def youtube(ctx):
     user_input = get_command_input(ctx.message.content)
     title, url = youtube_top_link(user_input)
-    # url=f"https://www.youtube.com/watch?v={id}"
     await ctx.send(content=f"{title}\n{url}")
 
 
@@ -105,7 +117,6 @@ async def youtubelist(ctx):
     number = int(duo[0])
     query = duo[1]
     result = search_youtube(user_input=query, number=number)
-    # url = "https://www.youtube.com/watch?v="
     embed = discord.Embed(color=0xFF0000)
     embed.set_footer(text="Tapez un nombre pour faire votre choix "
                           "ou dites \"cancel\" pour annuler")
