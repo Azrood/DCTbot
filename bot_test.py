@@ -153,4 +153,6 @@ async def youtubelist(ctx):
         await ctx.send("Tu as pris trop de temps pour répondre !", delete_after=5)
         await self_message.delete(delay=None)
         await ctx.message.delete(delay=2)
+
+
 bot.run(token)
