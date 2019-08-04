@@ -5,7 +5,7 @@ from utils.tools import get_command_input,string_is_int
 # from utils.urban import get_top_def
 from utils.urban import Urban_search
 from utils.getcomics import getcomics_top_link
-from utils.youtube import youtube_top_link,search_youtube
+from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 import asyncio
 
 bot = commands.Bot(command_prefix='!',help_command=None, description=None)
@@ -83,9 +83,10 @@ async def recrutement(ctx):
 @bot.command()
 async def youtube(ctx):
     user_input=get_command_input(ctx.message.content)
-    title,id = youtube_top_link(user_input)
-    url=f"https://www.youtube.com/watch?v={id}"
+    title, url = youtube_top_link(user_input)
+    # url=f"https://www.youtube.com/watch?v={id}"
     await ctx.send(content=f"{title}\n{url}")
+
 
 @bot.command()
 async def youtubelist(ctx):
@@ -93,24 +94,29 @@ async def youtubelist(ctx):
     duo = user_input.split(' ', 1)
     number = int(duo[0])
     query = duo[1]
-    result = search_youtube(user_input=query,number=number)
-    url = "https://www.youtube.com/watch?v="
+    result = search_youtube(user_input=query, number=number)
+    # url = "https://www.youtube.com/watch?v="
     embed = discord.Embed(color=0xFF0000)
-    embed.set_footer(text="Tapez un nombre pour faire votre choix ou dites \"cancel\" pour annuler")
+    embed.set_footer(text="Tapez un nombre pour faire votre choix "
+                          "ou dites \"cancel\" pour annuler")
     for s in result:
-        embed.add_field(name=f"{result.index(s)+1}.",value=f"[{s['title']}]({url}{s['id']})",inline= False)
+        url = get_youtube_url(s)
+        embed.add_field(name=f"{result.index(s)+1}.{s['type']}",
+                        value=f"[{s['title']}]({url})", inline=False)
     self_message = await ctx.send(embed=embed)
+
     def check(message):
-        return message.author == ctx.author and (message.content =="cancel" or string_is_int(message.content))
+        return message.author == ctx.author and (message.content == "cancel" or string_is_int(message.content))
     try:
-        msg = await bot.wait_for("message",check=check,timeout=15)
+        msg = await bot.wait_for("message", check=check, timeout=15)
         if msg.content == "cancel":
             await ctx.send("Annulé !")
             await self_message.delete(delay=None)
         else:
             num = int(msg.content)
-            if num > 1 and num <= len(result):
-                await ctx.send(content=f"{url}{result[num-1]['id']}")
+            if num > 0 and num <= len(result):
+                url = get_youtube_url(result[num-1])
+                await ctx.send(content=f"{url}")
                 await self_message.delete(delay=None)
     except asyncio.TimeoutError:
         await ctx.send("Tu as pris trop de temps pour répondre !")

@@ -36,13 +36,40 @@ def search_youtube(user_input,number):
     for l in list:
         title = html.unescape(l['snippet']['title'])
         try:
-            id = l['id']['videoId']
+            if l['id']['kind'] == "youtube#channel":
+                type = 'channel'
+                id = l['id']['channelId']
+            elif l['id']['kind'] == "youtube#playlist":
+                type = 'playlist'
+                id = l['id']['playlistId']
+            elif l['id']['kind'] == "youtube#video":
+                type = 'video'
+                id = l['id']['videoId']
+            else:
+                type = 'unknown'
+                id = "NoID"
         except KeyError:
-            id = l['id']['playlistId']
-        out.append({'title': title, 'id': id})
+            type = 'unknown'
+            id = "NoID"
+
+        out.append({'title': title, 'type': type, 'id': id})
 
     return out
 
+
 def youtube_top_link(user_input):
-    result=search_youtube(user_input,number=1)
-    return result[0]['title'],result[0]['id']
+    result = search_youtube(user_input, number=1)
+    url = get_youtube_url(result[0])
+    return result[0]['title'], url
+
+
+def get_youtube_url(result):
+    if result['type'] == 'video':
+        url = f"https://www.youtube.com/watch?v={result['id']}"
+    elif result['type'] == 'playlist':
+        url = f"https://www.youtube.com/playlist?list={result['id']}"
+    elif result['type'] == 'channel':
+        url = f"https://www.youtube.com/channel/{result['id']}"
+    else:
+        url = None
+    return url
