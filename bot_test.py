@@ -157,6 +157,7 @@ async def youtubelist(ctx):
         await self_message.delete(delay=None)
         await ctx.message.delete(delay=2)
 
+<<<<<<< HEAD
 @bot.command()
 async def comicsblog(ctx,num):
     list = get_comicsblog(num)
@@ -175,5 +176,7 @@ async def kick(ctx):
     else:
         await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")
 
+=======
+>>>>>>> 00541239d1b2a89598e3f913da114c047f96d458
 
 bot.run(token)
