@@ -6,6 +6,7 @@ from utils.tools import get_command_input, string_is_int
 from utils.urban import Urban_search
 from utils.getcomics import getcomics_top_link
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
+from utils.comicsblog import get_comicsblog
 import asyncio
 
 
@@ -26,7 +27,10 @@ helps = [
     {'name': 'clear', 'value': 'efface le nombre de message entré en argument (!clear [nombre])'},
     {'name': 'recrutement', 'value': 'donne le lien des tests de DCTrad'},
     {'name': 'youtube', 'value': 'donne le lien du premier résultat de la recherche'},
-    {'name': 'youtubelist', 'value': 'donne une liste de lien cliquables. Syntaxe : !youtubelist [nombre] [recherche]'}]
+    {'name': 'youtubelist', 'value': 'donne une liste de lien cliquables.\n Syntaxe : !youtubelist [nombre] [recherche]'},
+    {'name': 'comicsblog', 'value': 'donne les X derniers articles de comicsblog\n (syntaxe : !comicsblog [numero])'},
+    {'name': 'kick', 'value': 'kick la(les) personne(s) mentionnée(s)\n (syntaxe : !kick [@membre] (optionel)[@membre2]...'},
+    {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'}]
 
 
 @bot.event
@@ -56,9 +60,9 @@ async def team(ctx):
     if ctx.author.top_role >= role_dcteam:
         for member in member_list:
             await member.add_roles(role_dcteam)
-        await ctx.send("Bienvenue dans la Team !")
+        await ctx.send(content="Bienvenue dans la Team !")
     else:
-        await ctx.send("Bien tenté mais tu n'as pas de pouvoir ici !")
+        await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
 
 
 @bot.command()
@@ -96,7 +100,7 @@ async def clear(ctx):
         await ctx.send(content=f"J'ai supprimé {nbr_msg} messages",
                        delete_after=5)
     else:
-        await ctx.send(content="Tu n'as pas le pouvoir !")
+        await ctx.send(content=f"Tu n'as pas le pouvoir{ctx.author.mention} !")
 
 
 @bot.command()
@@ -153,4 +157,36 @@ async def youtubelist(ctx):
         await ctx.send("Tu as pris trop de temps pour répondre !", delete_after=5)
         await self_message.delete(delay=None)
         await ctx.message.delete(delay=2)
+
+
+@bot.command()
+async def comicsblog(ctx, num):
+    list = get_comicsblog(num)
+    embed = discord.Embed(title=f"les {num} derniers articles de comicsblog", color=0xe3951a)
+    for l in list:
+        embed.add_field(name=l.find('title').text, value=l.find('guid').text, inline=False)
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def kick(ctx):
+    member_list = ctx.message.mentions
+    role_dcteam = bot.guild.get_role(dcteam_role_id)
+    if ctx.author.top_role > role_dcteam:
+        for member in member_list:
+            await member.kick()
+    else:
+        await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")
+
+
+@bot.command()
+async def ban(ctx):
+    member_list = ctx.message.mentions
+    role_dcteam = bot.guild.get_role(dcteam_role_id)
+    if ctx.author.top_role > role_dcteam:
+        for member in member_list:
+            await member.ban(delete_message_days=3)
+    else:
+        await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")
+
 bot.run(token)
