@@ -28,8 +28,8 @@ helps = [
     {'name': 'recrutement', 'value': 'donne le lien des tests de DCTrad'},
     {'name': 'youtube', 'value': 'donne le lien du premier résultat de la recherche'},
     {'name': 'youtubelist', 'value': 'donne une liste de lien cliquables.\n Syntaxe : !youtubelist [nombre] [recherche]'},
-    {'name': 'comicsblog', 'value' : 'donne les X derniers articles de comicsblog\n (syntaxe : !comicsblog [numero])'},
-    {'name': 'kick', 'value' : 'kick la(les) personne(s) mentionnée(s)\n (syntaxe : !kick [@membre] (optionel)[@membre2]...'},
+    {'name': 'comicsblog', 'value': 'donne les X derniers articles de comicsblog\n (syntaxe : !comicsblog [numero])'},
+    {'name': 'kick', 'value': 'kick la(les) personne(s) mentionnée(s)\n (syntaxe : !kick [@membre] (optionel)[@membre2]...'},
     {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'}]
 
 
@@ -158,13 +158,15 @@ async def youtubelist(ctx):
         await self_message.delete(delay=None)
         await ctx.message.delete(delay=2)
 
+
 @bot.command()
-async def comicsblog(ctx,num):
+async def comicsblog(ctx, num):
     list = get_comicsblog(num)
-    embed=discord.Embed(title=f"les {num} derniers articles de comicsblog",color=0xe3951a)
+    embed = discord.Embed(title=f"les {num} derniers articles de comicsblog", color=0xe3951a)
     for l in list:
         embed.add_field(name=l.find('title').text, value=l.find('guid').text, inline=False)
     await ctx.send(embed=embed)
+
 
 @bot.command()
 async def kick(ctx):
@@ -175,6 +177,7 @@ async def kick(ctx):
             await member.kick()
     else:
         await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")
+
 
 @bot.command()
 async def ban(ctx):
