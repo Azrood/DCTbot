@@ -2,8 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def get_comicsblog(num):
-
+def get_comicsblog(numb):
+    num = int(numb)
     c_blog_rss = "http://www.comicsblog.fr/comicsblog.rss"
 
     res = requests.get(c_blog_rss)

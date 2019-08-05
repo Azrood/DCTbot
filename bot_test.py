@@ -59,9 +59,9 @@ async def team(ctx):
     if ctx.author.top_role >= role_dcteam:
         for member in member_list:
             await member.add_roles(role_dcteam)
-        await ctx.send("Bienvenue dans la Team !")
+        await ctx.send(content="Bienvenue dans la Team !")
     else:
-        await ctx.send("Bien tenté mais tu n'as pas de pouvoir ici !")
+        await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
 
 
 @bot.command()
@@ -99,7 +99,7 @@ async def clear(ctx):
         await ctx.send(content=f"J'ai supprimé {nbr_msg} messages",
                        delete_after=5)
     else:
-        await ctx.send(content="Tu n'as pas le pouvoir !")
+        await ctx.send(content=f"Tu n'as pas le pouvoir{ctx.author.mention} !")
 
 
 @bot.command()
@@ -173,6 +173,7 @@ async def kick(ctx):
         for member in member_list:
             await member.kick()
     else:
-        await ctx.send(content="Tu n'as pas de pouvoirs ")
+        await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")
+
 
 bot.run(token)
