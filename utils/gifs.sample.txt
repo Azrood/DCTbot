@@ -1,0 +1,1 @@
+{'name':name,'url':url,'public':bool}

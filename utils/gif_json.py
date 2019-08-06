@@ -56,54 +56,8 @@ class Gif_json:
         except Exception:
             return None
 
-    def print_data(self):
-        for l in self.gifs:
-            print(l['name'])
-            print(l['url'])
-            print(l['public'])
-            print('............')
-
-# Tests
+            
 
 
-# Creation of object (ie : execution of __init__)
-gifs_json = Gif_json("gifs.txt")
 
-print("========================")
 
-# add test
-gifs_json.gif_add('sergei', 'Sergei Url')
-
-gifs_json.print_data()
-
-print("========================")
-
-gifs_json.gif_add('ludo', 'ludo_gif_url')
-gifs_json.gif_add('sergei', 'Sergei_gif_2.0')
-gifs_json.gif_add('karnage', 'Karnage url', False)
-
-gifs_json.print_data()
-
-print("========================")
-
-gifs_json.gif_delete('karnage')
-gifs_json.gif_delete('ludo')
-
-gifs_json.print_data()
-
-# This is what will be called when we will want to get a gif for a name :
-print("========================")
-print("I try to get gif for sergei")
-gif = gifs_json.get_gif('sergei')
-if gif:
-    print(gif['url'])
-else:
-    print("Invalid name")
-
-print("========================")
-print("I try to get gif for toto")
-gif = gifs_json.get_gif('toto')
-if gif:
-    print(gif['url'])
-else:
-    print("Invalid name")

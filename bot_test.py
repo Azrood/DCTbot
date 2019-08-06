@@ -8,6 +8,7 @@ from utils.getcomics import getcomics_top_link
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 from utils.comicsblog import get_comicsblog
 from utils.google import search_google, google_top_link
+import utils.gif_json
 import asyncio
 
 
@@ -19,14 +20,14 @@ urban_logo = "https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5
 dctradlogo = "http://www.dctrad.fr/ext/planetstyles/flightdeck/store/logodctweb.png"
 
 dctrad_recru = "http://www.dctrad.fr/viewforum.php?f=21"
-role_dcteam = bot.guild.get_role(dcteam_role_id)
-role_modo = bot.guild.get_role(modo_role_id)
+
 
 helps = [
     {'name': 'help', 'value': 'affiche la liste des commandes'},
     {'name': 'getcomics', 'value': 'recherche dans getcomics les mots-clés entrés'},
     {'name': 'urban', 'value': 'fait une recherche du mot entré sur Urban Dictionary'},
     {'name': 'recrutement', 'value': 'donne le lien des tests de DCTrad'},
+    {'name': 'timer', 'value': 'minuteur qui notifie le user après X secondes\n Syntaxe : !timer [nombre (secondes)] [rappel]\n Exemple: !timer 3600 organiser mes dossiers'},
     {'name': 'youtube', 'value': 'donne le lien du premier résultat de la recherche'},
     {'name': 'youtubelist', 'value': 'donne une liste de lien cliquables.\n Syntaxe : !youtubelist [nombre] [recherche]'},
     {'name': 'comicsblog', 'value': 'donne les X derniers articles de comicsblog\n (syntaxe : !comicsblog [numero])'},
@@ -46,17 +47,18 @@ async def on_ready():
     print(bot.user.id)
     print('------')
     bot.guild = bot.get_guild(dcteam_id)  # se lier au serveur à partir de l'ID
-
+    bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
+    bot.role_modo = bot.guild.get_role(modo_role_id)
 
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)
     for s in helps:
         embed.add_field(name=s['name'], value=s['value'], inline=False)
-    if ctx.author.top_role >= role_dcteam:
+    if ctx.author.top_role >= bot.role_dcteam:
         for h in help_team:
             embed.add_field(name=h['name'], value=h['value'], inline=False)
-    if ctx.author.top_role >= role_modo:
+    if ctx.author.top_role >= bot.role_modo:
         for h in help_above:
             embed.add_field(name=h['name'], value=h['value'], inline=False)
 
@@ -68,9 +70,9 @@ async def team(ctx):
     member_list = ctx.message.mentions  # une liste d'objets
     # on regarde si le plus haut role de l'auteur du message est au dessus
     # du role (ou égal) au role DCT dans la hiérarchie
-    if ctx.author.top_role >= role_dcteam:
+    if ctx.author.top_role >= bot.role_dcteam:
         for member in member_list:
-            await member.add_roles(role_dcteam)
+            await member.add_roles(bot.role_dcteam)
         await ctx.send(content="Bienvenue dans la Team !")
     else:
         await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
@@ -103,7 +105,7 @@ async def urban(ctx):
 async def clear(ctx):
     # on regarde si le plus haut role de l'auteur est supérieur
     # ou égal hiérarchiquement au role DCT
-    if ctx.author.top_role >= role_dcteam:
+    if ctx.author.top_role >= bot.role_dcteam:
         nbr_msg = int(get_command_input(ctx.message.content))
         messages = await ctx.channel.history(limit=nbr_msg + 1).flatten()
         await ctx.channel.delete_messages(messages)
@@ -181,7 +183,7 @@ async def comicsblog(ctx, num):
 @bot.command()
 async def kick(ctx):
     member_list = ctx.message.mentions
-    if ctx.author.top_role >= role_modo:
+    if ctx.author.top_role >= bot.role_modo:
         for member in member_list:
             await member.kick()
     else:
@@ -191,7 +193,7 @@ async def kick(ctx):
 @bot.command()
 async def ban(ctx):
     member_list = ctx.message.mentions
-    if ctx.author.top_role >= role_modo:
+    if ctx.author.top_role >= bot.role_modo:
         for member in member_list:
             await member.ban(delete_message_days=3)
     else:
@@ -215,5 +217,12 @@ async def googlelist(ctx, num, *, args):
     for r in result:
         embed.add_field(name=r['title'], value=r['url'], inline=False)
     await ctx.send(embed=embed)
+
+@bot.command()
+async def timer(ctx, numb, *, args):
+    num=int(numb)
+    await ctx.send(content=f"{ctx.author.mention} : timer enregistré !", delete_after=10)
+    await asyncio.sleep(num, result=None,loop=None)
+    await ctx.send(content=f"temps écoulé ! : {ctx.author.mention} {args}")
 
 bot.run(token)
