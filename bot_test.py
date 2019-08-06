@@ -226,4 +226,8 @@ async def timer(ctx, numb, *, args):
     await asyncio.sleep(num, result=None,loop=None)
     await ctx.send(content=f"temps écoulé ! : {ctx.author.mention} {args}")
 
+@bot.command()
+async def gif(ctx,name):
+    pass 
+
 bot.run(token)
