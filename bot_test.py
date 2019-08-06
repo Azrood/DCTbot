@@ -50,14 +50,13 @@ async def on_ready():
 
 @bot.command()
 async def help(ctx):
-    role_dcteam = bot.guild.get_role(dcteam_role_id)
     embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)
     for s in helps:
         embed.add_field(name=s['name'], value=s['value'], inline=False)
     if ctx.author.top_role >= role_dcteam:
         for h in help_team:
             embed.add_field(name=h['name'], value=h['value'], inline=False)
-    if ctx.author.top_role > role_dcteam:
+    if ctx.author.top_role >= role_modo:
         for h in help_above:
             embed.add_field(name=h['name'], value=h['value'], inline=False)
 
@@ -103,7 +102,7 @@ async def urban(ctx):
 @bot.command()
 async def clear(ctx):
     # on regarde si le plus haut role de l'auteur est supérieur
-    # ou égale hiérarchiquement au role DCT
+    # ou égal hiérarchiquement au role DCT
     if ctx.author.top_role >= role_dcteam:
         nbr_msg = int(get_command_input(ctx.message.content))
         messages = await ctx.channel.history(limit=nbr_msg + 1).flatten()
