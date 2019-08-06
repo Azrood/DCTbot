@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils.secret import token, dcteam_role_id, dcteam_id
+from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id
 from utils.tools import get_command_input, string_is_int
 # from utils.urban import get_top_def
 from utils.urban import Urban_search
@@ -19,6 +19,8 @@ urban_logo = "https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5
 dctradlogo = "http://www.dctrad.fr/ext/planetstyles/flightdeck/store/logodctweb.png"
 
 dctrad_recru = "http://www.dctrad.fr/viewforum.php?f=21"
+role_dcteam = bot.guild.get_role(dcteam_role_id)
+role_modo = bot.guild.get_role(modo_role_id)
 
 helps = [
     {'name': 'help', 'value': 'affiche la liste des commandes'},
@@ -56,7 +58,6 @@ async def help(ctx):
 
 @bot.command()
 async def team(ctx):
-    role_dcteam = bot.guild.get_role(dcteam_role_id)
     member_list = ctx.message.mentions  # une liste d'objets
     # on regarde si le plus haut role de l'auteur du message est au dessus
     # du role (ou égal) au role DCT dans la hiérarchie
@@ -93,7 +94,6 @@ async def urban(ctx):
 
 @bot.command()
 async def clear(ctx):
-    role_dcteam = bot.guild.get_role(dcteam_role_id)
     # on regarde si le plus haut role de l'auteur est supérieur
     # ou égale hiérarchiquement au role DCT
     if ctx.author.top_role >= role_dcteam:
@@ -174,8 +174,7 @@ async def comicsblog(ctx, num):
 @bot.command()
 async def kick(ctx):
     member_list = ctx.message.mentions
-    role_dcteam = bot.guild.get_role(dcteam_role_id)
-    if ctx.author.top_role > role_dcteam:
+    if ctx.author.top_role >= role_modo:
         for member in member_list:
             await member.kick()
     else:
@@ -185,8 +184,7 @@ async def kick(ctx):
 @bot.command()
 async def ban(ctx):
     member_list = ctx.message.mentions
-    role_dcteam = bot.guild.get_role(dcteam_role_id)
-    if ctx.author.top_role > role_dcteam:
+    if ctx.author.top_role >= role_modo:
         for member in member_list:
             await member.ban(delete_message_days=3)
     else:
