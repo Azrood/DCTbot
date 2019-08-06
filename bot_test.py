@@ -7,6 +7,7 @@ from utils.urban import Urban_search
 from utils.getcomics import getcomics_top_link
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 from utils.comicsblog import get_comicsblog
+from utils.google import search_google, google_top_link
 import asyncio
 
 
@@ -30,7 +31,9 @@ helps = [
     {'name': 'youtubelist', 'value': 'donne une liste de lien cliquables.\n Syntaxe : !youtubelist [nombre] [recherche]'},
     {'name': 'comicsblog', 'value': 'donne les X derniers articles de comicsblog\n (syntaxe : !comicsblog [numero])'},
     {'name': 'kick', 'value': 'kick la(les) personne(s) mentionnée(s)\n (syntaxe : !kick [@membre] (optionel)[@membre2]...'},
-    {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'}]
+    {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'},
+    {'name': 'google', 'value': 'donne le premier lien de la recherche google des mots-clés saisis'},
+    {'name': 'googlelist', 'value': 'donne une liste des X premiers liens de la recherche google\n Syntaxe : !googlelist [numero] [mots-clés] \nExemple : !googlelist 3 the final countdown'}]
 
 
 @bot.event
@@ -44,7 +47,7 @@ async def on_ready():
 
 @bot.command()
 async def help(ctx):
-    embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précées du prefix \"!\") :", color=0x0000FF)
+    embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)
     for s in helps:
         embed.add_field(name=s['name'], value=s['value'], inline=False)
 
@@ -189,4 +192,18 @@ async def ban(ctx):
     else:
         await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")
 
+@bot.command()
+async def google(ctx):
+    query = get_command_input(ctx.message.content)
+    result = google_top_link(query)
+    await ctx.send(content=f"{result['title']}\n {result['url']}")
+
+@bot.command()
+async def googlelist(ctx, num, *, args):
+    result = search_google(args,num)
+    embed=discord.Embed(title=f"Les {num} premiers résultats de la recherche", color=0x3b5cbe)
+    for r in result:
+        embed.add_field(name=r['title'], value=r['url'],inline=False)
+    await ctx.send(embed=embed)
+    
 bot.run(token)
