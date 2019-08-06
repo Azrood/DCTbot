@@ -11,12 +11,13 @@ def search_google(user_input, number):
 
 
     # new Token to include in secret.py
-    
+
     google_search_url = "https://www.googleapis.com/customsearch/v1"
 
     params = {
         'q': quote_plus(user_input),
         'cx': DEVELOPER_CX,
+        'safe': 'active',
         'hl': 'fr',
         'num': int(number),
         'fields': 'items(kind,link,title)',
