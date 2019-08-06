@@ -192,18 +192,23 @@ async def ban(ctx):
     else:
         await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")
 
+
 @bot.command()
 async def google(ctx):
     query = get_command_input(ctx.message.content)
-    result = google_top_link(query)
-    await ctx.send(content=f"{result['title']}\n {result['url']}")
+    try:
+        result = google_top_link(query)
+        await ctx.send(content=f"{result['title']}\n {result['url']}")
+    except TypeError:
+        pass
+
 
 @bot.command()
 async def googlelist(ctx, num, *, args):
-    result = search_google(args,num)
-    embed=discord.Embed(title=f"Les {num} premiers résultats de la recherche", color=0x3b5cbe)
+    result = search_google(args, num)
+    embed = discord.Embed(title=f"Les {num} premiers résultats de la recherche", color=0x3b5cbe)
     for r in result:
-        embed.add_field(name=r['title'], value=r['url'],inline=False)
+        embed.add_field(name=r['title'], value=r['url'], inline=False)
     await ctx.send(embed=embed)
-    
+
 bot.run(token)

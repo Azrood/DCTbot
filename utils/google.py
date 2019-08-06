@@ -9,9 +9,6 @@ from utils.secret import token_youtube, DEVELOPER_CX
 
 def search_google(user_input, number):
 
-
-    # new Token to include in secret.py
-
     google_search_url = "https://www.googleapis.com/customsearch/v1"
 
     params = {
@@ -25,8 +22,10 @@ def search_google(user_input, number):
     }
 
     response = requests.get(google_search_url, params=params)
-
-    json_data = json.loads(response.text)["items"]
+    try:
+        json_data = json.loads(response.text)["items"]
+    except KeyError:
+        json_data = []
 
     out = []
 
@@ -39,5 +38,8 @@ def search_google(user_input, number):
 
 
 def google_top_link(user_input):
-    result = search_google(user_input, number=1)
-    return result[0]
+    try:
+        result = search_google(user_input, number=1)
+        return result[0]
+    except IndexError:
+        return None
