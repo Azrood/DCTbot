@@ -22,19 +22,20 @@ dctrad_recru = "http://www.dctrad.fr/viewforum.php?f=21"
 
 helps = [
     {'name': 'help', 'value': 'affiche la liste des commandes'},
-    {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},
     {'name': 'getcomics', 'value': 'recherche dans getcomics les mots-clés entrés'},
     {'name': 'urban', 'value': 'fait une recherche du mot entré sur Urban Dictionary'},
-    {'name': 'clear', 'value': 'efface le nombre de message entré en argument (!clear [nombre])'},
     {'name': 'recrutement', 'value': 'donne le lien des tests de DCTrad'},
     {'name': 'youtube', 'value': 'donne le lien du premier résultat de la recherche'},
     {'name': 'youtubelist', 'value': 'donne une liste de lien cliquables.\n Syntaxe : !youtubelist [nombre] [recherche]'},
     {'name': 'comicsblog', 'value': 'donne les X derniers articles de comicsblog\n (syntaxe : !comicsblog [numero])'},
-    {'name': 'kick', 'value': 'kick la(les) personne(s) mentionnée(s)\n (syntaxe : !kick [@membre] (optionel)[@membre2]...'},
-    {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'},
     {'name': 'google', 'value': 'donne le premier lien de la recherche google des mots-clés saisis'},
     {'name': 'googlelist', 'value': 'donne une liste des X premiers liens de la recherche google\n Syntaxe : !googlelist [numero] [mots-clés] \nExemple : !googlelist 3 the final countdown'}]
-
+help_team =[
+    {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},
+    {'name': 'clear', 'value': 'efface le nombre de message entré en argument (!clear [nombre])'}]
+help_above=[
+    {'name': 'kick', 'value': 'kick la(les) personne(s) mentionnée(s)\n (syntaxe : !kick [@membre] (optionel)[@membre2]...'},
+    {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'},]
 
 @bot.event
 async def on_ready():
@@ -47,9 +48,16 @@ async def on_ready():
 
 @bot.command()
 async def help(ctx):
+    role_dcteam = bot.guild.get_role(dcteam_role_id)
     embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)
     for s in helps:
         embed.add_field(name=s['name'], value=s['value'], inline=False)
+    if ctx.author.top_role >= role_dcteam:
+        for h in help_team:
+            embed.add_field(name=h['name'], value=h['value'], inline=False)
+    if ctx.author.top_role > role_dcteam:
+        for h in help_above:
+            embed.add_field(name=h['name'], value=h['value'], inline=False)
 
     await ctx.send(embed=embed)
 
