@@ -1,14 +1,16 @@
 import discord
 from discord.ext import commands
-from utils.secret import token, dcteam_role_id, dcteam_id
+from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id
 from utils.tools import get_command_input, string_is_int
 # from utils.urban import get_top_def
 from utils.urban import Urban_search
 from utils.getcomics import getcomics_top_link
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 from utils.comicsblog import get_comicsblog
+from utils.google import search_google, google_top_link
+import utils.gif_json
 import asyncio
-
+import random
 
 bot = commands.Bot(command_prefix='!', help_command=None, description=None)
 client = discord.Client()
@@ -19,16 +21,23 @@ dctradlogo = "http://www.dctrad.fr/ext/planetstyles/flightdeck/store/logodctweb.
 
 dctrad_recru = "http://www.dctrad.fr/viewforum.php?f=21"
 
+
 helps = [
     {'name': 'help', 'value': 'affiche la liste des commandes'},
-    {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},
     {'name': 'getcomics', 'value': 'recherche dans getcomics les mots-clés entrés'},
     {'name': 'urban', 'value': 'fait une recherche du mot entré sur Urban Dictionary'},
-    {'name': 'clear', 'value': 'efface le nombre de message entré en argument (!clear [nombre])'},
     {'name': 'recrutement', 'value': 'donne le lien des tests de DCTrad'},
+    {'name': 'timer', 'value': 'minuteur qui notifie le user après X secondes\n Syntaxe : !timer [nombre (secondes)] [rappel]\n Exemple: !timer 3600 organiser mes dossiers'},
     {'name': 'youtube', 'value': 'donne le lien du premier résultat de la recherche'},
     {'name': 'youtubelist', 'value': 'donne une liste de lien cliquables.\n Syntaxe : !youtubelist [nombre] [recherche]'},
     {'name': 'comicsblog', 'value': 'donne les X derniers articles de comicsblog\n (syntaxe : !comicsblog [numero])'},
+    {'name': 'google', 'value': 'donne le premier lien de la recherche google des mots-clés saisis'},
+    {'name': 'googlelist', 'value': 'donne une liste des X premiers liens de la recherche google\n Syntaxe : !googlelist [numero] [mots-clés] \nExemple : !googlelist 3 the final countdown'},
+    {'name': 'roulette', 'value': '1/6 chance de se faire kick, la roulette russe avec le bon Colt !'}]
+help_team = [
+    {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},
+    {'name': 'clear', 'value': 'efface le nombre de message entré en argument (!clear [nombre])'}]
+help_above = [
     {'name': 'kick', 'value': 'kick la(les) personne(s) mentionnée(s)\n (syntaxe : !kick [@membre] (optionel)[@membre2]...'},
     {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'}]
 
@@ -40,26 +49,32 @@ async def on_ready():
     print(bot.user.id)
     print('------')
     bot.guild = bot.get_guild(dcteam_id)  # se lier au serveur à partir de l'ID
-
+    bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
+    bot.role_modo = bot.guild.get_role(modo_role_id)
 
 @bot.command()
 async def help(ctx):
-    embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précées du prefix \"!\") :", color=0x0000FF)
+    embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)
     for s in helps:
         embed.add_field(name=s['name'], value=s['value'], inline=False)
+    if ctx.author.top_role >= bot.role_dcteam:
+        for h in help_team:
+            embed.add_field(name=h['name'], value=h['value'], inline=False)
+    if ctx.author.top_role >= bot.role_modo:
+        for h in help_above:
+            embed.add_field(name=h['name'], value=h['value'], inline=False)
 
     await ctx.send(embed=embed)
 
 
 @bot.command()
 async def team(ctx):
-    role_dcteam = bot.guild.get_role(dcteam_role_id)
     member_list = ctx.message.mentions  # une liste d'objets
     # on regarde si le plus haut role de l'auteur du message est au dessus
     # du role (ou égal) au role DCT dans la hiérarchie
-    if ctx.author.top_role >= role_dcteam:
+    if ctx.author.top_role >= bot.role_dcteam:
         for member in member_list:
-            await member.add_roles(role_dcteam)
+            await member.add_roles(bot.role_dcteam)
         await ctx.send(content="Bienvenue dans la Team !")
     else:
         await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
@@ -90,10 +105,9 @@ async def urban(ctx):
 
 @bot.command()
 async def clear(ctx):
-    role_dcteam = bot.guild.get_role(dcteam_role_id)
     # on regarde si le plus haut role de l'auteur est supérieur
-    # ou égale hiérarchiquement au role DCT
-    if ctx.author.top_role >= role_dcteam:
+    # ou égal hiérarchiquement au role DCT
+    if ctx.author.top_role >= bot.role_dcteam:
         nbr_msg = int(get_command_input(ctx.message.content))
         messages = await ctx.channel.history(limit=nbr_msg + 1).flatten()
         await ctx.channel.delete_messages(messages)
@@ -171,8 +185,7 @@ async def comicsblog(ctx, num):
 @bot.command()
 async def kick(ctx):
     member_list = ctx.message.mentions
-    role_dcteam = bot.guild.get_role(dcteam_role_id)
-    if ctx.author.top_role > role_dcteam:
+    if ctx.author.top_role >= bot.role_modo:
         for member in member_list:
             await member.kick()
     else:
@@ -182,11 +195,49 @@ async def kick(ctx):
 @bot.command()
 async def ban(ctx):
     member_list = ctx.message.mentions
-    role_dcteam = bot.guild.get_role(dcteam_role_id)
-    if ctx.author.top_role > role_dcteam:
+    if ctx.author.top_role >= bot.role_modo:
         for member in member_list:
             await member.ban(delete_message_days=3)
     else:
         await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")
+
+
+@bot.command()
+async def google(ctx):
+    query = get_command_input(ctx.message.content)
+    try:
+        result = google_top_link(query)
+        await ctx.send(content=f"{result['title']}\n {result['url']}")
+    except TypeError:
+        pass
+
+
+@bot.command()
+async def googlelist(ctx, num, *, args):
+    result = search_google(args, num)
+    embed = discord.Embed(title=f"Les {num} premiers résultats de la recherche", color=0x3b5cbe)
+    for r in result:
+        embed.add_field(name=r['title'], value=r['url'], inline=False)
+    await ctx.send(embed=embed)
+
+@bot.command()
+async def timer(ctx, numb, *, args):
+    num=int(numb)
+    await ctx.send(content=f"{ctx.author.mention} : timer enregistré !", delete_after=10)
+    await asyncio.sleep(num, result=None,loop=None)
+    await ctx.send(content=f"temps écoulé ! : {ctx.author.mention} {args}")
+
+@bot.command()
+async def roulette(ctx):
+    if random.randrange(6) == 3:
+        await ctx.send(content="Pan !")
+        await asyncio.sleep(1, result=None, loop=None)
+        await ctx.author.kick()
+    else:
+        await ctx.send(content="*clic*....Tu restes vivant !")
+
+@bot.command()
+async def gif(ctx,name):
+    pass 
 
 bot.run(token)
