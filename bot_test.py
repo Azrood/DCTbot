@@ -10,7 +10,7 @@ from utils.comicsblog import get_comicsblog
 from utils.google import search_google, google_top_link
 import utils.gif_json
 import asyncio
-
+import random
 
 bot = commands.Bot(command_prefix='!', help_command=None, description=None)
 client = discord.Client()
@@ -225,6 +225,15 @@ async def timer(ctx, numb, *, args):
     await ctx.send(content=f"{ctx.author.mention} : timer enregistré !", delete_after=10)
     await asyncio.sleep(num, result=None,loop=None)
     await ctx.send(content=f"temps écoulé ! : {ctx.author.mention} {args}")
+
+@bot.command()
+async def roulette(ctx):
+    if random.randrange(6) == 3:
+        await ctx.send(content="Pan !")
+        await asyncio.sleep(1, result=None, loop=None)
+        await ctx.author.kick()
+    else:
+        await ctx.send(content="*clic*....Tu restes vivant !")
 
 @bot.command()
 async def gif(ctx,name):
