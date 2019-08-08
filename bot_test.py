@@ -52,6 +52,7 @@ async def on_ready():
     bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
     bot.role_modo = bot.guild.get_role(modo_role_id)
 
+
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)
@@ -220,12 +221,14 @@ async def googlelist(ctx, num, *, args):
         embed.add_field(name=r['title'], value=r['url'], inline=False)
     await ctx.send(embed=embed)
 
+
 @bot.command()
 async def timer(ctx, numb, *, args):
-    num=int(numb)
+    num = int(numb)
     await ctx.send(content=f"{ctx.author.mention} : timer enregistré !", delete_after=10)
-    await asyncio.sleep(num, result=None,loop=None)
+    await asyncio.sleep(num, result=None, loop=None)
     await ctx.send(content=f"temps écoulé ! : {ctx.author.mention} {args}")
+
 
 @bot.command()
 async def roulette(ctx):
@@ -236,8 +239,9 @@ async def roulette(ctx):
     else:
         await ctx.send(content="*clic*....Tu restes vivant !")
 
+
 @bot.command()
-async def gif(ctx,name):
-    pass 
+async def gif(ctx, name):
+    pass
 
 bot.run(token)
