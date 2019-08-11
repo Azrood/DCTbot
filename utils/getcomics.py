@@ -50,7 +50,7 @@ def getcomics_directlink(comic_url):
 
     if res2.status_code == 200:
         print("req 2 code 200")
-        print(res2.url)
+        return res2.url
     elif res2.status_code == 302:
         print("302, Found Comic URL")
         return res2.headers['location']
