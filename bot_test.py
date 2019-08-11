@@ -21,6 +21,7 @@ dctradlogo = "http://www.dctrad.fr/ext/planetstyles/flightdeck/store/logodctweb.
 
 dctrad_recru = "http://www.dctrad.fr/viewforum.php?f=21"
 
+gif_url = "https://media.tenor.com/images/8d7d2e757f934793bb4154cede8a4afa/tenor.gif"
 
 helps = [
     {'name': 'help', 'value': 'affiche la liste des commandes'},
@@ -64,7 +65,6 @@ async def help(ctx):
     if ctx.author.top_role >= bot.role_modo:
         for h in help_above:
             embed.add_field(name=h['name'], value=h['value'], inline=False)
-
     await ctx.send(embed=embed)
 
 
@@ -140,6 +140,8 @@ async def youtubelist(ctx):
     duo = user_input.split(' ', 1)
     number = int(duo[0])
     query = duo[1]
+    if number > 10:
+        number = 10
     result = search_youtube(user_input=query, number=number)
     embed = discord.Embed(color=0xFF0000)
     embed.set_footer(text="Tapez un nombre pour faire votre choix "
@@ -233,8 +235,8 @@ async def timer(ctx, numb, *, args):
 @bot.command()
 async def roulette(ctx):
     if random.randrange(6) == 3:
-        await ctx.send(content="Pan !")
-        await asyncio.sleep(1, result=None, loop=None)
+        await ctx.send(content=f"Pan !\n{gif_url}")
+        await asyncio.sleep(2.4, result=None, loop=None)
         await ctx.author.kick()
     else:
         await ctx.send(content="*clic*....Tu restes vivant !")
