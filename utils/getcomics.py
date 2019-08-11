@@ -43,7 +43,7 @@ def getcomics_directlink(comic_url):
     temp_url = direct_download['href']
 
     # We follow temp_url to find final URL
-    time.sleep(2)
+    time.sleep(1)
 
     res2 = requests.get(temp_url, allow_redirects=False, stream=True)
     res2.close()
