@@ -73,12 +73,15 @@ async def team(ctx):
     member_list = ctx.message.mentions  # une liste d'objets
     # on regarde si le plus haut role de l'auteur du message est au dessus
     # du role (ou égal) au role DCT dans la hiérarchie
-    if ctx.author.top_role >= bot.role_dcteam:
-        for member in member_list:
-            await member.add_roles(bot.role_dcteam)
-        await ctx.send(content="Bienvenue dans la Team !")
+    if member_list == []:
+        pass
     else:
-        await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
+        if ctx.author.top_role >= bot.role_dcteam:
+            for member in member_list:
+                await member.add_roles(bot.role_dcteam)
+            await ctx.send(content="Bienvenue dans la Team !")
+        else:
+            await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
 
 
 @bot.command()
@@ -235,7 +238,8 @@ async def timer(ctx, numb, *, args):
 @bot.command()
 async def roulette(ctx):
     if random.randrange(6) == 3:
-        await ctx.send(content=f"Pan !\n{gif_url}")
+        await ctx.send(content=f"Pan !")
+        await ctx.send(content=gif_url, delete_after=4)
         await asyncio.sleep(2.4, result=None, loop=None)
         await ctx.author.kick()
     else:
