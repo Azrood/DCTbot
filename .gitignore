@@ -2,3 +2,4 @@ __pycache__/
 .vscode/
 secret.py
 gifs.txt
+gifs.json
