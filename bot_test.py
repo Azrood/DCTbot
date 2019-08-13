@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id
+from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id
 from utils.tools import get_command_input, string_is_int
 # from utils.urban import get_top_def
 from utils.urban import Urban_search
@@ -8,7 +8,7 @@ from utils.getcomics import getcomics_top_link
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 from utils.comicsblog import get_comicsblog
 from utils.google import search_google, google_top_link
-import utils.gif_json
+from utils.gif_json import Gif_json
 import asyncio
 import random
 
@@ -21,7 +21,7 @@ dctradlogo = "http://www.dctrad.fr/ext/planetstyles/flightdeck/store/logodctweb.
 
 dctrad_recru = "http://www.dctrad.fr/viewforum.php?f=21"
 
-gif_url = "https://media.tenor.com/images/8d7d2e757f934793bb4154cede8a4afa/tenor.gif"
+snap_url = "https://media.tenor.com/images/8d7d2e757f934793bb4154cede8a4afa/tenor.gif"
 
 helps = [
     {'name': 'help', 'value': 'affiche la liste des commandes'},
@@ -34,14 +34,19 @@ helps = [
     {'name': 'comicsblog', 'value': 'donne les X derniers articles de comicsblog\n (syntaxe : !comicsblog [numero])'},
     {'name': 'google', 'value': 'donne le premier lien de la recherche google des mots-clés saisis'},
     {'name': 'googlelist', 'value': 'donne une liste des X premiers liens de la recherche google\n Syntaxe : !googlelist [numero] [mots-clés] \nExemple : !googlelist 3 the final countdown'},
-    {'name': 'roulette', 'value': '1/6 chance de se faire kick, la roulette russe avec le bon Colt !'}]
+    {'name': 'roulette', 'value': '1/6 chance de se faire kick, la roulette russe avec le bon Colt !'},
+    {'name': 'gif help', 'value': 'affiche la liste des gifs'}
+    ]
 help_team = [
     {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},
-    {'name': 'clear', 'value': 'efface le nombre de message entré en argument (!clear [nombre])'}]
+    {'name': 'clear', 'value': 'efface le nombre de message entré en argument (!clear [nombre])'}
+    ]
 help_above = [
     {'name': 'kick', 'value': 'kick la(les) personne(s) mentionnée(s)\n (syntaxe : !kick [@membre] (optionel)[@membre2]...'},
-    {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'}]
+    {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'}
+    ]
 
+my_giflist = Gif_json("utils/gifs.json")
 
 @bot.event
 async def on_ready():
@@ -239,15 +244,55 @@ async def timer(ctx, numb, *, args):
 async def roulette(ctx):
     if random.randrange(6) == 3:
         await ctx.send(content=f"Pan !")
-        await ctx.send(content=gif_url, delete_after=4)
+        await ctx.send(content=snap_url, delete_after=4)
         await asyncio.sleep(2.4, result=None, loop=None)
         await ctx.author.kick()
     else:
         await ctx.send(content="*clic*....Tu restes vivant !")
 
+@bot.command()
+async def gif(ctx,name):
+    if name == 'help':
+        habile = []
+        list_names = ""
+        for key,value in my_giflist.gifs.items():
+            if value['public']:
+                habile.append(key+"\n")
+        
+            elif ctx.channel.category_id == dcteam_category_id:
+                habile.append(key+"\n")
+        for x in habile:
+            list_names = list_names + x
+        embed=discord.Embed(title="liste des gifs", description=list_names, color=0x000FF)
+        await ctx.send(embed=embed)
+    if my_giflist.get_gif(name) is not None:
+        if my_giflist.get_gif(name)['public'] or ctx.channel.category_id == dcteam_category_id:
+            gif_url = my_giflist.get_gif(name)['url']
+            await ctx.send(content=gif_url)
+    else:
+        pass
 
 @bot.command()
-async def gif(ctx, name):
-    pass
+async def admin(ctx):
+    embed=discord.Embed(color=0x0000FF)
+    embed.add_field(name="gifadd", value="!gifadd <name> <url> <bool> (bool : public or private)", inline=False)
+    embed.add_field(name="gifdelete", value="!gifdelete <name>", inline=False)
+    if ctx.author.top_role > bot.guild.get_role(admin_id):
+        await ctx.author.send(embed=embed)
+
+@bot.command()
+async def gifadd(ctx, name, url, bool):
+    if ctx.author.top_role > bot.guild.get_role(admin_id):
+        my_giflist.gif_add(name, url, bool)
+    else:
+        pass
+
+
+@bot.command()
+async def gifdelete(ctx, name):
+    if ctx.author.top_role > bot.guild.get_role(admin_id):
+        my_giflist.gif_delete(name)
+    else:
+        pass
 
 bot.run(token)

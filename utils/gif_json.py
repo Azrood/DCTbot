@@ -13,7 +13,7 @@ class Gif_json:
         # or not
         except FileNotFoundError:
             print('File does not exist. Creating.')
-            init = []
+            init = {}
             with open(file, 'w') as outfile:
                 json.dump(init, outfile)
 
@@ -28,36 +28,27 @@ class Gif_json:
 
     def file_write(self, data):
         with open(self.file, 'w') as outfile:
-            json.dump(data, outfile)
+            json.dump(data, outfile, sort_keys=True, indent=4)
 
     def update_file(self):
         with open(self.file, 'w') as outfile:
-            json.dump(self.gifs, outfile)
+            json.dump(self.gifs, outfile, sort_keys=True, indent=4)
 
     def gif_delete(self, name):
-        self.gifs = [i for i in self.gifs if not (i['name'] == name)]
-        self.update_file()
+        try:
+            self.gifs.pop(name)
+            self.update_file()
+        except KeyError:
+            pass
 
     def gif_add(self, name, url, public=True):
-        new_gif = {
-            'name': name.lower(),
-            'url': url,
-            'public': public
-        }
+        new_gif = {name.lower(): {'url': url, 'public': public}}
         self.file_read()
-        # delete if already exists
-        self.gif_delete(name)
-        self.gifs.append(new_gif)
+        self.gifs.update(new_gif)
         self.file_write(self.gifs)
 
     def get_gif(self, name):
         try:
-            return next(item for item in self.gifs if item["name"] == name.lower())
+            return self.gifs[name]
         except Exception:
             return None
-
-            
-
-
-
-
