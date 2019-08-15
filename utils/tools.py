@@ -18,7 +18,15 @@ def string_is_int(string):
 
 def get_soup_lxml(url):
     # get HTML page with requests.get
-    res = requests.get(url)
+    res = requests.get(url, timeout=3)
     res.close()
     # BeautifulSoup will transform raw HTML in a tree easy to parse
     return BeautifulSoup(res.text, 'lxml')
+
+
+def get_soup_html(url):
+    # get HTML page with requests.get
+    res = requests.get(url, timeout=3)
+    res.close()
+    # BeautifulSoup will transform raw HTML in a tree easy to parse
+    return BeautifulSoup(res.text, 'html.parser')

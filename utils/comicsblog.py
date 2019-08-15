@@ -1,15 +1,11 @@
-import requests
-from bs4 import BeautifulSoup
+from utils.tools import get_soup_html
 
 
 def get_comicsblog(numb):
     num = int(numb)
     c_blog_rss = "http://www.comicsblog.fr/comicsblog.rss"
 
-    res = requests.get(c_blog_rss)
-    res.close()
-    # BeautifulSoup will transform raw HTML in a tree easy to parse
-    soup = BeautifulSoup(res.text, 'html.parser')
+    soup = get_soup_html(c_blog_rss)
     ls = soup.select('item')
     out = ls[:num]
 
