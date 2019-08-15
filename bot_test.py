@@ -48,6 +48,7 @@ help_above = [
 
 my_giflist = Gif_json("utils/gifs.json")
 
+
 @bot.event
 async def on_ready():
     print('Logged in as')
@@ -250,20 +251,21 @@ async def roulette(ctx):
     else:
         await ctx.send(content="*clic*....Tu restes vivant !")
 
+
 @bot.command()
-async def gif(ctx,name):
+async def gif(ctx, name):
     if name == 'help':
         habile = []
         list_names = ""
-        for key,value in my_giflist.gifs.items():
+        for key, value in my_giflist.gifs.items():
             if value['public']:
-                habile.append(key+"\n")
-        
+                habile.append(key + "\n")
+
             elif ctx.channel.category_id == dcteam_category_id:
-                habile.append(key+"\n")
+                habile.append(key + "\n")
         for x in habile:
             list_names = list_names + x
-        embed=discord.Embed(title="liste des gifs", description=list_names, color=0x000FF)
+        embed = discord.Embed(title="liste des gifs", description=list_names, color=0x000FF)
         await ctx.send(embed=embed)
     if my_giflist.get_gif(name) is not None:
         if my_giflist.get_gif(name)['public'] or ctx.channel.category_id == dcteam_category_id:
@@ -272,13 +274,15 @@ async def gif(ctx,name):
     else:
         pass
 
+
 @bot.command()
 async def admin(ctx):
-    embed=discord.Embed(color=0x0000FF)
+    embed = discord.Embed(color=0x0000FF)
     embed.add_field(name="gifadd", value="!gifadd <name> <url> <bool> (bool : public or private)", inline=False)
     embed.add_field(name="gifdelete", value="!gifdelete <name>", inline=False)
     if ctx.author.top_role > bot.guild.get_role(admin_id):
         await ctx.author.send(embed=embed)
+
 
 @bot.command()
 async def gifadd(ctx, name, url, bool):

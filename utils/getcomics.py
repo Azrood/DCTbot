@@ -3,7 +3,6 @@
 
 import time
 import requests  # lib for going on internet
-from bs4 import BeautifulSoup  # html parser
 import urllib.parse
 from utils.tools import get_soup_html
 
