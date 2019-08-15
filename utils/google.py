@@ -21,7 +21,7 @@ def search_google(user_input, number):
         'key': token_youtube
     }
 
-    response = requests.get(google_search_url, params=params)
+    response = requests.get(google_search_url, params=params, timeout=3)
     try:
         json_data = json.loads(response.text)["items"]
     except KeyError:
