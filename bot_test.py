@@ -79,15 +79,20 @@ async def team(ctx):
     member_list = ctx.message.mentions  # une liste d'objets
     # on regarde si le plus haut role de l'auteur du message est au dessus
     # du role (ou égal) au role DCT dans la hiérarchie
-    if member_list == []:
-        pass
-    else:
-        if ctx.author.top_role >= bot.role_dcteam:
-            for member in member_list:
-                await member.add_roles(bot.role_dcteam)
-            await ctx.send(content="Bienvenue dans la Team !")
+    counter = 0
+    if ctx.author.top_role >= bot.role_dcteam:
+        if member_list == []:
+            pass
         else:
-            await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
+            for member in member_list:
+                if bot.role_dcteam in member.roles:
+                    counter += 1
+                await member.add_roles(bot.role_dcteam)
+            if counter == len(member_list):
+                return None
+            await ctx.send(content="Bienvenue dans la Team !")
+    else:
+        await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
 
 
 @bot.command()
