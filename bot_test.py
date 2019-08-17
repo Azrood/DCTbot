@@ -1,4 +1,6 @@
 import discord
+import asyncio
+import random
 from discord.ext import commands
 from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id
 from utils.tools import get_command_input, string_is_int
@@ -9,8 +11,6 @@ from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 from utils.comicsblog import get_comicsblog
 from utils.google import search_google, google_top_link
 from utils.gif_json import Gif_json
-import asyncio
-import random
 
 bot = commands.Bot(command_prefix='!', help_command=None, description=None)
 client = discord.Client()
