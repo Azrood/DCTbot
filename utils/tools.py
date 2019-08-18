@@ -17,7 +17,7 @@ def string_is_int(string):
 
 
 def get_soup_lxml(url):
-     """Return a BeautifulSoup soup from given url, Parser is lxml
+    """Return a BeautifulSoup soup from given url, Parser is lxml
     
     Args:
         url (str): url
