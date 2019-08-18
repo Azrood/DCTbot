@@ -59,8 +59,11 @@ def search_youtube(user_input, number):
 
 def youtube_top_link(user_input):
     result = search_youtube(user_input, number=1)
-    url = get_youtube_url(result[0])
-    return result[0]['title'], url
+    try:
+        url = get_youtube_url(result[0])
+        return result[0]['title'], url
+    except IndexError:
+        pass
 
 
 def get_youtube_url(result):
