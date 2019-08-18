@@ -17,6 +17,14 @@ def string_is_int(string):
 
 
 def get_soup_lxml(url):
+     """Return a BeautifulSoup soup from given url, Parser is lxml
+    
+    Args:
+        url (str): url
+    
+    Returns:
+        BeautifulSoup: soup
+    """
     # get HTML page with requests.get
     res = requests.get(url, timeout=3)
     res.close()
@@ -25,6 +33,14 @@ def get_soup_lxml(url):
 
 
 def get_soup_html(url):
+    """Return a BeautifulSoup soup from given url, Parser is html.parser
+    
+    Args:
+        url (str): url
+    
+    Returns:
+        BeautifulSoup: soup
+    """
     # get HTML page with requests.get
     res = requests.get(url, timeout=3)
     res.close()
