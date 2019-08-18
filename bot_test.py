@@ -13,7 +13,6 @@ import asyncio
 import random
 
 bot = commands.Bot(command_prefix='!', help_command=None, description=None)
-client = discord.Client()
 
 urban_logo = "https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5MuDJw8LUbwqZM9BW9oey5I/https/i.imgur.com/VFXr0ID.jpg"
 
@@ -303,5 +302,15 @@ async def gifdelete(ctx, name):
         my_giflist.gif_delete(name)
     else:
         pass
+
+@bot.command()
+async def choose(ctx, *choices):
+    if len(choices) < 1:
+        return None
+    await ctx.send(random.choice(choices))
+
+@bot.command()
+async def coinflip(ctx):
+    await ctx.send(random.choice(["pile","face"]))
 
 bot.run(token)
