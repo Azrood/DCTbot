@@ -305,14 +305,16 @@ async def gifdelete(ctx, name):
     else:
         pass
 
+
 @bot.command()
 async def choose(ctx, *choices):
     if len(choices) < 1:
         return None
     await ctx.send(random.choice(choices))
 
+
 @bot.command()
 async def coinflip(ctx):
-    await ctx.send(random.choice(["pile","face"]))
+    await ctx.send(random.choice(["pile", "face"]))
 
 bot.run(token)
