@@ -24,6 +24,7 @@ snap_url = "https://media.tenor.com/images/8d7d2e757f934793bb4154cede8a4afa/teno
 
 helps = [
     {'name': 'help', 'value': 'affiche la liste des commandes'},
+    {'name': 'gif help', 'value': 'affiche la liste des gifs'},
     {'name': 'getcomics', 'value': 'recherche dans getcomics les mots-clés entrés'},
     {'name': 'urban', 'value': 'fait une recherche du mot entré sur Urban Dictionary'},
     {'name': 'recrutement', 'value': 'donne le lien des tests de DCTrad'},
@@ -34,7 +35,8 @@ helps = [
     {'name': 'google', 'value': 'donne le premier lien de la recherche google des mots-clés saisis'},
     {'name': 'googlelist', 'value': 'donne une liste des X premiers liens de la recherche google\n Syntaxe : !googlelist [numero] [mots-clés] \nExemple : !googlelist 3 the final countdown'},
     {'name': 'roulette', 'value': '1/6 chance de se faire kick, la roulette russe avec le bon Colt !'},
-    {'name': 'gif help', 'value': 'affiche la liste des gifs'}
+    {'name': 'choose', 'value': "choisit aléatoiremement parmi plusieurs arguments \n Syntaxe : !choose arg1 arg2 \"phrase avec plusieurs mots\" "},
+    {"name": "coinflip", 'value': "fais un lancer de pile ou face"}
     ]
 help_team = [
     {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},
