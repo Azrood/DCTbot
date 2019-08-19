@@ -1,6 +1,6 @@
 import discord
-from discord.ext import commands
-from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id
+from discord.ext import commands, tasks
+from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, nsfw_channel_id
 from utils.tools import get_command_input, string_is_int
 # from utils.urban import get_top_def
 from utils.urban import Urban_search
@@ -9,6 +9,8 @@ from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 from utils.comicsblog import get_comicsblog
 from utils.google import search_google, google_top_link
 from utils.gif_json import Gif_json
+from utils.bonjourmadame import latest_madame
+import datetime as date
 import asyncio
 import random
 
@@ -299,4 +301,13 @@ async def gifdelete(ctx, name):
     else:
         pass
 
+time=date.time(hour=12)
+@tasks.loop(minutes=1, loop=None)
+async def bonjour_madame():
+    await bot.get_channel(nsfw_channel_id).send(latest_madame())
+
+@bonjour_madame.before_loop
+async def before_bonjour_madame():
+    await bot.wait_until_ready()
+bonjour_madame.start()
 bot.run(token)
