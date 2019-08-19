@@ -91,6 +91,7 @@ async def help(ctx):
         else:
             return None
         await reaction.remove(user)
+    await msg.delete(delay=60)
     helperloop.start()
 
 
@@ -336,4 +337,10 @@ async def choose(ctx, *choices):
 @bot.command()
 async def coinflip(ctx):
     await ctx.send(random.choice(["pile", "face"]))
+
+@bot.command()
+async def say(ctx,*,args):
+    await ctx.message.delete()
+    await ctx.send(content=args)
+
 bot.run(token)
