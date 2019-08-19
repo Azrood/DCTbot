@@ -301,8 +301,8 @@ async def gifdelete(ctx, name):
     else:
         pass
 
-time=date.time(hour=12)
-@tasks.loop(minutes=1, loop=None)
+# time=date.time(hour=12)  will use it when v1.3 for discord.py is released
+@tasks.loop(hours=10, loop=None) # will take time as argument when v1.3 is released
 async def bonjour_madame():
     await bot.get_channel(nsfw_channel_id).send(latest_madame())
 
