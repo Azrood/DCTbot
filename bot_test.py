@@ -1,7 +1,7 @@
 import discord
 import asyncio
 import random
-from discord.ext import commands
+from discord.ext import commands, tasks
 from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id
 from utils.tools import get_command_input, string_is_int
 # from utils.urban import get_top_def
@@ -63,16 +63,36 @@ async def on_ready():
 
 @bot.command()
 async def help(ctx):
-    embed = discord.Embed(title="Bot DCTrad", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)
+    embed = discord.Embed(title="Page 1/2, utilisez les flèches en réaction pour naviguer", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)
+    embed_2 = discord.Embed(title="Page 2/2, utilisez les flèches en réaction pour naviguer", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)
     for s in helps:
-        embed.add_field(name=s['name'], value=s['value'], inline=False)
+        if len(embed.fields) < 10:
+            embed.add_field(name=s['name'], value=s['value'], inline=False)
+        else:
+            embed_2.add_field(name=s['name'], value=s['value'], inline=False)
     if ctx.author.top_role >= bot.role_dcteam:
         for h in help_team:
-            embed.add_field(name=h['name'], value=h['value'], inline=False)
+            embed_2.add_field(name=h['name'], value=h['value'], inline=False)
     if ctx.author.top_role >= bot.role_modo:
         for h in help_above:
-            embed.add_field(name=h['name'], value=h['value'], inline=False)
-    await ctx.send(embed=embed)
+            embed_2.add_field(name=h['name'], value=h['value'], inline=False)
+    msg = await ctx.send(embed=embed)
+    await msg.add_reaction("\U000025c0")
+    await msg.add_reaction("\U000025b6")
+    @tasks.loop(seconds=2)
+    async def helperloop():
+        def check(reaction,user):
+            return ctx.author == user and str(reaction.emoji) in ["\U000025b6","\U000025c0"] and msg.id == reaction.message.id
+        reaction, user = await bot.wait_for("reaction_add", check=check,timeout= 60)
+        if str(reaction.emoji) == "\U000025c0":
+            await msg.edit(embed=embed)
+        elif str(reaction.emoji) == "\U000025b6":
+            await msg.edit(embed=embed_2)
+        else:
+            return None
+        await reaction.remove(user)
+    helperloop.start()
+
 
 
 @bot.command()
@@ -316,5 +336,4 @@ async def choose(ctx, *choices):
 @bot.command()
 async def coinflip(ctx):
     await ctx.send(random.choice(["pile", "face"]))
-
 bot.run(token)
