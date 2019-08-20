@@ -157,8 +157,8 @@ async def clear(ctx):
 
 @bot.command()
 async def recrutement(ctx):
-    embed = discord.Embed(title="Viens avec nous si tu veux lire",
-                          description="allez n'aies pas peur de cliquer",
+    embed = discord.Embed(title="Rejoins le team DCTrad !",
+                          description="allez n'aies pas peur de cliquer et deviens un héros !",
                           color=0x0000FF, url=dctrad_recru)
     embed.set_thumbnail(url=dctradlogo)
     await ctx.send(embed=embed)
