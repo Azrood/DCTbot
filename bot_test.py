@@ -79,11 +79,12 @@ async def help(ctx):
     msg = await ctx.send(embed=embed)
     await msg.add_reaction("\U000025c0")
     await msg.add_reaction("\U000025b6")
+
     @tasks.loop(seconds=2)
     async def helperloop():
-        def check(reaction,user):
-            return ctx.author == user and str(reaction.emoji) in ["\U000025b6","\U000025c0"] and msg.id == reaction.message.id
-        reaction, user = await bot.wait_for("reaction_add", check=check,timeout= 60)
+        def check(reaction, user):
+            return ctx.author == user and str(reaction.emoji) in ["\U000025b6", "\U000025c0"] and msg.id == reaction.message.id
+        reaction, user = await bot.wait_for("reaction_add", check=check, timeout=60)
         if str(reaction.emoji) == "\U000025c0":
             await msg.edit(embed=embed)
         elif str(reaction.emoji) == "\U000025b6":
@@ -93,7 +94,6 @@ async def help(ctx):
         await reaction.remove(user)
     await msg.delete(delay=60)
     helperloop.start()
-
 
 
 @bot.command()
@@ -338,8 +338,9 @@ async def choose(ctx, *choices):
 async def coinflip(ctx):
     await ctx.send(random.choice(["pile", "face"]))
 
+
 @bot.command()
-async def say(ctx,*,args):
+async def say(ctx, *, args):
     await ctx.message.delete()
     await ctx.send(content=args)
 
