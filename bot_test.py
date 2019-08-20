@@ -30,13 +30,14 @@ helps = [
     {'name': 'recrutement', 'value': 'donne le lien des tests de DCTrad'},
     {'name': 'timer', 'value': 'minuteur qui notifie le user après X secondes\n Syntaxe : !timer [nombre (secondes)] [rappel]\n Exemple: !timer 3600 organiser mes dossiers'},
     {'name': 'youtube', 'value': 'donne le lien du premier résultat de la recherche'},
-    {'name': 'youtubelist', 'value': 'donne une liste de lien cliquables.\n Syntaxe : !youtubelist [nombre] [recherche]'},
+    {'name': 'youtubelist', 'value': 'donne une liste de liens cliquables.\n Syntaxe : !youtubelist [nombre] [recherche]'},
     {'name': 'comicsblog', 'value': 'donne les X derniers articles de comicsblog\n (syntaxe : !comicsblog [numero])'},
-    {'name': 'google', 'value': 'donne le premier lien de la recherche google des mots-clés saisis'},
+    {'name': 'google', 'value': 'donne le premier lien de la recherche google avec les mots-clés saisis'},
     {'name': 'googlelist', 'value': 'donne une liste des X premiers liens de la recherche google\n Syntaxe : !googlelist [numero] [mots-clés] \nExemple : !googlelist 3 the final countdown'},
     {'name': 'roulette', 'value': '1/6 chance de se faire kick, la roulette russe avec le bon Colt !'},
     {'name': 'choose', 'value': "choisit aléatoiremement parmi plusieurs arguments \n Syntaxe : !choose arg1 arg2 \"phrase avec plusieurs mots\" (si vous voulez des choix avec plusieurs mots, mettez vos choix entre \"\" comme pâr exemple \n !choose \"manger chinois\" \"manger italien \" \" manger quelqu'un \" ) "},
-    {"name": "coinflip", 'value': "fais un lancer de pile ou face"}
+    {"name": "coinflip", 'value': "fais un lancer de pile ou face"},
+    {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"}
     ]
 help_team = [
     {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},
@@ -107,9 +108,9 @@ async def team(ctx):
             pass
         else:
             for member in member_list:
-                if bot.role_dcteam in member.roles:
-                    counter += 1
-                await member.add_roles(bot.role_dcteam)
+                if bot.role_dcteam in member.roles: # le counter c'est pour voir si tous les membres mentionnés
+                    counter += 1 
+                await member.add_roles(bot.role_dcteam) # sont dans la team, alors on n'affiche pas le message de bienvenue
             if counter == len(member_list):
                 return None
             await ctx.send(content="Bienvenue dans la Team !")
