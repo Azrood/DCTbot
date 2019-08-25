@@ -108,9 +108,9 @@ async def team(ctx):
             pass
         else:
             for member in member_list:
-                if bot.role_dcteam in member.roles: # le counter c'est pour voir si tous les membres mentionnés
-                    counter += 1 
-                await member.add_roles(bot.role_dcteam) # sont dans la team, alors on n'affiche pas le message de bienvenue
+                if bot.role_dcteam in member.roles:  # le counter c'est pour voir si tous les membres mentionnés
+                    counter += 1
+                await member.add_roles(bot.role_dcteam)  # sont dans la team, alors on n'affiche pas le message de bienvenue
             if counter == len(member_list):
                 return None
             await ctx.send(content="Bienvenue dans la Team !")
@@ -344,5 +344,17 @@ async def coinflip(ctx):
 async def say(ctx, *, args):
     await ctx.message.delete()
     await ctx.send(content=args)
+
+
+@bot.event
+async def on_message(ctx):
+    # Find if custom command exist in dictionary
+    for key, value in my_giflist.gifs.items():
+        # Added simple hardcoded prefix
+        if ctx.content.startswith('!' + key):
+            if my_giflist.get_gif(key)['public'] or ctx.channel.category_id == dcteam_category_id:
+                gif_url = my_giflist.get_gif(key)['url']
+                await bot.send_message(ctx.channel, gif_url)
+
 
 bot.run(token)
