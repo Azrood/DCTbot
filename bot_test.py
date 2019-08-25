@@ -348,13 +348,14 @@ async def say(ctx, *, args):
 
 @bot.event
 async def on_message(ctx):
+    channel = ctx.channel
     # Find if custom command exist in dictionary
     for key, value in my_giflist.gifs.items():
         # Added simple hardcoded prefix
-        if ctx.content.startswith('!' + key):
+        command = '!' + key
+        if ctx.content == command:
             if my_giflist.get_gif(key)['public'] or ctx.channel.category_id == dcteam_category_id:
                 gif_url = my_giflist.get_gif(key)['url']
-                await bot.send_message(ctx.channel, gif_url)
-
+                await channel.send(gif_url)
 
 bot.run(token)
