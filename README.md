@@ -1,7 +1,7 @@
 # DCTbot
 Discord Bot with multiple features for a community server related to comicbooks.
 
-#Requirements
+# Requirements
 ```
 pip install requests
 pip install bs4
