@@ -8,8 +8,8 @@ pip install bs4
 pip install discord
 pip install google-api-python-client
 ```
-![example](example.jpg)
+![example](/pictures/example.jpg)
 
 A screenshot from the embed help command.
 
-![example](example 2.JPG)
+![example2](/pictures/example 2.jpg)
