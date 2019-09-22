@@ -1,11 +1,15 @@
 # DCTbot
-Commandant suprême de DCTrad
-Bientôt grand remplaçant de Mee6
-Il n'a qu'à bien se tenir
+Discord Bot with multiple features for a community server related to comicbooks.
 
+#Requirements
 ```
 pip install requests
 pip install bs4
 pip install discord
 pip install google-api-python-client
 ```
+![example](example.jpg)
+
+A screenshot from the embed help command.
+
+![example](example 2.JPG)
