@@ -1,5 +1,6 @@
 __pycache__/
 .vscode/
+venv/
 secret.py
 gifs.txt
 gifs.json
