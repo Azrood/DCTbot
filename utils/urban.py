@@ -12,10 +12,9 @@ class Urban_search:
 
     # init is executed when the object is created
     def __init__(self, user_input):
-        formated_input = quote_plus(user_input.lower(), safe='', encoding=None,
-                                    errors=None)
+        formated_input = quote_plus(user_input.lower())
 
-        # Make search url: www.urbandictionary.com/define.php?term=taco+hole
+        # Make search url: www.urbandictionary.com/define.php?term=distro+hop
         self.search_url = self.urban_url + formated_input
         self.soup = get_soup_lxml(self.search_url)
         self.isokay()
