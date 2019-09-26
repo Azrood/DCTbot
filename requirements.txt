@@ -1,0 +1,5 @@
+discord
+requests
+bs4
+google-api-python-client
+lxml
