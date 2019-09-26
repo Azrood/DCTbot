@@ -10,7 +10,6 @@ import random
 from discord.ext import commands, tasks
 from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, admin_role
 from utils.tools import get_command_input, string_is_int
-# from utils.urban import get_top_def
 from utils.urban import UrbanSearch
 from utils.getcomics import getcomics_top_link
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url

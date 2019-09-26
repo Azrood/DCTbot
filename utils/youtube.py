@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Module to search on Youtube."""
 
 # Sample Python code for youtube.search.list
 # See instructions for running these code samples locally:
@@ -11,6 +12,16 @@ import googleapiclient.discovery
 
 
 def search_youtube(user_input, number):
+    """Search on Youtube.
+
+    Args:
+        user_input (str): search string
+        number (int): number of search results
+
+    Returns:
+        list: list of results
+
+    """
     # Disable OAuthlib's HTTPS verification when running locally.
     # *DO NOT* leave this option enabled in production.
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
@@ -58,6 +69,15 @@ def search_youtube(user_input, number):
 
 
 def youtube_top_link(user_input):
+    """Return title and url of 1st Youtube search.
+
+    Args:
+        user_input (str): user search on Youtube
+
+    Returns:
+        tuple: title, url
+
+    """
     result = search_youtube(user_input, number=1)
     try:
         url = get_youtube_url(result[0])
@@ -67,6 +87,7 @@ def youtube_top_link(user_input):
 
 
 def get_youtube_url(result):
+    """Make youtube url of 'result' (video, playlist, or channel)."""
     if result['type'] == 'video':
         url = f"https://www.youtube.com/watch?v={result['id']}"
     elif result['type'] == 'playlist':
