@@ -10,6 +10,7 @@ from utils.urban import UrbanSearch
 from utils.youtube import youtube_top_link
 from utils.comicsblog import get_comicsblog
 from utils.gif_json import GifJson
+from utils.getcomics import getcomics_top_link
 
 
 class TestDiscordBot(unittest.TestCase):
@@ -52,6 +53,12 @@ class TestDiscordBot(unittest.TestCase):
         gifs = GifJson("utils/gifs.sample.json")
         my_gif = gifs.get_gif("your_gif_name")
         self.assertEqual(my_gif['url'], "your_gif_url")
+
+    def test_getcomics_top_link_title(self):
+        """Test getcomics_top_link (title only)."""
+        title = getcomics_top_link("Batman #79")[0]
+        ref = "Batman #79 (2019)"
+        self.assertEqual(title, ref)
 
 
 if __name__ == '__main__':
