@@ -39,19 +39,21 @@ class TestDiscordBot(unittest.TestCase):
         """Test UrbanSearch.get_top_def."""
         urban = UrbanSearch("Distro Hop")
         res = urban.get_top_def()
-        print(res)
-        self.assertIsNotNone(res)
+        ref = "Distro Hop"
+        self.assertEqual(res[0], ref)
 
     def test_youtube_top_link(self):
         """Test youtube_top_link."""
         res = youtube_top_link("epenser bohr")
-        print(res)
-        self.assertIsNotNone(res)
+        ref = "Bohr, l'étudiant troll - quickie 08 - e-penser"
+        # print(res[0])
+        self.assertEqual(res[0], ref)
 
     def test_get_comicsblog(self):
         """Test get_comicsblog."""
         res = get_comicsblog(1)[0]
-        print(res.find('title').text)
+        # print(res.find('title').text)
+        self.assertIsNotNone(res)
 
     def test_get_gif(self):
         """Test get_gif."""
