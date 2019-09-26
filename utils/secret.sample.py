@@ -1,3 +1,9 @@
+"""Store secret tokens and stuff here.
+
+Rename file in 'secret.py'
+"""
+
+
 token = "XXXXXXXXXXXXXXXXXXXX"  # str
 dcteam_role_id = "XXXXXXXXXXXXXXXXX"  # int
 dcteam_id = "XXXXXXXXXXXXXXXXXX"  # int
