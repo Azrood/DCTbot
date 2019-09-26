@@ -30,18 +30,23 @@ class TestDiscordBot(unittest.TestCase):
         ref = "https://docs.python.org/3/library/unittest.html"
         self.assertEqual(res['url'], ref)
 
+    def test_google_top_link_fail(self):
+        """Test google_top_link Fail (return None)."""
+        res = google_top_link("qsdfqdsfkqdmflkjdflj")
+        self.assertIsNone(res)
+
     def test_get_top_def(self):
         """Test UrbanSearch.get_top_def."""
         urban = UrbanSearch("Distro Hop")
         res = urban.get_top_def()
         print(res)
-        assert res is not None
+        self.assertIsNotNone(res)
 
     def test_youtube_top_link(self):
         """Test youtube_top_link."""
         res = youtube_top_link("epenser bohr")
         print(res)
-        assert res is not None
+        self.assertIsNotNone(res)
 
     def test_get_comicsblog(self):
         """Test get_comicsblog."""
@@ -53,6 +58,12 @@ class TestDiscordBot(unittest.TestCase):
         gifs = GifJson("utils/gifs.sample.json")
         my_gif = gifs.get_gif("your_gif_name")
         self.assertEqual(my_gif['url'], "your_gif_url")
+
+    def test_get_gif_fail(self):
+        """Test get_gif fail."""
+        gifs = GifJson("utils/gifs.sample.json")
+        my_gif = gifs.get_gif("toto")
+        self.assertIsNone(my_gif)  # gif toto return none
 
     def test_getcomics_top_link_title(self):
         """Test getcomics_top_link (title only)."""
