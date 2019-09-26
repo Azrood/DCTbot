@@ -1,14 +1,16 @@
-# File for some tools
+"""File for some tools."""
 
 import requests  # lib for going on internet
 from bs4 import BeautifulSoup
 
 
 def get_command_input(user_input):
+    """Split user_input into !command args and return args."""
     return user_input.split(' ', 1)[1]
 
 
 def string_is_int(string):
+    """Return if 'string' is an int or not (bool)."""
     try:
         int(string)
         return True
@@ -17,13 +19,14 @@ def string_is_int(string):
 
 
 def get_soup_lxml(url):
-    """Return a BeautifulSoup soup from given url, Parser is lxml
-    
+    """Return a BeautifulSoup soup from given url, Parser is lxml.
+
     Args:
         url (str): url
-    
+
     Returns:
         BeautifulSoup: soup
+
     """
     # get HTML page with requests.get
     res = requests.get(url, timeout=3)
@@ -33,13 +36,14 @@ def get_soup_lxml(url):
 
 
 def get_soup_html(url):
-    """Return a BeautifulSoup soup from given url, Parser is html.parser
-    
+    """Return a BeautifulSoup soup from given url, Parser is html.parser.
+
     Args:
         url (str): url
-    
+
     Returns:
         BeautifulSoup: soup
+
     """
     # get HTML page with requests.get
     res = requests.get(url, timeout=3)
