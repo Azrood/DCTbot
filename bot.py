@@ -60,6 +60,7 @@ my_giflist = GifJson(gifs_file)
 
 @bot.event
 async def on_ready():
+    """Log in Discord."""
     print('Logged in as')
     print(bot.user.name)
     print(bot.user.id)
@@ -71,6 +72,7 @@ async def on_ready():
 
 @bot.command()
 async def help(ctx):
+    """Display available commands."""
     embed = discord.Embed(title="Page 1/2, utilisez les flèches en réaction pour naviguer", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)
     embed_2 = discord.Embed(title="Page 2/2, utilisez les flèches en réaction pour naviguer", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)
     for s in helps:
@@ -106,6 +108,7 @@ async def help(ctx):
 
 @bot.command()
 async def team(ctx):
+    """Give 'team' role to user list."""
     member_list = ctx.message.mentions  # une liste d'objets
     # on regarde si le plus haut role de l'auteur du message est au dessus
     # du role (ou égal) au role DCT dans la hiérarchie
@@ -127,6 +130,7 @@ async def team(ctx):
 
 @bot.command()
 async def getcomics(ctx):
+    """Send direct download link for getcomics search result."""
     user_input = get_command_input(ctx.message.content)
     title, url = getcomics_top_link(user_input)
     embed = discord.Embed(title=f"{title}", description="cliquez sur le titre pour télécharger votre comic", color=0x882640, url=url)
@@ -135,6 +139,7 @@ async def getcomics(ctx):
 
 @bot.command()
 async def urban(ctx):
+    """Send definition of user input on Urban Dictionary."""
     user_input = get_command_input(ctx.message.content)
     # create object urban of class Urban
     urban = UrbanSearch(user_input)
@@ -150,6 +155,7 @@ async def urban(ctx):
 
 @bot.command()
 async def clear(ctx):
+    """Clear n messages."""
     # on regarde si le plus haut role de l'auteur est supérieur
     # ou égal hiérarchiquement au role DCT
     if ctx.author.top_role >= bot.role_dcteam:
@@ -164,6 +170,7 @@ async def clear(ctx):
 
 @bot.command()
 async def recrutement(ctx):
+    """Send 'recrutement' topic url."""
     embed = discord.Embed(title="Rejoins le team DCTrad !",
                           description="allez n'aies pas peur de cliquer et deviens un héros !",
                           color=0x0000FF, url=dctrad_recru)
@@ -173,6 +180,7 @@ async def recrutement(ctx):
 
 @bot.command()
 async def youtube(ctx):
+    """Send first Youtube search result."""
     user_input = get_command_input(ctx.message.content)
     title, url = youtube_top_link(user_input)
     await ctx.send(content=f"{title}\n{url}")
@@ -180,6 +188,7 @@ async def youtube(ctx):
 
 @bot.command()
 async def youtubelist(ctx):
+    """Send n Youtube search results."""
     user_input = get_command_input(ctx.message.content)
     duo = user_input.split(' ', 1)
     number = int(duo[0])
@@ -222,6 +231,12 @@ async def youtubelist(ctx):
 
 @bot.command()
 async def comicsblog(ctx, num):
+    """Send latest comicsblog news.
+
+    Args:
+        num (int): number of results to send
+
+    """
     list = get_comicsblog(num)
     embed = discord.Embed(title=f"les {num} derniers articles de comicsblog", color=0xe3951a)
     for l in list:
@@ -231,6 +246,7 @@ async def comicsblog(ctx, num):
 
 @bot.command()
 async def kick(ctx):
+    """Kick user."""
     member_list = ctx.message.mentions
     if ctx.author.top_role >= bot.role_modo:
         for member in member_list:
@@ -241,6 +257,7 @@ async def kick(ctx):
 
 @bot.command()
 async def ban(ctx):
+    """Ban user."""
     member_list = ctx.message.mentions
     if ctx.author.top_role >= bot.role_modo:
         for member in member_list:
@@ -251,6 +268,7 @@ async def ban(ctx):
 
 @bot.command()
 async def google(ctx):
+    """Send first Google search result."""
     query = get_command_input(ctx.message.content)
     try:
         result = google_top_link(query)
@@ -261,6 +279,7 @@ async def google(ctx):
 
 @bot.command()
 async def googlelist(ctx, num, *, args):
+    """Send Google search results."""
     result = search_google(args, num)
     embed = discord.Embed(title=f"Les {num} premiers résultats de la recherche", color=0x3b5cbe)
     for r in result:
@@ -270,6 +289,7 @@ async def googlelist(ctx, num, *, args):
 
 @bot.command()
 async def timer(ctx, numb, *, args):
+    """Program a timer."""
     num = int(numb)
     await ctx.send(content=f"{ctx.author.mention} : timer enregistré !", delete_after=10)
     await asyncio.sleep(num, result=None, loop=None)
@@ -278,6 +298,7 @@ async def timer(ctx, numb, *, args):
 
 @bot.command()
 async def roulette(ctx):
+    """Plays russian roulette and kick user if shot."""
     if random.randrange(6) == 3:
         await ctx.send(content=f"Pan !")
         await ctx.send(content=snap_url, delete_after=4)
@@ -289,6 +310,7 @@ async def roulette(ctx):
 
 @bot.command()
 async def gif(ctx, name):
+    """Send gif corresponding to 'name'."""
     if name == 'help':
         habile = []
         list_names = ""
@@ -312,6 +334,7 @@ async def gif(ctx, name):
 
 @bot.command()
 async def admin(ctx):
+    """Help for admin user."""
     embed = discord.Embed(color=0x0000FF)
     embed.add_field(name="gifadd", value="!gifadd <name> <url> <bool> (bool : public or private)", inline=False)
     embed.add_field(name="gifdelete", value="!gifdelete <name>", inline=False)
@@ -321,6 +344,7 @@ async def admin(ctx):
 
 @bot.command()
 async def gifadd(ctx, name, url, bool):
+    """Add gif in gif dictionary and gif json file."""
     if ctx.author.top_role > bot.guild.get_role(admin_id):
         my_giflist.gif_add(name, url, bool)
     else:
@@ -329,6 +353,7 @@ async def gifadd(ctx, name, url, bool):
 
 @bot.command()
 async def gifdelete(ctx, name):
+    """Delete gif in gif dictionary and gif json file."""
     if ctx.author.top_role > bot.guild.get_role(admin_id):
         my_giflist.gif_delete(name)
     else:
@@ -351,6 +376,7 @@ async def restart_error(ctx, error):
 
 @bot.command()
 async def choose(ctx, *choices):
+    """Randomly choose user's choices."""
     if len(choices) < 1:
         return None
     await ctx.send(random.choice(choices))
@@ -358,17 +384,20 @@ async def choose(ctx, *choices):
 
 @bot.command()
 async def coinflip(ctx):
+    """Launch a coinflip and print 'pile' or 'face'."""
     await ctx.send(random.choice(["pile", "face"]))
 
 
 @bot.command()
 async def say(ctx, *, args):
+    """Bot writes user message content, and delete original user message."""
     await ctx.message.delete()
     await ctx.send(content=args)
 
 
 @bot.event
 async def on_message(ctx):
+    """Read all message and check if it's a gif command."""
     found = False
     channel = ctx.channel
     # Find if custom command exist in dictionary
