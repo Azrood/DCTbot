@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+"""Module to search on getcomics.info."""
 
 import time
 import requests  # lib for going on internet
@@ -8,7 +9,7 @@ from utils.tools import get_soup_html
 
 
 def getcomics_top_link(user_input):
-
+    """Search getcomics and return first result."""
     formated_search = urllib.parse.quote_plus(user_input.lower(),
                                               safe='', encoding=None,
                                               errors=None)
@@ -26,7 +27,7 @@ def getcomics_top_link(user_input):
 
 
 def getcomics_directlink(comic_url):
-
+    """Get download links in a getcomics post."""
     # BeautifulSoup will transform raw HTML in a tree easy to parse
     soup = get_soup_html(comic_url)
 
@@ -42,16 +43,16 @@ def getcomics_directlink(comic_url):
     res2.close()
 
     if res2.status_code == 200:
-        print("req 2 code 200")
+        # print("req 2 code 200")
         return res2.url
     elif res2.status_code == 302:
-        print("302, Found Comic URL")
+        # print("302, Found Comic URL")
         return res2.headers['location']
     elif res2.status_code == 404:
-        print('404, returning post url')
+        # print('404, returning post url')
         # in this case, return the getcomics post url
         return comic_url
     else:
         # in this case, return the getcomics post url
-        print("unkwnown response code")
+        # print("unkwnown response code")
         return comic_url
