@@ -1,7 +1,7 @@
 import json
 
 
-class Gif_json:
+class GifJson:
 
     # init is executed when the object is created
     def __init__(self, file):
@@ -50,5 +50,5 @@ class Gif_json:
     def get_gif(self, name):
         try:
             return self.gifs[name]
-        except Exception:
+        except KeyError:
             return None

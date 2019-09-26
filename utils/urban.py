@@ -7,7 +7,7 @@ from utils.tools import get_soup_lxml
 
 
 # Class to make request on Urban Dictionary
-class Urban_search:
+class UrbanSearch:
     urban_url = "https://www.urbandictionary.com/define.php?term="
 
     # init is executed when the object is created

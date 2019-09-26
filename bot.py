@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+"""Awesome Discord Bot."""
 
 import os
 import sys
@@ -10,12 +11,12 @@ from discord.ext import commands, tasks
 from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, admin_role
 from utils.tools import get_command_input, string_is_int
 # from utils.urban import get_top_def
-from utils.urban import Urban_search
+from utils.urban import UrbanSearch
 from utils.getcomics import getcomics_top_link
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 from utils.comicsblog import get_comicsblog
 from utils.google import search_google, google_top_link
-from utils.gif_json import Gif_json
+from utils.gif_json import GifJson
 
 bot = commands.Bot(command_prefix='!', help_command=None, description=None)
 
@@ -55,7 +56,7 @@ help_above = [
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 gifs_file = os.path.join(dir_path, "utils/gifs.json")
-my_giflist = Gif_json(gifs_file)
+my_giflist = GifJson(gifs_file)
 
 
 @bot.event
@@ -111,7 +112,7 @@ async def team(ctx):
     # du role (ou égal) au role DCT dans la hiérarchie
     counter = 0
     if ctx.author.top_role >= bot.role_dcteam:
-        if member_list == []:
+        if not member_list:
             pass
         else:
             for member in member_list:
@@ -137,7 +138,7 @@ async def getcomics(ctx):
 async def urban(ctx):
     user_input = get_command_input(ctx.message.content)
     # create object urban of class Urban
-    urban = Urban_search(user_input)
+    urban = UrbanSearch(user_input)
     if urban.valid:
         title, meaning, example, search_url = urban.get_top_def()
         embed = discord.Embed(title=f"Definition of {title}", description=meaning, color=0x00FFFF, url=search_url)
@@ -207,7 +208,7 @@ async def youtubelist(ctx):
             await msg.delete(delay=1)
         else:
             num = int(msg.content)
-            if num > 0 and num <= len(result):
+            if 0 < num <= len(result):
                 url = get_youtube_url(result[num - 1])
                 await ctx.send(content=f"{url}")
                 await ctx.message.delete(delay=2)
@@ -343,9 +344,10 @@ async def restart(ctx):
     os.execv(__file__, sys.argv)
 
 
-@bot.command()
-async def test(ctx):
-    await ctx.send("Cette commande vient d'être ajoutée à chaud.")
+@restart.error
+async def restart_error(ctx, error):
+    """Handle error in !restart command (MissingAnyRole)."""
+    await ctx.send('Nope.')
 
 
 @bot.command()
