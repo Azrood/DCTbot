@@ -6,3 +6,4 @@ token_youtube = "XXXXXXXXXXXXXXXXXXX"  # str
 DEVELOPER_CX = "XXXXXXXXXXXXXXXXXXXXXXXXXXX"  # str
 dcteam_category_id = "XXXXXXXXXXXXXXXXXx"  # int
 admin = "XXXXXXXXXXXXXXXXXX"  # int
+admin_role = ["XXX"]  # list of str

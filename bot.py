@@ -1,8 +1,13 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+import os
+import sys
 import discord
 import asyncio
 import random
 from discord.ext import commands, tasks
-from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id
+from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, admin_role
 from utils.tools import get_command_input, string_is_int
 # from utils.urban import get_top_def
 from utils.urban import Urban_search
@@ -48,7 +53,9 @@ help_above = [
     {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'}
     ]
 
-my_giflist = Gif_json("utils/gifs.json")
+dir_path = os.path.dirname(os.path.realpath(__file__))
+gifs_file = os.path.join(dir_path, "utils/gifs.json")
+my_giflist = Gif_json(gifs_file)
 
 
 @bot.event
@@ -329,6 +336,19 @@ async def gifdelete(ctx, name):
 
 
 @bot.command()
+@commands.has_any_role(*admin_role)
+async def restart(ctx):
+    """Restart bot."""
+    await ctx.send('Restarting.')
+    os.execv(__file__, sys.argv)
+
+
+@bot.command()
+async def test(ctx):
+    await ctx.send("Cette commande vient d'être ajoutée à chaud.")
+
+
+@bot.command()
 async def choose(ctx, *choices):
     if len(choices) < 1:
         return None
@@ -351,7 +371,7 @@ async def on_message(ctx):
     found = False
     channel = ctx.channel
     # Find if custom command exist in dictionary
-    for key, value in my_giflist.gifs.items():
+    for key in my_giflist.gifs.keys():
         # Added simple hardcoded prefix
         command = '!' + key
         if ctx.content == command:
