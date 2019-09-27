@@ -312,22 +312,31 @@ async def roulette(ctx):
 async def gif(ctx, name):
     """Send gif corresponding to 'name'."""
     if name == 'help':
-        habile = []
-        list_names = ""
-        for key, value in my_giflist.gifs.items():
-            if value['public']:
-                habile.append(key + "\n")
 
-            elif ctx.channel.category_id == dcteam_category_id:
-                habile.append(key + "\n")
-        for x in habile:
-            list_names = list_names + x
+        try:  # if in team category
+            if ctx.channel.category_id == dcteam_category_id:
+                list_names = my_giflist.get_names_string(private=False)
+            else:
+                list_names = my_giflist.get_names_string(private=True)
+        except AttributeError:
+            list_names = my_giflist.get_names_string(private=True)
+            # channel.category_id will fail in DM messages
+            # DMChannel' object has no attribute 'category_id
+
         embed = discord.Embed(title="liste des gifs", description=list_names, color=0x000FF)
         await ctx.send(embed=embed)
+
     if my_giflist.get_gif(name) is not None:
-        if my_giflist.get_gif(name)['public'] or ctx.channel.category_id == dcteam_category_id:
-            gif_url = my_giflist.get_gif(name)['url']
-            await ctx.send(content=gif_url)
+        try:
+            if my_giflist.get_gif(name)['public'] or ctx.channel.category_id == dcteam_category_id:
+                gif_url = my_giflist.get_gif(name)['url']
+                await ctx.send(content=gif_url)
+        except AttributeError:
+            # channel.category_id will fail in DM messages
+            # DMChannel' object has no attribute 'category_id
+            if my_giflist.get_gif(name)['public']:
+                gif_url = my_giflist.get_gif(name)['url']
+                await ctx.send(content=gif_url)
     else:
         pass
 
@@ -406,9 +415,16 @@ async def on_message(ctx):
         command = '!' + key
         if ctx.content == command:
             found = True
-            if my_giflist.get_gif(key)['public'] or ctx.channel.category_id == dcteam_category_id:
-                gif_url = my_giflist.get_gif(key)['url']
-                await channel.send(gif_url)
+            try:
+                if my_giflist.get_gif(key)['public'] or ctx.channel.category_id == dcteam_category_id:
+                    gif_url = my_giflist.get_gif(key)['url']
+                    await channel.send(gif_url)
+            except AttributeError:
+                # channel.category_id will fail in DM messages
+                # DMChannel' object has no attribute 'category_id
+                if my_giflist.get_gif(key)['public']:
+                    gif_url = my_giflist.get_gif(key)['url']
+                    await channel.send(gif_url)
     # If not b
     if not found:
         await bot.process_commands(ctx)
