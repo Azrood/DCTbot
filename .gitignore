@@ -1,6 +1,7 @@
 __pycache__/
 .idea/
 .vscode/
+.pytest_*/
 venv/
 secret.py
 gifs.txt
