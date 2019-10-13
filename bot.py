@@ -16,6 +16,7 @@ from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 from utils.comicsblog import get_comicsblog
 from utils.google import search_google, google_top_link
 from utils.gif_json import GifJson
+from utils.header import get_header
 
 bot = commands.Bot(command_prefix='!', help_command=None, description=None)
 
@@ -42,7 +43,9 @@ helps = [
     {'name': 'roulette', 'value': '1/6 chance de se faire kick, la roulette russe avec le bon Colt !'},
     {'name': 'choose', 'value': "choisit aléatoiremement parmi plusieurs arguments \n Syntaxe : !choose arg1 arg2 \"phrase avec plusieurs mots\" (si vous voulez des choix avec plusieurs mots, mettez vos choix entre \"\" comme pâr exemple \n !choose \"manger chinois\" \"manger italien \" \" manger quelqu'un \" ) "},
     {"name": "coinflip", 'value': "fais un lancer de pile ou face"},
-    {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"}
+    {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"},
+    {'name': 'header', 'value': ("affiche un header dctrad.\n"
+                                 "syntaxe : !header [category] avec category = rebirth/hors/indés/marvel")}
     ]
 help_team = [
     {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},
@@ -402,6 +405,28 @@ async def say(ctx, *, args):
     """Bot writes user message content, and delete original user message."""
     await ctx.message.delete()
     await ctx.send(content=args)
+
+
+@bot.command()
+async def header(ctx, arg):
+    """Send header image."""
+    arg = arg.lower()
+    if arg == "rebirth" or arg == "dcrebirth":
+        file_path = get_header(1, dir_path)
+        await ctx.send(file=discord.File(file_path))
+        os.remove(file_path)
+    elif arg == "hors" or arg == "horsrebirth":
+        file_path = get_header(2, dir_path)
+        await ctx.send(file=discord.File(file_path))
+        os.remove(file_path)
+    elif arg == "indé" or arg == "indés":
+        file_path = get_header(2, dir_path)
+        await ctx.send(file=discord.File(file_path))
+        os.remove(file_path)
+    elif arg == "marvel":
+        file_path = get_header(4, dir_path)
+        await ctx.send(file=discord.File(file_path))
+        os.remove(file_path)
 
 
 @bot.event
