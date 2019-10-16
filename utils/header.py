@@ -8,7 +8,6 @@ import shutil
 import time
 from PIL import Image
 
-import numpy as np
 import requests
 from urllib.parse import urljoin
 
@@ -35,7 +34,7 @@ def _download_img(h_list, path):
         index = h_list.index(h)
         img_url = urljoin(dctrad_base, h.img['src'])
         response = requests.get(img_url, stream=True)
-        _file = os.path.join(path, f"ressources/img{index}.png")
+        _file = os.path.join(path, f"ressources/img{index}.jpg")
         with open(_file, 'wb') as out_file:
             shutil.copyfileobj(response.raw, out_file)
     del response
@@ -46,25 +45,38 @@ def _make_header(n, path):
 
     n is 1, 2,  or 4 for different headers.
     """
-    # Code found on Stackoverflow.
-    # It just works.
-    png_list = []
+    jpg_list = []
     for i in range(9):
-        _file = os.path.join(path, f"ressources/img{i}.png")
-        png_list.append(_file)
+        _file = os.path.join(path, f"ressources/img{i}.jpg")
+        jpg_list.append(_file)
 
-    imgs = [Image.open(i) for i in png_list]
+    images = [Image.open(i) for i in jpg_list]
 
-    # pick the image which is the smallest, and resize the others to match it (can be arbitrary image shape here)
-    min_shape = sorted([(sum(i.size), i.size) for i in imgs])[0][1]
-    imgs_comb = np.hstack([i.resize(min_shape) for i in imgs])
+    widths, heights = zip(*(i.size for i in images))
 
-    # save that beautiful picture
-    imgs_comb = Image.fromarray(imgs_comb)
-    # Add a time stamp to the file name, so that Discord can't use cache
+    max_width = max(widths)
+    total_width = max_width * 3
+    max_height = max(heights)
+    total_height = max_height * 3
+
+    new_im = Image.new('RGB', (total_width, total_height))
+
+    ims_grid = [images[x:x+3] for x in range(0, len(images), 3)]  # noqa: E226
+
     _file = os.path.join(path,
                          f'ressources/header{n}-{time.strftime("%Y%m%d-%H%M%S")}.jpg')
-    imgs_comb.save(_file)
+
+    x_offset = 0
+    y_offset = 0
+    for row in ims_grid:
+        for im in row:
+            new_im.paste(im, box=(x_offset, y_offset))
+            x_offset += max_width
+        x_offset = 0
+        y_offset += max_height
+
+    new_im.save(_file)
+
     return _file
 
 
