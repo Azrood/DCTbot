@@ -20,7 +20,7 @@ dctrad_url = "http://www.dctrad.fr/index.php"
 def _get_header_img(soup, n):
     """Return list of img url.
 
-    n is 1, 2,  or 4 for different headers.
+    n is 1, 2, 3 or 4 for different headers.
     """
     return soup.select(f'#dog{n+1} > center > span.btn-cover a')
 
@@ -28,7 +28,7 @@ def _get_header_img(soup, n):
 def _download_img(h_list, path):
     """Download list of images.
 
-    n is 1, 2,  or 4 for different headers.
+    n is 1, 2, 3 or 4 for different headers.
     """
     for h in h_list[:9]:
         index = h_list.index(h)
@@ -43,7 +43,7 @@ def _download_img(h_list, path):
 def _make_header(n, path):
     """Create header img.
 
-    n is 1, 2,  or 4 for different headers.
+    n is 1, 2, 3 or 4 for different headers.
     """
     jpg_list = []
     for i in range(9):
@@ -83,7 +83,7 @@ def _make_header(n, path):
 def get_header(n, path):
     """Get header.
 
-    n is 1, 2,  or 4 for different headers.
+    n is 1, 2, 3 or 4 for different headers.
     """
     soup = get_soup_html(dctrad_url)
     h_list = _get_header_img(soup, n)
