@@ -330,16 +330,19 @@ async def gif(ctx, name):
         await ctx.send(embed=embed)
 
     if my_giflist.get_gif(name) is not None:
+        embed = discord.Embed()
         try:
             if my_giflist.get_gif(name)['public'] or ctx.channel.category_id == dcteam_category_id:
                 gif_url = my_giflist.get_gif(name)['url']
-                await ctx.send(content=gif_url)
+                embed.set_image(url=gif_url)
+                await ctx.send(embed=embed)
         except AttributeError:
             # channel.category_id will fail in DM messages
             # DMChannel' object has no attribute 'category_id
             if my_giflist.get_gif(name)['public']:
                 gif_url = my_giflist.get_gif(name)['url']
-                await ctx.send(content=gif_url)
+                embed.set_image(url=gif_url)
+                await ctx.send(embed=embed)
     else:
         pass
 
@@ -435,6 +438,7 @@ async def on_message(ctx):
     found = False
     channel = ctx.channel
     # Find if custom command exist in dictionary
+    embed = discord.Embed()
     for key in my_giflist.gifs.keys():
         # Added simple hardcoded prefix
         command = '!' + key
@@ -443,13 +447,15 @@ async def on_message(ctx):
             try:
                 if my_giflist.get_gif(key)['public'] or ctx.channel.category_id == dcteam_category_id:
                     gif_url = my_giflist.get_gif(key)['url']
-                    await channel.send(gif_url)
+                    embed.set_image(url=gif_url)
+                    await channel.send(embed=embed)
             except AttributeError:
                 # channel.category_id will fail in DM messages
                 # DMChannel' object has no attribute 'category_id
                 if my_giflist.get_gif(key)['public']:
                     gif_url = my_giflist.get_gif(key)['url']
-                    await channel.send(gif_url)
+                    embed.set_image(url=gif_url)
+                    await channel.send(embed=embed)
     # If not b
     if not found:
         await bot.process_commands(ctx)
