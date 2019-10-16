@@ -420,7 +420,7 @@ async def header(ctx, arg):
         await ctx.send(file=discord.File(file_path))
         os.remove(file_path)
     elif arg == "indé" or arg == "indés":
-        file_path = get_header(2, dir_path)
+        file_path = get_header(3, dir_path)
         await ctx.send(file=discord.File(file_path))
         os.remove(file_path)
     elif arg == "marvel":
