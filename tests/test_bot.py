@@ -11,6 +11,7 @@ from utils.youtube import youtube_top_link
 from utils.comicsblog import get_comicsblog
 from utils.gif_json import GifJson
 from utils.getcomics import getcomics_top_link
+from utils.header import get_monthly_url
 
 
 class TestDiscordBot(unittest.TestCase):
@@ -72,6 +73,12 @@ class TestDiscordBot(unittest.TestCase):
         title = getcomics_top_link("Batman #79")[0]
         ref = "Batman #79 (2019)"
         self.assertEqual(title, ref)
+
+    def test_get_monthly_url(self):
+        """Test utils.header.get_monthy_url."""
+        montyly = get_monthly_url()
+        self.assertRegex(montyly,
+                         r"^http://www\.dctrad\.fr/viewtopic\.php\?f=7&t=\d+$")
 
 
 if __name__ == '__main__':
