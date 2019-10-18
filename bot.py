@@ -16,7 +16,7 @@ from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 from utils.comicsblog import get_comicsblog
 from utils.google import search_google, google_top_link
 from utils.gif_json import GifJson
-from utils.header import get_header
+from utils.header import get_header, get_monthly_url
 
 bot = commands.Bot(command_prefix='!', help_command=None, description=None)
 
@@ -414,21 +414,23 @@ async def say(ctx, *, args):
 async def header(ctx, arg):
     """Send header image."""
     arg = arg.lower()
+    monthly = get_monthly_url()
+    embed = discord.Embed(title="Comics du mois", url=monthly)
     if arg == "rebirth" or arg == "dcrebirth":
         file_path = get_header(1, dir_path)
-        await ctx.send(file=discord.File(file_path))
+        await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
     elif arg == "hors" or arg == "horsrebirth":
         file_path = get_header(2, dir_path)
-        await ctx.send(file=discord.File(file_path))
+        await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
-    elif arg == "indé" or arg == "indés":
+    elif arg in ["indé", "indés", "inde", "indé"]:
         file_path = get_header(3, dir_path)
-        await ctx.send(file=discord.File(file_path))
+        await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
     elif arg == "marvel":
         file_path = get_header(4, dir_path)
-        await ctx.send(file=discord.File(file_path))
+        await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
 
 

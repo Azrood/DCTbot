@@ -11,7 +11,7 @@ from PIL import Image
 import requests
 from urllib.parse import urljoin
 
-from utils.tools import get_soup_html
+from utils.tools import get_soup_html, get_soup_lxml
 
 dctrad_base = "http://www.dctrad.fr"
 dctrad_url = "http://www.dctrad.fr/index.php"
@@ -78,6 +78,18 @@ def _make_header(n, path):
     new_im.save(_file)
 
     return _file
+
+
+def get_monthly_url():
+    """Get 'Comics du mois' topic url."""
+    # TODO
+    # Class ?
+    # For not fetching soup again ?
+    soup = get_soup_lxml(dctrad_url)
+    monthly_url = soup.select_one(
+        'div#dog2 > center > span.text > a.btn-cm')['href']
+    # #dog2 > center > span.text > a.btn-cm
+    return monthly_url
 
 
 def get_header(n, path):
