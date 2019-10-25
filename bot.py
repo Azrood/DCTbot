@@ -46,15 +46,17 @@ helps = [
     {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"},
     {'name': 'header', 'value': ("affiche un header dctrad.\n"
                                  "syntaxe : !header [category] avec category = rebirth/hors/indés/marvel")}
-    ]
+]
+
 help_team = [
     {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},
     {'name': 'clear', 'value': 'efface le nombre de message entré en argument (!clear [nombre])'}
-    ]
+]
+
 help_above = [
     {'name': 'kick', 'value': 'kick la(les) personne(s) mentionnée(s)\n (syntaxe : !kick [@membre] (optionel)[@membre2]...'},
     {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'}
-    ]
+]
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 gifs_file = os.path.join(dir_path, "utils/gifs.json")
