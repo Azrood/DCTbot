@@ -34,7 +34,7 @@ helps = [
     {'name': 'urban', 'value': 'fait une recherche du mot entré sur Urban Dictionary'},
     {'name': 'recrutement', 'value': 'donne le lien des tests de DCTrad'},
     {'name': 'timer', 'value': 'minuteur qui notifie le user après X secondes\n Syntaxe : !timer [nombre (secondes)] [rappel]\n Exemple: !timer 3600 organiser mes dossiers'},
-    {'name': 'youtube', 'value': 'donne le lien du premier résultat de la recherche'},
+    {'name': 'youtube', 'value': 'donne le lien du premier résultat de la recherche\n Supprime le lien si l\'utilisateur supprime son message'},
     {'name': 'youtubelist', 'value': 'donne une liste de liens cliquables.\n Syntaxe : !youtubelist [nombre] [recherche]'},
     {'name': 'comicsblog', 'value': 'donne les X derniers articles de comicsblog\n (syntaxe : !comicsblog [numero])'},
     {'name': 'google', 'value': 'donne le premier lien de la recherche google avec les mots-clés saisis'},
@@ -154,12 +154,12 @@ async def urban(ctx):
 
 
 @bot.command()
-async def clear(ctx):
+async def clear(ctx,number):
     """Clear n messages."""
     # on regarde si le plus haut role de l'auteur est supérieur
     # ou égal hiérarchiquement au role DCT
     if ctx.author.top_role >= bot.role_dcteam:
-        nbr_msg = int(get_command_input(ctx.message.content))
+        nbr_msg = int(number)
         messages = await ctx.channel.history(limit=nbr_msg + 1).flatten()
         await ctx.channel.delete_messages(messages)
         await ctx.send(content=f"J'ai supprimé {nbr_msg} messages",
@@ -179,20 +179,22 @@ async def recrutement(ctx):
 
 
 @bot.command()
-async def youtube(ctx):
+async def youtube(ctx,*,user_input):
     """Send first Youtube search result."""
-    user_input = get_command_input(ctx.message.content)
     title, url = youtube_top_link(user_input)
-    await ctx.send(content=f"{title}\n{url}")
+    link = await ctx.send(content=f"{title}\n{url}")
+    def check(message):
+        return message==ctx.message
+    msg = await bot.wait_for("message_delete",check=check)
+    await link.delete(delay=None)
+
+
 
 
 @bot.command()
-async def youtubelist(ctx):
+async def youtubelist(ctx,num,*,query):
     """Send n Youtube search results."""
-    user_input = get_command_input(ctx.message.content)
-    duo = user_input.split(' ', 1)
-    number = int(duo[0])
-    query = duo[1]
+    number = int(num)
     if number > 10:
         number = 10
     result = search_youtube(user_input=query, number=number)
