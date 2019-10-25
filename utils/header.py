@@ -45,10 +45,11 @@ def _make_header(n, path):
 
     n is 1, 2, 3 or 4 for different headers.
     """
-    jpg_list = []
-    for i in range(9):
-        _file = os.path.join(path, f"ressources/img{i}.jpg")
-        jpg_list.append(_file)
+    # jpg_list = []
+    # for i in range(9):
+    #     file_ = os.path.join(path, f"ressources/img{i}.jpg")
+    #     jpg_list.append(file_)
+    jpg_list = [os.path.join(path, f"ressources/img{i}.jpg") for i in range(9)]
 
     images = [Image.open(i) for i in jpg_list]
 
@@ -63,8 +64,8 @@ def _make_header(n, path):
 
     ims_grid = [images[x:x+3] for x in range(0, len(images), 3)]  # noqa: E226
 
-    _file = os.path.join(path,
-                         f'ressources/header{n}-{time.strftime("%Y%m%d-%H%M%S")}.jpg')
+    file_ = os.path.join(path,
+        f'ressources/header{n}-{time.strftime("%Y%m%d-%H%M%S")}.jpg')  # noqa: E501
 
     x_offset = 0
     y_offset = 0
@@ -75,9 +76,9 @@ def _make_header(n, path):
         x_offset = 0
         y_offset += max_height
 
-    new_im.save(_file)
+    new_im.save(file_)
 
-    return _file
+    return file_
 
 
 def get_monthly_url():
