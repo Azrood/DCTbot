@@ -179,20 +179,20 @@ async def recrutement(ctx):
 
 
 @bot.command()
-async def youtube(ctx,*,user_input):
+async def youtube(ctx, *, user_input):
     """Send first Youtube search result."""
     title, url = youtube_top_link(user_input)
     link = await ctx.send(content=f"{title}\n{url}")
     def check(message):
         return message==ctx.message
-    msg = await bot.wait_for("message_delete",check=check)
+    msg = await bot.wait_for("message_delete", check=check, timeout=1200)
     await link.delete(delay=None)
 
 
 
 
 @bot.command()
-async def youtubelist(ctx,num,*,query):
+async def youtubelist(ctx,num, *, query):
     """Send n Youtube search results."""
     number = int(num)
     if number > 10:
