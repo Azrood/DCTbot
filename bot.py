@@ -191,7 +191,7 @@ async def youtube(ctx, *, user_input):
 
     def check(message):
         return message == ctx.message
-    await bot.wait_for("message_delete", check=check)
+    await bot.wait_for("message_delete", check=check, timeout=1200)
     await link.delete(delay=None)
 
 
