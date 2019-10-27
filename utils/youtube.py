@@ -33,7 +33,7 @@ def search_youtube(user_input, number):
     youtube = googleapiclient.discovery.build(
         api_service_name, api_version, developerKey=DEVELOPER_KEY)
 
-    request = youtube.search().list(  # pylint: disable=no-member
+    request = youtube.search().list(
         part="snippet",
         maxResults=number,
         q=user_input
@@ -88,13 +88,12 @@ def youtube_top_link(user_input):
 
 def get_youtube_url(result):
     """Make youtube url of 'result' (video, playlist, or channel)."""
-    YOUTUBE = "https://www.youtube.com/"
     if result['type'] == 'video':
-        url = f"{YOUTUBE}watch?v={result['id']}"
+        url = f"https://www.youtube.com/watch?v={result['id']}"
     elif result['type'] == 'playlist':
-        url = f"{YOUTUBE}playlist?list={result['id']}"
+        url = f"https://www.youtube.com/playlist?list={result['id']}"
     elif result['type'] == 'channel':
-        url = f"{YOUTUBE}channel/{result['id']}"
+        url = f"https://www.youtube.com/channel/{result['id']}"
     else:
         url = None
     return url

@@ -16,7 +16,6 @@ from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 from utils.comicsblog import get_comicsblog
 from utils.google import search_google, google_top_link
 from utils.gif_json import GifJson
-from utils.header import get_header, get_monthly_url
 
 bot = commands.Bot(command_prefix='!', help_command=None, description=None)
 
@@ -43,20 +42,16 @@ helps = [
     {'name': 'roulette', 'value': '1/6 chance de se faire kick, la roulette russe avec le bon Colt !'},
     {'name': 'choose', 'value': "choisit aléatoiremement parmi plusieurs arguments \n Syntaxe : !choose arg1 arg2 \"phrase avec plusieurs mots\" (si vous voulez des choix avec plusieurs mots, mettez vos choix entre \"\" comme pâr exemple \n !choose \"manger chinois\" \"manger italien \" \" manger quelqu'un \" ) "},
     {"name": "coinflip", 'value': "fais un lancer de pile ou face"},
-    {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"},
-    {'name': 'header', 'value': ("affiche un header dctrad.\n"
-                                 "syntaxe : !header [category] avec category = rebirth/hors/indés/marvel")}
-]
-
+    {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"}
+    ]
 help_team = [
     {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},
     {'name': 'clear', 'value': 'efface le nombre de message entré en argument (!clear [nombre])'}
-]
-
+    ]
 help_above = [
     {'name': 'kick', 'value': 'kick la(les) personne(s) mentionnée(s)\n (syntaxe : !kick [@membre] (optionel)[@membre2]...'},
     {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'}
-]
+    ]
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 gifs_file = os.path.join(dir_path, "utils/gifs.json")
@@ -159,7 +154,7 @@ async def urban(ctx):
 
 
 @bot.command()
-async def clear(ctx, number):
+async def clear(ctx,number):
     """Clear n messages."""
     # on regarde si le plus haut role de l'auteur est supérieur
     # ou égal hiérarchiquement au role DCT
@@ -188,15 +183,16 @@ async def youtube(ctx, *, user_input):
     """Send first Youtube search result."""
     title, url = youtube_top_link(user_input)
     link = await ctx.send(content=f"{title}\n{url}")
-
     def check(message):
-        return message == ctx.message
-    await bot.wait_for("message_delete", check=check, timeout=1200)
+        return message==ctx.message
+    msg = await bot.wait_for("message_delete", check=check, timeout=1200)
     await link.delete(delay=None)
 
 
+
+
 @bot.command()
-async def youtubelist(ctx, num, *, query):
+async def youtubelist(ctx,num, *, query):
     """Send n Youtube search results."""
     number = int(num)
     if number > 10:
@@ -333,19 +329,16 @@ async def gif(ctx, name):
         await ctx.send(embed=embed)
 
     if my_giflist.get_gif(name) is not None:
-        embed = discord.Embed()
         try:
             if my_giflist.get_gif(name)['public'] or ctx.channel.category_id == dcteam_category_id:
                 gif_url = my_giflist.get_gif(name)['url']
-                embed.set_image(url=gif_url)
-                await ctx.send(embed=embed)
+                await ctx.send(content=gif_url)
         except AttributeError:
             # channel.category_id will fail in DM messages
             # DMChannel' object has no attribute 'category_id
             if my_giflist.get_gif(name)['public']:
                 gif_url = my_giflist.get_gif(name)['url']
-                embed.set_image(url=gif_url)
-                await ctx.send(embed=embed)
+                await ctx.send(content=gif_url)
     else:
         pass
 
@@ -413,37 +406,12 @@ async def say(ctx, *, args):
     await ctx.send(content=args)
 
 
-@bot.command()
-async def header(ctx, arg):
-    """Send header image."""
-    arg = arg.lower()
-    monthly = get_monthly_url()
-    embed = discord.Embed(title="Comics du mois", url=monthly)
-    if arg == "rebirth" or arg == "dcrebirth":
-        file_path = get_header(1, dir_path)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-    elif arg == "hors" or arg == "horsrebirth":
-        file_path = get_header(2, dir_path)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-    elif arg in ["indé", "indés", "inde", "indé"]:
-        file_path = get_header(3, dir_path)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-    elif arg == "marvel":
-        file_path = get_header(4, dir_path)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-
-
 @bot.event
 async def on_message(ctx):
     """Read all message and check if it's a gif command."""
     found = False
     channel = ctx.channel
     # Find if custom command exist in dictionary
-    embed = discord.Embed()
     for key in my_giflist.gifs.keys():
         # Added simple hardcoded prefix
         command = '!' + key
@@ -452,15 +420,13 @@ async def on_message(ctx):
             try:
                 if my_giflist.get_gif(key)['public'] or ctx.channel.category_id == dcteam_category_id:
                     gif_url = my_giflist.get_gif(key)['url']
-                    embed.set_image(url=gif_url)
-                    await channel.send(embed=embed)
+                    await channel.send(gif_url)
             except AttributeError:
                 # channel.category_id will fail in DM messages
                 # DMChannel' object has no attribute 'category_id
                 if my_giflist.get_gif(key)['public']:
                     gif_url = my_giflist.get_gif(key)['url']
-                    embed.set_image(url=gif_url)
-                    await channel.send(embed=embed)
+                    await channel.send(gif_url)
     # If not b
     if not found:
         await bot.process_commands(ctx)
