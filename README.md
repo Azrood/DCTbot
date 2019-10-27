@@ -7,6 +7,7 @@ pip install requests
 pip install bs4
 pip install discord
 pip install google-api-python-client
+pip install pillow
 ```
 ![example](https://raw.githubusercontent.com/Azrood/DCTbot/dev/pictures/example.JPG)
 

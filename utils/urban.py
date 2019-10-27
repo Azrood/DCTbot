@@ -33,8 +33,8 @@ class UrbanSearch:
             self.valid = True
 
     def get_top_def(self):
-        """Parse the HTML soup to find Top Definition title, meaning, example."""
-        title = self.soup.select_one('div.def-panel > div.def-header > a.word').text
+        """Parse the HTML to find Top Definition title, meaning, example."""
+        title = self.soup.select_one('div.def-panel > div.def-header > a.word').text  # noqa: E501
         meaning = self.soup.select_one('div.def-panel > div.meaning').text
         example_raw = self.soup.select_one('div.def-panel > div.example').text
         if hasattr(example_raw, 'text'):
