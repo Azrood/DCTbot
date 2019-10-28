@@ -3,4 +3,4 @@ __pycache__/
 secret.py
 gifs.txt
 gifs.json
-utils\pornhub\example.py
+example.py
