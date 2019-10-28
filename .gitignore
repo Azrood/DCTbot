@@ -6,4 +6,3 @@ venv/
 secret.py
 gifs.txt
 gifs.json
-tests/
