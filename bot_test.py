@@ -10,6 +10,7 @@ from utils.comicsblog import get_comicsblog
 from utils.google import search_google, google_top_link
 from utils.gif_json import Gif_json
 from utils.bonjourmadame import latest_madame
+from utils.reddit import reddit_nsfw
 import datetime as date
 import asyncio
 import random
@@ -309,5 +310,10 @@ async def bonjour_madame():
 @bonjour_madame.before_loop
 async def before_bonjour_madame():
     await bot.wait_until_ready()
+
+@bot.command()
+async def nsfw(ctx):
+    if ctx.channel.id == nsfw_channel_id:
+        await ctx.send(content=reddit_nsfw())
 bonjour_madame.start()
 bot.run(token)
