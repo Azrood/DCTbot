@@ -499,5 +499,15 @@ async def nsfw(ctx):
     # TODO : doctring
     if ctx.channel.id == nsfw_channel_id:
         await ctx.send(content=reddit_nsfw())
+
+@bot.command()
+async def poke(ctx, people):
+    # TODO : docstring
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    card_file = os.path.join(dir_path, f"pictures/cards/{people}")
+    f = discord.File("card_file", filename="image.png")
+    embed = discord.Embed()
+    embed.set_image(url="attachment://image.png")
+await messagable.send(file=f, embed=e)
 bonjour_madame.start()
 bot.run(token)
