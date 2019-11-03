@@ -8,7 +8,7 @@ import discord
 import asyncio
 import random
 from discord.ext import commands, tasks
-from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, nsfw_channel_id
+from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, nsfw_channel_id, admin_role
 from utils.tools import get_command_input, string_is_int
 from utils.urban import UrbanSearch
 from utils.getcomics import getcomics_top_link
