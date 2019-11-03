@@ -91,6 +91,8 @@ async def help(ctx):
     if ctx.author.top_role >= bot.role_modo:
         for h in help_above:
             embed_2.add_field(name=h['name'], value=h['value'], inline=False)
+    if ctx.channel.category_id == dcteam_category_id:
+        embed.add_field(name='nsfw', value="affiche une image nsfw", inline=False)
     msg = await ctx.send(embed=embed)
     await msg.add_reaction("\U000025c0")
     await msg.add_reaction("\U000025b6")
