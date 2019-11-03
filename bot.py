@@ -8,7 +8,7 @@ import discord
 import asyncio
 import random
 from discord.ext import commands, tasks
-from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, admin_role
+from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, nsfw_channel_id
 from utils.tools import get_command_input, string_is_int
 from utils.urban import UrbanSearch
 from utils.getcomics import getcomics_top_link
@@ -16,6 +16,11 @@ from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 from utils.comicsblog import get_comicsblog
 from utils.google import search_google, google_top_link
 from utils.gif_json import GifJson
+from utils.bonjourmadame import latest_madame
+from utils.reddit import reddit_nsfw
+import datetime as date
+import asyncio
+import random
 
 bot = commands.Bot(command_prefix='!', help_command=None, description=None)
 
@@ -431,4 +436,18 @@ async def on_message(ctx):
     if not found:
         await bot.process_commands(ctx)
 
+# time=date.time(hour=12)  will use it when v1.3 for discord.py is released
+@tasks.loop(hours=10, loop=None) # will take time as argument when v1.3 is released
+async def bonjour_madame():
+    await bot.get_channel(nsfw_channel_id).send(latest_madame())
+
+@bonjour_madame.before_loop
+async def before_bonjour_madame():
+    await bot.wait_until_ready()
+
+@bot.command()
+async def nsfw(ctx):
+    if ctx.channel.id == nsfw_channel_id:
+        await ctx.send(content=reddit_nsfw())
+bonjour_madame.start()
 bot.run(token)
