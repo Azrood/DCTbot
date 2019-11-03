@@ -14,4 +14,8 @@ dcteam_category_id = "XXXXXXXXXXXXXXXXXx"  # int
 admin = "XXXXXXXXXXXXXXXXXX"  # int
 admin_role = ["XXX"]  # list of str
 admin_id = "XXXXXXXXXXXXXXXXXX"  # int
-nsfw_channel_id = "XXXXXXXXXXXXXXXXX" # int
+nsfw_channel_id = "XXXXXXXXXXXXXXXXX"  # int
+
+reddit_secret = "XXXXXXXXX"
+reddit_client_id = "XXXXXXX"
+reddit_useragent = "XXXXX"

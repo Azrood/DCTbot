@@ -1,9 +1,13 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+"""Bonjourmadame feed parser."""
 
 import requests
 from bs4 import BeautifulSoup
+
+
 def latest_madame():
+    """Fetch last Bonjourmadame picture."""
     madames = "http://feeds2.feedburner.com/BonjourMadame"
 
     res = requests.get(madames)
@@ -14,4 +18,3 @@ def latest_madame():
     url = item.find('img')['src']
 
     return url.split('?')[0]
-    

@@ -33,7 +33,7 @@ def search_youtube(user_input, number):
     youtube = googleapiclient.discovery.build(
         api_service_name, api_version, developerKey=DEVELOPER_KEY)
 
-    request = youtube.search().list(
+    request = youtube.search().list(  # pylint: disable=no-member
         part="snippet",
         maxResults=number,
         q=user_input
