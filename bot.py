@@ -17,6 +17,7 @@ from utils.comicsblog import get_comicsblog
 from utils.google import search_google, google_top_link
 from utils.gif_json import GifJson
 from utils.bonjourmadame import latest_madame
+from utils.header import get_header, get_monthly_url
 from utils.reddit import reddit_nsfw
 import datetime as date
 
@@ -428,6 +429,30 @@ async def say(ctx, *, args):
     """Bot writes user message content, and delete original user message."""
     await ctx.message.delete()
     await ctx.send(content=args)
+
+
+@bot.command()
+async def header(ctx, arg):
+    """Send header image."""
+    arg = arg.lower()
+    monthly = get_monthly_url()
+    embed = discord.Embed(title="Comics du mois", url=monthly)
+    if arg == "rebirth" or arg == "dcrebirth":
+        file_path = get_header(1, dir_path)
+        await ctx.send(embed=embed, file=discord.File(file_path))
+        os.remove(file_path)
+    elif arg == "hors" or arg == "horsrebirth":
+        file_path = get_header(2, dir_path)
+        await ctx.send(embed=embed, file=discord.File(file_path))
+        os.remove(file_path)
+    elif arg in ["indé", "indés", "inde", "indé"]:
+        file_path = get_header(3, dir_path)
+        await ctx.send(embed=embed, file=discord.File(file_path))
+        os.remove(file_path)
+    elif arg == "marvel":
+        file_path = get_header(4, dir_path)
+        await ctx.send(embed=embed, file=discord.File(file_path))
+        os.remove(file_path)
 
 
 @bot.event
