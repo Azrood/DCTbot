@@ -1,24 +1,22 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+"""Module to search on getcomics.info."""
 
 import time
 import requests  # lib for going on internet
-from bs4 import BeautifulSoup  # html parser
 import urllib.parse
+from utils.tools import get_soup_html
 
 
 def getcomics_top_link(user_input):
-
+    """Search getcomics and return first result."""
     formated_search = urllib.parse.quote_plus(user_input.lower(),
                                               safe='', encoding=None,
                                               errors=None)
     getcomics_search = f"https://getcomics.info/?s={formated_search}"
-    # get HTML page with requests.get
-    res = requests.get(getcomics_search)
-    res.close()
 
     # BeautifulSoup will transform raw HTML in a tree easy to parse
-    soup = BeautifulSoup(res.text, 'lxml')
+    soup = get_soup_html(getcomics_search)
 
     first = soup.find('h1', class_='post-title')
 
@@ -29,13 +27,9 @@ def getcomics_top_link(user_input):
 
 
 def getcomics_directlink(comic_url):
-
-    # get HTML page with requests.get
-    res = requests.get(comic_url)
-    res.close()
-
+    """Get download links in a getcomics post."""
     # BeautifulSoup will transform raw HTML in a tree easy to parse
-    soup = BeautifulSoup(res.text, 'html.parser')
+    soup = get_soup_html(comic_url)
 
     direct_download = soup.find('a', class_='aio-red')
 
@@ -45,20 +39,20 @@ def getcomics_directlink(comic_url):
     # We follow temp_url to find final URL
     time.sleep(1)
 
-    res2 = requests.get(temp_url, allow_redirects=False, stream=True)
+    res2 = requests.get(temp_url, allow_redirects=False, stream=True, timeout=3)
     res2.close()
 
     if res2.status_code == 200:
-        print("req 2 code 200")
+        # print("req 2 code 200")
         return res2.url
     elif res2.status_code == 302:
-        print("302, Found Comic URL")
+        # print("302, Found Comic URL")
         return res2.headers['location']
     elif res2.status_code == 404:
-        print('404, returning post url')
+        # print('404, returning post url')
         # in this case, return the getcomics post url
         return comic_url
     else:
         # in this case, return the getcomics post url
-        print("unkwnown response code")
+        # print("unkwnown response code")
         return comic_url
