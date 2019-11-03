@@ -3,12 +3,6 @@
 import requests  # lib for going on internet
 from bs4 import BeautifulSoup
 
-
-def get_command_input(user_input):
-    """Split user_input into !command args and return args."""
-    return user_input.split(' ', 1)[1]
-
-
 def string_is_int(string):
     """Return if 'string' is an int or not (bool)."""
     try:

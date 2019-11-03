@@ -9,7 +9,7 @@ import asyncio
 import random
 from discord.ext import commands, tasks
 from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, nsfw_channel_id, admin_role  # noqa: E501
-from utils.tools import get_command_input, string_is_int
+from utils.tools import string_is_int
 from utils.urban import UrbanSearch
 from utils.getcomics import getcomics_top_link
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
@@ -137,9 +137,8 @@ async def team(ctx):
 
 
 @bot.command()
-async def getcomics(ctx):
+async def getcomics(ctx, *, user_input):
     """Send direct download link for getcomics search result."""
-    user_input = get_command_input(ctx.message.content)
     title, url = getcomics_top_link(user_input)
     embed = discord.Embed(title=f"{title}",
                           description="cliquez sur le titre pour télécharger votre comic",  # noqa: E501
@@ -148,9 +147,8 @@ async def getcomics(ctx):
 
 
 @bot.command()
-async def urban(ctx):
+async def urban(ctx, *, user_input):
     """Send definition of user input on Urban Dictionary."""
-    user_input = get_command_input(ctx.message.content)
     # create object urban of class Urban
     urban = UrbanSearch(user_input)
     if urban.valid:
@@ -285,9 +283,8 @@ async def ban(ctx):
 
 
 @bot.command()
-async def google(ctx):
+async def google(ctx, *, query):
     """Send first Google search result."""
-    query = get_command_input(ctx.message.content)
     try:
         result = google_top_link(query)
         await ctx.send(content=f"{result['title']}\n {result['url']}")
