@@ -19,7 +19,7 @@ from utils.gif_json import GifJson
 from utils.bonjourmadame import latest_madame
 from utils.header import get_header, get_monthly_url
 from utils.reddit import reddit_nsfw
-import datetime as date
+import datetime 
 
 bot = commands.Bot(command_prefix='!', help_command=None, description=None)
 
@@ -481,11 +481,12 @@ async def on_message(ctx):
     if not found:
         await bot.process_commands(ctx)
 
-# time=date.time(hour=12)  will use it when v1.3 for discord.py is released
-@tasks.loop(hours=10, loop=None)  # will take time as argument when v1.3 is released  # noqa: E501
+# time=date.time(hour=10)  will use it when v1.3 for discord.py is released
+@tasks.loop(hours=24, loop=None)  # will take time as argument when v1.3 is released  # noqa: E501
 async def bonjour_madame():
     """Send daily bonjourmadame."""
-    await bot.get_channel(nsfw_channel_id).send(latest_madame())
+    if 0<= datetime.date.today().weekday() <= 5: #check the current day, days are given as numbers where Monday=0 and Sunday=6
+        await bot.get_channel(nsfw_channel_id).send(latest_madame()) 
 
 
 @bonjour_madame.before_loop
