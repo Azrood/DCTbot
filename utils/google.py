@@ -37,14 +37,7 @@ def search_google(user_input, number):
     except KeyError:
         json_data = []
 
-    out = []
-
-    for j in json_data:
-        title = j['title']
-        url = j['link']
-        out.append({'title': title, 'url': url})
-
-    return out
+    return [{'title': j['title'], 'url': j['link']} for j in json_data]
 
 
 def google_top_link(user_input):
