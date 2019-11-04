@@ -508,6 +508,6 @@ async def poke(ctx, people):
     f = discord.File("card_file", filename="image.png")
     embed = discord.Embed()
     embed.set_image(url="attachment://image.png")
-await messagable.send(file=f, embed=e)
+    await ctx.send(file=f, embed=embed)
 bonjour_madame.start()
 bot.run(token)
