@@ -504,10 +504,10 @@ async def nsfw(ctx):
 async def poke(ctx, people):
     # TODO : docstring
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    card_file = os.path.join(dir_path, f"pictures/cards/{people}")
-    f = discord.File("card_file", filename="image.png")
+    card_file = os.path.join(dir_path, f"pictures/cards/{people}.jpg")
+    f = discord.File(fp=card_file, filename=people+".jpg") #discord.File can't handle f-strings apparently
     embed = discord.Embed()
-    embed.set_image(url="attachment://image.png")
+    embed.set_image(url="attachment://"+people+".jpg")
     await ctx.send(file=f, embed=embed)
 bonjour_madame.start()
 bot.run(token)
