@@ -4,7 +4,6 @@
 
 
 import unittest
-from utils.tools import get_command_input
 from utils.google import google_top_link
 from utils.urban import UrbanSearch
 from utils.youtube import youtube_top_link
@@ -18,11 +17,6 @@ class TestDiscordBot(unittest.TestCase):
 
     # Each method with name beginning with 'test_'
     # is a test.
-
-    def test_get_command_input(self):
-        """Test split command and input."""
-        input = get_command_input("!google python.org unittest")
-        self.assertEqual(input, "python.org unittest")
 
     def test_google_top_link(self):
         """Test google_top_link."""
