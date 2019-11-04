@@ -34,6 +34,7 @@ snap_url = "https://media.tenor.com/images/8d7d2e757f934793bb4154cede8a4afa/teno
 helps = [
     {'name': 'help', 'value': 'affiche la liste des commandes'},
     {'name': 'gif help', 'value': 'affiche la liste des gifs'},
+    {'name': 'poke help', 'value': 'affiche la liste des cartes'},
     {'name': 'getcomics', 'value': 'recherche dans getcomics les mots-clés entrés'},  # noqa: E501
     {'name': 'urban', 'value': 'fait une recherche du mot entré sur Urban Dictionary'},  # noqa: E501
     {'name': 'recrutement', 'value': 'donne le lien des tests de DCTrad'},
@@ -56,6 +57,8 @@ help_above = [
     {'name': 'kick', 'value': 'kick la(les) personne(s) mentionnée(s)\n (syntaxe : !kick [@membre] (optionel)[@membre2]...'},  # noqa: E501
     {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'}  # noqa: E501
     ]
+
+poke_help="azrod\nbane\nrun\nsergei\n" #see comment in line 509
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 gifs_file = os.path.join(dir_path, "utils/gifs.json")
@@ -502,12 +505,18 @@ async def nsfw(ctx):
 
 @bot.command()
 async def poke(ctx, people):
-    # TODO : docstring
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    card_file = os.path.join(dir_path, f"pictures/cards/{people}.jpg")
-    f = discord.File(fp=card_file, filename=people+".jpg") #discord.File can't handle f-strings apparently
-    embed = discord.Embed()
-    embed.set_image(url="attachment://"+people+".jpg")
-    await ctx.send(file=f, embed=embed)
+    """Send card made by Slyrax """
+    if people == "help" : #probably needs improvements
+        embed=discord.Embed(title="Liste des cartes \nSyntaxe : !poke <nom>",description=poke_help) #use this to get by until improvement
+        embed.set_footer(text="Merci à Slyrax pour les cartes !")
+        await ctx.send(embed=embed)
+
+    else:
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        card_file = os.path.join(dir_path, f"pictures/cards/{people}.jpg")
+        f = discord.File(fp=card_file, filename=people+".jpg") #discord.File can't handle f-strings apparently
+        embed = discord.Embed()
+        embed.set_image(url="attachment://"+people+".jpg") #better safe than sorry
+        await ctx.send(file=f, embed=embed)
 bonjour_madame.start()
 bot.run(token)
