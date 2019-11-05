@@ -376,6 +376,7 @@ async def admin(ctx):
 
 
 @bot.command()
+@commands.is_owner()
 async def gifadd(ctx, name, url, bool):
     """Add gif in gif dictionary and gif json file."""
     if ctx.author.top_role > bot.guild.get_role(admin_id):
@@ -385,6 +386,7 @@ async def gifadd(ctx, name, url, bool):
 
 
 @bot.command()
+@commands.is_owner()
 async def gifdelete(ctx, name):
     """Delete gif in gif dictionary and gif json file."""
     if ctx.author.top_role > bot.guild.get_role(admin_id):
