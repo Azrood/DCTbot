@@ -331,7 +331,7 @@ async def roulette(ctx):
 @bot.command()
 async def gif(ctx, name):
     """Send gif corresponding to 'name'."""
-    name.lower()
+    name = name.lower()
     if name == 'help':
 
         try:  # if in team category
@@ -382,7 +382,7 @@ async def admin(ctx):
 @bot.command()
 async def gifadd(ctx, name, url, bool):
     """Add gif in gif dictionary and gif json file."""
-    name.lower()
+    name = name.lower()
     if ctx.author.top_role > bot.guild.get_role(admin_id):
         my_giflist.gif_add(name, url, bool)
     else:
@@ -392,7 +392,7 @@ async def gifadd(ctx, name, url, bool):
 @bot.command()
 async def gifdelete(ctx, name):
     """Delete gif in gif dictionary and gif json file."""
-    name.lower()
+    name = name.lower()
     if ctx.author.top_role > bot.guild.get_role(admin_id):
         my_giflist.gif_delete(name)
     else:
@@ -468,7 +468,7 @@ async def on_message(ctx):
     for key in my_giflist.gifs.keys():
         # Added simple hardcoded prefix
         command = '!' + key
-        if ctx.content == command:
+        if ctx.content.lower() == command:
             found = True
             try:
                 if (my_giflist.get_gif(key)['public']
@@ -513,7 +513,7 @@ async def nsfw(ctx):
 @bot.command()
 async def poke(ctx, people):
     """Send card made by Slyrax """
-    people.lower()
+    people = people.lower()
     if people == "help" : #probably needs improvements
         embed=discord.Embed(title="Liste des cartes \nSyntaxe : !poke <nom>",description=poke_help) #use this to get by until improvement
         embed.set_footer(text="Merci à Slyrax pour les cartes !")
