@@ -66,7 +66,7 @@ class GifJson:
             return None
 
     def get_names_string(self, private=True):
-        """Get multilne string of gifs names.
+        """Get multiline string of gifs names.
 
         If private is true, only public gifs are returned.
 
