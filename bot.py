@@ -485,8 +485,11 @@ async def on_message(ctx):
 @tasks.loop(hours=24, loop=None)  # will take time as argument when v1.3 is released  # noqa: E501
 async def bonjour_madame():
     """Send daily bonjourmadame."""
-    if 0<= datetime.date.today().weekday() <= 5: #check the current day, days are given as numbers where Monday=0 and Sunday=6
-        await bot.get_channel(nsfw_channel_id).send(latest_madame()) 
+    if 0 <= datetime.date.today().weekday() <= 5:  # check the current day, days are given as numbers where Monday=0 and Sunday=6
+        embed = discord.Embed()
+        embed.set_image(url=latest_madame())
+        embed.set_footer(text="Bonjour Madame")
+        await bot.get_channel(nsfw_channel_id).send(embed=embed)
 
 
 @bonjour_madame.before_loop
