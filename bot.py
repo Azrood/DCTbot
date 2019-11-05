@@ -21,7 +21,7 @@ from utils.header import get_header, get_monthly_url
 from utils.reddit import reddit_nsfw
 import datetime 
 
-bot = commands.Bot(command_prefix='!', help_command=None, description=None)
+bot = commands.Bot(command_prefix='!', help_command=None, description=None, case_insensitive=True)
 
 urban_logo = "https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5MuDJw8LUbwqZM9BW9oey5I/https/i.imgur.com/VFXr0ID.jpg"  # noqa: E501
 
@@ -194,7 +194,7 @@ async def recrutement(ctx):
 @bot.command()
 async def youtube(ctx, *, user_input):
     """Send first Youtube search result."""
-    title, url = youtube_top_link(user_input)
+    title, url = youtube_top_link(user_input.lower())
     link = await ctx.send(content=f"{title}\n{url}")
 
     def check(message):
@@ -331,6 +331,7 @@ async def roulette(ctx):
 @bot.command()
 async def gif(ctx, name):
     """Send gif corresponding to 'name'."""
+    name.lower()
     if name == 'help':
 
         try:  # if in team category
@@ -371,7 +372,7 @@ async def admin(ctx):
     """Help for admin user."""
     embed = discord.Embed(color=0x0000FF)
     embed.add_field(name="gifadd",
-                    value="!gifadd <name> <url> <bool> (bool : public or private)",  # noqa: E501
+                    value="!gifadd <name> <url> <bool> (bool : public(True) or private(False) )",  # noqa: E501
                     inline=False)
     embed.add_field(name="gifdelete", value="!gifdelete <name>", inline=False)
     if ctx.author.top_role > bot.guild.get_role(admin_id):
@@ -381,6 +382,7 @@ async def admin(ctx):
 @bot.command()
 async def gifadd(ctx, name, url, bool):
     """Add gif in gif dictionary and gif json file."""
+    name.lower()
     if ctx.author.top_role > bot.guild.get_role(admin_id):
         my_giflist.gif_add(name, url, bool)
     else:
@@ -390,6 +392,7 @@ async def gifadd(ctx, name, url, bool):
 @bot.command()
 async def gifdelete(ctx, name):
     """Delete gif in gif dictionary and gif json file."""
+    name.lower()
     if ctx.author.top_role > bot.guild.get_role(admin_id):
         my_giflist.gif_delete(name)
     else:
@@ -510,6 +513,7 @@ async def nsfw(ctx):
 @bot.command()
 async def poke(ctx, people):
     """Send card made by Slyrax """
+    people.lower()
     if people == "help" : #probably needs improvements
         embed=discord.Embed(title="Liste des cartes \nSyntaxe : !poke <nom>",description=poke_help) #use this to get by until improvement
         embed.set_footer(text="Merci à Slyrax pour les cartes !")
