@@ -482,7 +482,7 @@ async def on_message(ctx):
         await bot.process_commands(ctx)
 
 # time=date.time(hour=10)  will use it when v1.3 for discord.py is released
-@tasks.loop(hours=24, loop=None)  # will take time as argument when v1.3 is released  # noqa: E501
+@tasks.loop(hours=24)  # will take time as argument when v1.3 is released  # noqa: E501
 async def bonjour_madame():
     """Send daily bonjourmadame."""
     if 0 <= datetime.date.today().weekday() <= 5:  # check the current day, days are given as numbers where Monday=0 and Sunday=6
