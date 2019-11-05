@@ -58,8 +58,8 @@ help_above = [
     ]
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-gifs_file = os.path.join(dir_path, "utils/gifs.json")
-my_giflist = GifJson(gifs_file)
+# gifs_file = os.path.join(dir_path, "utils/gifs.json")
+my_giflist = GifJson()
 
 
 @bot.event
