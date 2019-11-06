@@ -383,10 +383,7 @@ async def admin(ctx):
 async def gifadd(ctx, name, url, bool):
     """Add gif in gif dictionary and gif json file."""
     name = name.lower()
-    if ctx.author.top_role > bot.guild.get_role(admin_id):
-        my_giflist.gif_add(name, url, bool)
-    else:
-        pass
+    my_giflist.gif_add(name, url, bool)
 
 
 @bot.command()
@@ -394,10 +391,7 @@ async def gifadd(ctx, name, url, bool):
 async def gifdelete(ctx, name):
     """Delete gif in gif dictionary and gif json file."""
     name = name.lower()
-    if ctx.author.top_role > bot.guild.get_role(admin_id):
-        my_giflist.gif_delete(name)
-    else:
-        pass
+    my_giflist.gif_delete(name)
 
 
 @bot.command()
@@ -506,10 +500,10 @@ async def before_bonjour_madame():
 
 
 @bot.command()
+@commands.is_nsfw()
 async def nsfw(ctx):
     # TODO : doctring
-    if ctx.channel.id == nsfw_channel_id:
-        await ctx.send(content=reddit_nsfw())
+     await ctx.send(content=reddit_nsfw())
 
 @bot.command()
 async def poke(ctx, people):
