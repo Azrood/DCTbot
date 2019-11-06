@@ -61,8 +61,7 @@ help_above = [
 poke_help="azrod\nbane\nrun\nsergei\n" #see comment in line 509
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-# gifs_file = os.path.join(dir_path, "utils/gifs.json")
-my_giflist = GifJson()
+my_giflist = GifJson("gifs.json")
 
 
 @bot.event
