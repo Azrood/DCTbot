@@ -51,13 +51,13 @@ class TestDiscordBot(unittest.TestCase):
 
     def test_get_gif(self):
         """Test get_gif."""
-        gifs = GifJson("utils/gifs.sample.json")
+        gifs = GifJson("gifs.sample.json")
         my_gif = gifs.get_gif("your_gif_name")
         self.assertEqual(my_gif['url'], "your_gif_url")
 
     def test_get_gif_fail(self):
         """Test get_gif fail."""
-        gifs = GifJson("utils/gifs.sample.json")
+        gifs = GifJson("gifs.sample.json")
         my_gif = gifs.get_gif("toto")
         self.assertIsNone(my_gif)  # gif toto return none
 
