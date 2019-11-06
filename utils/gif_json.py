@@ -7,14 +7,14 @@ class GifJson:
     """Class to handle reading gifs url from json file."""
 
     # init is executed when the object is created
-    def __init__(self):
+    def __init__(self, filename):
         """Init object.
 
         Read (or create) json file.
         """
         dir_path = os.path.dirname(os.path.realpath(__file__))
 
-        self.file = os.path.join(dir_path, "gifs.json")
+        self.file = os.path.join(dir_path, filename)
         # if file exists
         try:
             f = open(self.file)
