@@ -441,19 +441,19 @@ async def header(ctx, arg):
     monthly = get_monthly_url()
     embed = discord.Embed(title="Comics du mois", url=monthly)
     if arg == "rebirth" or arg == "dcrebirth":
-        file_path = get_header(1, dir_path)
+        file_path = get_header(1)
         await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
     elif arg == "hors" or arg == "horsrebirth":
-        file_path = get_header(2, dir_path)
+        file_path = get_header(2)
         await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
     elif arg in ["indé", "indés", "inde", "indé"]:
-        file_path = get_header(3, dir_path)
+        file_path = get_header(3)
         await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
     elif arg == "marvel":
-        file_path = get_header(4, dir_path)
+        file_path = get_header(4)
         await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
 

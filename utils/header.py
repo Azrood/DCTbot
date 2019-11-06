@@ -34,8 +34,8 @@ def _download_img(h_list, path):
         index = h_list.index(h)
         img_url = urljoin(dctrad_base, h.img['src'])
         response = requests.get(img_url, stream=True)
-        _file = os.path.join(path, f"ressources/img{index}.jpg")
-        with open(_file, 'wb') as out_file:
+        file_ = os.path.join(path, f"img{index}.jpg")
+        with open(file_, 'wb') as out_file:
             shutil.copyfileobj(response.raw, out_file)
     del response
 
@@ -45,11 +45,7 @@ def _make_header(n, path):
 
     n is 1, 2, 3 or 4 for different headers.
     """
-    # jpg_list = []
-    # for i in range(9):
-    #     file_ = os.path.join(path, f"ressources/img{i}.jpg")
-    #     jpg_list.append(file_)
-    jpg_list = [os.path.join(path, f"ressources/img{i}.jpg") for i in range(9)]
+    jpg_list = [os.path.join(path, f"img{i}.jpg") for i in range(9)]
 
     images = [Image.open(i) for i in jpg_list]
 
@@ -62,19 +58,13 @@ def _make_header(n, path):
 
     new_im = Image.new('RGB', (total_width, total_height))
 
-    ims_grid = [images[x:x+3] for x in range(0, len(images), 3)]  # noqa: E226
+    file_ = os.path.join(path, f'header{n}-{time.strftime("%Y%m%d-%H%M%S")}.jpg')  # noqa: E501
 
-    file_ = os.path.join(path,
-        f'ressources/header{n}-{time.strftime("%Y%m%d-%H%M%S")}.jpg')  # noqa: E501
-
-    x_offset = 0
-    y_offset = 0
-    for row in ims_grid:
-        for im in row:
-            new_im.paste(im, box=(x_offset, y_offset))
-            x_offset += max_width
-        x_offset = 0
-        y_offset += max_height
+    for index, image in enumerate(images):
+        i, j = divmod(index, 3)
+        x_offset = j * max_width
+        y_offset = i * max_height
+        new_im.paste(image, box=(x_offset, y_offset))
 
     new_im.save(file_)
 
@@ -93,13 +83,17 @@ def get_monthly_url():
     return monthly_url
 
 
-def get_header(n, path):
+def get_header(n):
     """Get header.
 
     n is 1, 2, 3 or 4 for different headers.
     """
+    # Compute path (ie : ./../ressoures/)
+    dirname = os.path.dirname(__file__)  # -> ./
+    ress_path = os.path.join(dirname, os.pardir, "ressources/")  # -> ./../ressources  # noqa:E501
+
     soup = get_soup_html(dctrad_url)
     h_list = _get_header_img(soup, n)
-    _download_img(h_list, path)
-    file_path = _make_header(n, path)
+    _download_img(h_list, ress_path)
+    file_path = _make_header(n, ress_path)
     return file_path
