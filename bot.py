@@ -367,6 +367,7 @@ async def gif(ctx, name):
 
 
 @bot.command()
+@commands.is_owner()
 async def admin(ctx):
     """Help for admin user."""
     embed = discord.Embed(color=0x0000FF)
@@ -374,8 +375,7 @@ async def admin(ctx):
                     value="!gifadd <name> <url> <bool> (bool : public(True) or private(False) )",  # noqa: E501
                     inline=False)
     embed.add_field(name="gifdelete", value="!gifdelete <name>", inline=False)
-    if ctx.author.top_role > bot.guild.get_role(admin_id):
-        await ctx.author.send(embed=embed)
+    await ctx.author.send(embed=embed)
 
 
 @bot.command()
@@ -383,21 +383,17 @@ async def admin(ctx):
 async def gifadd(ctx, name, url, bool):
     """Add gif in gif dictionary and gif json file."""
     name = name.lower()
-    if ctx.author.top_role > bot.guild.get_role(admin_id):
-        my_giflist.gif_add(name, url, bool)
-    else:
-        pass
-
+    bool = bool.lower()
+    my_giflist.gif_add(name, url, bool)
+    await ctx.send(content=f"gif {name} ajouté !",delete_after=2)
 
 @bot.command()
 @commands.is_owner()
 async def gifdelete(ctx, name):
     """Delete gif in gif dictionary and gif json file."""
     name = name.lower()
-    if ctx.author.top_role > bot.guild.get_role(admin_id):
-        my_giflist.gif_delete(name)
-    else:
-        pass
+    my_giflist.gif_delete(name)
+    await ctx.send(content=f"gif {name} supprimé !", delete_after=2)
 
 
 @bot.command()
