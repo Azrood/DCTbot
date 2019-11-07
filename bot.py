@@ -402,6 +402,7 @@ async def admin(ctx):
 async def gifadd(ctx, name, url, bool):
     """Add gif in gif dictionary and gif json file."""
     name = name.lower()
+
     bool = bool.lower()
     my_giflist.gif_add(name, url, bool)
     await ctx.send(content=f"gif {name} ajouté !",delete_after=2)
@@ -521,10 +522,10 @@ async def before_bonjour_madame():
 
 
 @bot.command()
+@commands.is_nsfw()
 async def nsfw(ctx):
     # TODO : doctring
-    if ctx.channel.id == nsfw_channel_id:
-        await ctx.send(content=reddit_nsfw())
+     await ctx.send(content=reddit_nsfw())
 
 @bot.command()
 async def poke(ctx, people):
