@@ -2,27 +2,30 @@
 # -*- coding: utf-8 -*-
 """Awesome Discord Bot."""
 
-import os
-import sys
-import discord
 import asyncio
+import datetime
+import os
 import random
+import sys
+
+import discord
 from discord.ext import commands, tasks
+
+from utils.bonjourmadame import latest_madame
+from utils.comicsblog import get_comicsblog
+from utils.getcomics import getcomics_top_link
+from utils.gif_json import GifJson
+from utils.google import search_google, google_top_link
+from utils.header import get_header, get_monthly_url
+from utils.logs import CommandLog
+from utils.reddit import reddit_nsfw
 from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, nsfw_channel_id, admin_role  # noqa: E501
 from utils.tools import string_is_int, args_separator_for_log_function
 from utils.urban import UrbanSearch
-from utils.getcomics import getcomics_top_link
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
-from utils.comicsblog import get_comicsblog
-from utils.google import search_google, google_top_link
-from utils.gif_json import GifJson
-from utils.bonjourmadame import latest_madame
-from utils.header import get_header, get_monthly_url
-from utils.reddit import reddit_nsfw
-from utils.logs import CommandLog
-import datetime 
 
-bot = commands.Bot(command_prefix='!', help_command=None, description=None, case_insensitive=True)
+bot = commands.Bot(command_prefix='!', help_command=None,
+                   description=None, case_insensitive=True)
 
 urban_logo = "https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5MuDJw8LUbwqZM9BW9oey5I/https/i.imgur.com/VFXr0ID.jpg"  # noqa: E501
 
@@ -59,7 +62,7 @@ help_above = [
     {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'}  # noqa: E501
     ]
 
-poke_help="azrod\nbane\nrun\nsergei\n" #see comment in line 509
+poke_help = "azrod\nbane\nrun\nsergei\n"  # see comment in line 509
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 my_giflist = GifJson("gifs.json")
@@ -499,7 +502,7 @@ async def on_message(ctx):
 @tasks.loop(hours=24)  # will take time as argument when v1.3 is released  # noqa: E501
 async def bonjour_madame():
     """Send daily bonjourmadame."""
-    if 0 <= datetime.date.today().weekday() <= 5:  # check the current day, days are given as numbers where Monday=0 and Sunday=6
+    if 0 <= datetime.date.today().weekday() <= 5:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
         embed = discord.Embed()
         embed.set_image(url=latest_madame())
         embed.set_footer(text="Bonjour Madame")
@@ -512,27 +515,27 @@ async def before_bonjour_madame():
     await bot.wait_until_ready()
 
 
-@bot.command()
-@commands.is_nsfw()
-async def nsfw(ctx):
+# @bot.command()
+# @commands.is_nsfw()
+# async def nsfw(ctx):
     # TODO : doctring
-     await ctx.send(content=reddit_nsfw())
+    # await ctx.send(content=reddit_nsfw())
 
 @bot.command()
 async def poke(ctx, people):
-    """Send card made by Slyrax """
+    """Send card made by Slyrax."""
     people = people.lower()
-    if people == "help" : #probably needs improvements
-        embed=discord.Embed(title="Liste des cartes \nSyntaxe : !poke <nom>",description=poke_help) #use this to get by until improvement
+    if people == "help":  # probably needs improvements
+        embed = discord.Embed(title="Liste des cartes \nSyntaxe : !poke <nom>", description=poke_help)  # use this to get by until improvement  # noqa: E501
         embed.set_footer(text="Merci à Slyrax pour les cartes !")
         await ctx.send(embed=embed)
 
     else:
         dir_path = os.path.dirname(os.path.realpath(__file__))
         card_file = os.path.join(dir_path, f"pictures/cards/{people}.jpg")
-        f = discord.File(fp=card_file, filename=people+".jpg") #discord.File can't handle f-strings apparently
+        f = discord.File(fp=card_file, filename=people+".jpg")  # discord.File can't handle f-strings apparently  # noqa: E501,E226
         embed = discord.Embed()
-        embed.set_image(url="attachment://"+people+".jpg") #better safe than sorry
+        embed.set_image(url="attachment://"+people+".jpg")  # better safe than sorry  # noqa: E501,E226
         await ctx.send(file=f, embed=embed)
 
 @bot.command()

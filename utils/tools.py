@@ -4,6 +4,7 @@ import requests  # lib for going on internet
 from bs4 import BeautifulSoup
 from discord.utils import get as disc_get
 
+
 def string_is_int(string):
     """Return if 'string' is an int or not (bool)."""
     try:
