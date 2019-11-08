@@ -540,7 +540,7 @@ async def poke(ctx, people):
 
 @bot.command()
 @commands.is_owner()
-async def logs(ctx,date, *, args=""):
+async def logs(ctx,date, *args):
     embed = discord.Embed(title="logs",colour=0xe7191f)
     [user,command,channel] = args_separator_for_log_function(bot.guild, args)
     if date == "today":
@@ -582,7 +582,7 @@ async def logs(ctx,date, *, args=""):
                 embed.add_field(name=tuple[0], value=f"used in {tuple[2]}", inline=False)
         else: # in this case, all 3 entries are specified
 
-            #word count(specified) = over 9000
+            #word.count('specified') = over 9000
             # we get the dates and the times where given user used the specified command in the given channel
             embed.set_footer(text=f"{user} used {command} in {channel}")
             for tuple in list_log:

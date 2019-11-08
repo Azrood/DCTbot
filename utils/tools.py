@@ -51,8 +51,7 @@ def args_separator_for_log_function(guild,args):
     """check the args if there are user, channel and command""" 
     commands = ['kick','clear','ban']
     [user,command,channel] = [None,None,None] # They are defaulted to None, if any of them is specified, it will be changed
-    liste = args.split() # split the args into a list
-    for word in liste:
+    for word in args:
         if disc_get(guild.members, name=word) is not None: # if word is a member of the guild
             user = word
         elif disc_get(guild.text_channels, name=word) is not None: # if word is a channel of the guild
