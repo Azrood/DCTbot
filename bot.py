@@ -64,6 +64,7 @@ poke_help="azrod\nbane\nrun\nsergei\n" #see comment in line 509
 dir_path = os.path.dirname(os.path.realpath(__file__))
 my_giflist = GifJson("gifs.json")
 log = CommandLog("logs.json")
+datetime.datetime.strftime("dd/mm/yyyy")
 @bot.event
 async def on_ready():
     """Log in Discord."""
@@ -184,8 +185,8 @@ async def clear(ctx, number):
         await ctx.channel.delete_messages(messages)
         await ctx.send(content=f"J'ai supprimé {nbr_msg} messages",
                        delete_after=5)
-        today = f"{str(datetime.date.today().day)}/{str(datetime.date.today().month)}/{str(datetime.date.today().year)}"
-        time = f"{str(datetime.datetime.now().hour)}h{str(datetime.datetime.now().minute)}m{str(datetime.datetime.now().second)}s"
+        today = datetime.date.today().strftime("%d/%m/%Y")
+        time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
         log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
     else:
         await ctx.send(content=f"Tu n'as pas le pouvoir{ctx.author.mention} !")
@@ -280,8 +281,8 @@ async def kick(ctx):
     if ctx.author.top_role >= bot.role_modo:
         for member in member_list:
             await member.kick()
-        today = f"{str(datetime.date.today().day)}/{str(datetime.date.today().month)}/{str(datetime.date.today().year)}"
-        time = f"{str(datetime.datetime.now().hour)}h{str(datetime.datetime.now().minute)}m{str(datetime.datetime.now().second)}s"
+        today = datetime.date.today().strftime("%d/%m/%Y")
+        time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
         log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
     else:
         await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
@@ -294,8 +295,8 @@ async def ban(ctx):
     if ctx.author.top_role >= bot.role_modo:
         for member in member_list:
             await member.ban(delete_message_days=3)
-        today = f"{str(datetime.date.today().day)}/{str(datetime.date.today().month)}/{str(datetime.date.today().year)}"
-        time = f"{str(datetime.datetime.now().hour)}h{str(datetime.datetime.now().minute)}m{str(datetime.datetime.now().second)}s"
+        today = datetime.date.today().strftime("%d/%m/%Y")
+        time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
         log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
     else:
         await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
@@ -551,7 +552,7 @@ async def logs(ctx,date, *, args=""):
     lists = args_separator_for_log_function(bot.mems, bot.chan, args)
     user,command,channel = lists[0],lists[1],lists[2]
     if date == "today":
-        date= f"{str(datetime.date.today().day)}/{str(datetime.date.today().month)}/{str(datetime.date.today().year)}"
+        date = datetime.date.today().strftime("%d/%m/%Y")
     if log.log_read(date, user, command, channel) is not None:
         list_log = log.log_read(date, user, command, channel)
         if [user,command,channel] == [None,None,None]:
