@@ -19,7 +19,7 @@ from utils.google import search_google, google_top_link
 from utils.header import get_header, get_monthly_url
 from utils.logs import CommandLog
 from utils.reddit import reddit_nsfw
-from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, nsfw_channel_id, admin_role  # noqa: E501
+from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, nsfw_channel_id, admin_role, staff_role, mods_role  # noqa: E501
 from utils.tools import string_is_int, args_separator_for_log_function
 from utils.urban import UrbanSearch
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
@@ -119,25 +119,26 @@ async def help(ctx):
 
 
 @bot.command()
+@commands.has_any_role(*staff_role)
 async def team(ctx):
     """Give 'team' role to user list."""
     member_list = ctx.message.mentions  # une liste d'objets
-    # on regarde si le plus haut role de l'auteur du message est au dessus
-    # du role (ou égal) au role DCT dans la hiérarchie
     counter = 0
-    if ctx.author.top_role >= bot.role_dcteam:
-        if not member_list:
-            pass
-        else:
-            for member in member_list:
-                if bot.role_dcteam in member.roles:  # le counter c'est pour voir si tous les membres mentionnés  # noqa: E501
-                    counter += 1
-                await member.add_roles(bot.role_dcteam)  # sont dans la team, alors on n'affiche pas le message de bienvenue  # noqa: E501
-            if counter == len(member_list):
-                return None
-            await ctx.send(content="Bienvenue dans la Team !")
+    if not member_list:
+        pass
     else:
-        await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
+        for member in member_list:
+            if bot.role_dcteam in member.roles:  # le counter c'est pour voir si tous les membres mentionnés  # noqa: E501
+                counter += 1
+            await member.add_roles(bot.role_dcteam)  # sont dans la team, alors on n'affiche pas le message de bienvenue  # noqa: E501
+        if counter == len(member_list):
+            return None
+        await ctx.send(content="Bienvenue dans la Team !")
+
+@team.error
+async def team_error(ctx, error):
+    """handle error in command !team (MissingAnyRole)"""
+    await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
 
 
 @bot.command()
@@ -168,21 +169,22 @@ async def urban(ctx, *, user_input):
 
 
 @bot.command()
+@commands.has_any_role(*staff_role)
 async def clear(ctx, number):
     """Clear n messages."""
-    # on regarde si le plus haut role de l'auteur est supérieur
-    # ou égal hiérarchiquement au role DCT
-    if ctx.author.top_role >= bot.role_dcteam:
-        nbr_msg = int(number)
-        messages = await ctx.channel.history(limit=nbr_msg + 1).flatten()
-        await ctx.channel.delete_messages(messages)
-        await ctx.send(content=f"J'ai supprimé {nbr_msg} messages",
-                       delete_after=5)
-        today = datetime.date.today().strftime("%d/%m/%Y")
-        time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-        log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
-    else:
-        await ctx.send(content=f"Tu n'as pas le pouvoir{ctx.author.mention} !")
+    nbr_msg = int(number)
+    messages = await ctx.channel.history(limit=nbr_msg + 1).flatten()
+    await ctx.channel.delete_messages(messages)
+    await ctx.send(content=f"J'ai supprimé {nbr_msg} messages",
+                    delete_after=5)
+    today = datetime.date.today().strftime("%d/%m/%Y")
+    time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
+    log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
+
+@clear.error
+async def clear_error(ctx, error):
+    """handle error in !clear command (MissingAnyRole)"""
+    await ctx.send(content=f"Tu n'as pas le pouvoir{ctx.author.mention} !")
 
 
 @bot.command()
@@ -268,31 +270,37 @@ async def comicsblog(ctx, num):
 
 
 @bot.command()
+@commands.has_any_role(*mods_role)
 async def kick(ctx):
     """Kick user."""
     member_list = ctx.message.mentions
-    if ctx.author.top_role >= bot.role_modo:
-        for member in member_list:
-            await member.kick()
-        today = datetime.date.today().strftime("%d/%m/%Y")
-        time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-        log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
-    else:
-        await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
+    for member in member_list:
+        await member.kick()
+    today = datetime.date.today().strftime("%d/%m/%Y")
+    time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
+    log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
+
+@kick.error
+async def kick_error(ctx, error):
+    """handle error in !kick command (MissingAnyRole)"""
+    await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
 
 
 @bot.command()
+@commands.has_any_role(*mods_role)
 async def ban(ctx):
     """Ban user."""
     member_list = ctx.message.mentions
-    if ctx.author.top_role >= bot.role_modo:
-        for member in member_list:
-            await member.ban(delete_message_days=3)
-        today = datetime.date.today().strftime("%d/%m/%Y")
-        time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-        log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
-    else:
-        await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
+    for member in member_list:
+        await member.ban(delete_message_days=3)
+    today = datetime.date.today().strftime("%d/%m/%Y")
+    time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
+    log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
+
+@ban.error
+async def ban_error(ctx, error):
+    """handle error in !ban command (MissingAnyRole)"""
+    await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
 
 
 @bot.command()
