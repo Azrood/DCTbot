@@ -2,6 +2,7 @@
 
 import requests  # lib for going on internet
 from bs4 import BeautifulSoup
+from discord.utils import get as disc_get
 
 def string_is_int(string):
     """Return if 'string' is an int or not (bool)."""
@@ -45,34 +46,17 @@ def get_soup_html(url):
     # BeautifulSoup will transform raw HTML in a tree easy to parse
     return BeautifulSoup(res.text, 'html.parser')
 
-def args_separator_for_log_function(users,chans,args):
+def args_separator_for_log_function(guild,args):
     """check the args if there are user, channel and command""" 
     commands = ['kick','clear','ban']
-    f1,f2,f3 = False,False,False
-    returned_list=[] # in format [user,command,chan]
-    liste = args.split()
+    [user,command,channel] = [None,None,None] # They are defaulted to None, if any of them is specified, it will be changed
+    liste = args.split() # split the args into a list
     for word in liste:
-        if word in users:
-            f1 = True
+        if disc_get(guild.members, name=word) is not None: # if word is a member of the guild
             user = word
-        elif word in commands:
-            f2 = True
-            command = word
-        elif word in chans:
-            f3 = True
+        elif disc_get(guild.text_channels, name=word) is not None: # if word is a channel of the guild
             channel = word
-    if f1:
-        returned_list.append(user)
-    else:
-        returned_list.append(None)
-    if f2:
-        returned_list.append(command)
-    else:
-        returned_list.append(None)
-    if f3:
-        returned_list.append(channel)
-    else:
-        returned_list.append(None)
-
-    return returned_list
-        
+        elif word in commands: # if word is a command
+            command = word
+    return [user, command, channel] # variables not specified in the args are defaulted to None
+    

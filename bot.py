@@ -72,18 +72,9 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-    chans_str=[]
-    mem=[]
     bot.guild = bot.get_guild(dcteam_id)  # se lier au serveur à partir de l'ID
     bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
     bot.role_modo = bot.guild.get_role(modo_role_id)
-    for chan in bot.guild.text_channels:
-        chans_str.append(chan.name)
-    bot.chan = chans_str
-    for member in bot.guild.members:
-        mem.append(member.name)
-    bot.mems = mem
-
 
 @bot.command()
 async def help(ctx):
@@ -549,43 +540,49 @@ async def poke(ctx, people):
 @commands.is_owner()
 async def logs(ctx,date, *, args=""):
     embed = discord.Embed(title="logs",colour=0xe7191f)
-    lists = args_separator_for_log_function(bot.mems, bot.chan, args)
-    user,command,channel = lists[0],lists[1],lists[2]
+    [user,command,channel] = args_separator_for_log_function(bot.guild, args)
     if date == "today":
         date = datetime.date.today().strftime("%d/%m/%Y")
-    if log.log_read(date, user, command, channel) is not None:
-        list_log = log.log_read(date, user, command, channel)
-        if [user,command,channel] == [None,None,None]:
-            for tuple in list_log:
-                embed.add_field(name=tuple[0], value=f"{tuple[1]} used {tuple[2]} in {tuple[3]}", inline=False)
-        elif user is None:
-            if command is None :
+    if log.log_read(date, user, command, channel) is not None: # if it is None, there are no logs on the given date
+        list_log = log.log_read(date, user, command, channel) # to avoid multiple calling
+        # if entries are not specified, then they are None
+        if [user,command,channel] == [None,None,None]: # all 3 entries are None so
+            for tuple in list_log:       # we get a list of tuple in this format [(time,user,command,channel)]
+                embed.add_field(name=tuple[0], value=f"{tuple[1]} used {tuple[2]} in {tuple[3]}", inline=False) # nice embed
+        elif user is None: # user is None (i.e : not specified)
+            if command is None : # so we test for the other entries, here command is None, so channel is specified
                 embed.set_footer(text=channel)
-                for tuple in list_log:
+                for tuple in list_log: # the list_log is in format [(time,user,command)]
                     embed.add_field(name=tuple[0], value=f"{tuple[1]} used {tuple[2]}", inline=False)
-            else:
+            else: # in this case, command and channel are both specified
+                # we get a list of tuple [(time,user,command)] where the command in tuple is the command specified
                 embed.set_footer(text=f"users of {command} in {channel}")
-                for tuple in list_log:
-                    embed.add_field(name=tuple[0], value=f"{tuple[1]}", inline=False)
-        elif command is None:
-            if channel is None:
+                for tuple in list_log: # so we want list of users who used the given command in the specified channel
+                    embed.add_field(name=tuple[0], value=f"{tuple[1]}", inline=False) # nice embed
+        elif command is None: 
+            if channel is None: # if both command and channel are not specified
                 embed.set_footer(text=user)
-                for tuple in list_log:
+                for tuple in list_log: # we get a list of the commands and channels used by the given user
+                    # format [(time,command,channel)]
                     embed.add_field(name=tuple[0], value=f"used {tuple[1]} in {tuple[2]}", inline=False)
-            else:
-                embed.set_footer(text=f"{user} commands in {channel}")
-                for tuple in list_log:
+            else: # channel is specified
+                embed.set_footer(text=f"{user} commands in {channel}") # commands used by the specified user in the given channel
+                for tuple in list_log: # we get only the list of tuples where channels match the specified channel
                     embed.add_field(name=tuple[0], value=f"used {tuple[2]}", inline=False)
-        elif channel is None:
+        elif channel is None: # at this point, if channel is not specified, then both user and command are specified, otherwise it would get
+            # treated in the tests above, so we only get the channels where specified user used given command
             embed.set_footer(text=f"{user} used {command}")
             for tuple in list_log:
                 embed.add_field(name=tuple[0], value=f"used in {tuple[2]}", inline=False)
-        else:
+        else: # in this case, all 3 entries are specified
+
+            #word count(specified) = over 9000
+            # we get the dates and the times where given user used the specified command in the given channel
             embed.set_footer(text=f"{user} used {command} in {channel}")
             for tuple in list_log:
                 embed.add_field(name=tuple[0],value=f"{tuple[1]}", inline=False)
-        await ctx.author.send(embed=embed)
-    else:
+        await ctx.author.send(embed=embed) 
+    else: # no logs in the given date
         await ctx.author.send(content="Rien dans cette date !")
 
 

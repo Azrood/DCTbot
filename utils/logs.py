@@ -142,4 +142,4 @@ class CommandLog:
         else: # if all the entries are not specified (None)
             # returns list of tuples of when all logged users used the commands in the logged channels of a given date
             return self._get_log_day(date) # [(time,user,command,channel)]
-            
+        
