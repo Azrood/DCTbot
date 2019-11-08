@@ -1,14 +1,20 @@
 """Module to handle !gif command (gifs are stored in json file)."""
 import json
+import os
 
 
 class GifJson:
     """Class to handle reading gifs url from json file."""
 
     # init is executed when the object is created
-    def __init__(self, file):
-        """Init object with json file, and read it."""
-        self.file = file
+    def __init__(self, filename):
+        """Init object.
+
+        Read (or create) json file.
+        """
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+
+        self.file = os.path.join(dir_path, filename)
         # if file exists
         try:
             f = open(self.file)
@@ -17,7 +23,7 @@ class GifJson:
         except FileNotFoundError:
             print('File does not exist. Creating.')
             init = {}
-            with open(file, 'w') as outfile:
+            with open(self.file, 'w') as outfile:
                 json.dump(init, outfile)
 
         # read
@@ -60,14 +66,13 @@ class GifJson:
             return None
 
     def get_names_string(self, private=True):
-        """Get multilne string of gifs names.
+        """Get multiline string of gifs names.
 
         If private is true, only public gifs are returned.
 
         """
         if private:
-            new_dict = dict(filter(lambda elem: elem[1]['public'],
-                                   self.gifs.items()))
+            new_dict = {k: v for k, v in self.gifs.items() if v['public']}
         else:
             new_dict = self.gifs
         # Return multiline string with names

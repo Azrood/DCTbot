@@ -2,11 +2,7 @@
 
 import requests  # lib for going on internet
 from bs4 import BeautifulSoup
-
-
-def get_command_input(user_input):
-    """Split user_input into !command args and return args."""
-    return user_input.split(' ', 1)[1]
+from discord.utils import get as disc_get
 
 
 def string_is_int(string):
@@ -50,3 +46,17 @@ def get_soup_html(url):
     res.close()
     # BeautifulSoup will transform raw HTML in a tree easy to parse
     return BeautifulSoup(res.text, 'html.parser')
+
+def args_separator_for_log_function(guild,args):
+    """check the args if there are user, channel and command""" 
+    commands = ['kick','clear','ban']
+    [user,command,channel] = [None,None,None] # They are defaulted to None, if any of them is specified, it will be changed
+    for word in args:
+        if disc_get(guild.members, name=word) is not None: # if word is a member of the guild
+            user = word
+        elif disc_get(guild.text_channels, name=word) is not None: # if word is a channel of the guild
+            channel = word
+        elif word in commands: # if word is a command
+            command = word
+    return [user, command, channel] # variables not specified in the args are defaulted to None
+    

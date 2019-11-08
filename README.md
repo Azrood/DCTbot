@@ -2,11 +2,9 @@
 Discord Bot with multiple features for a community server related to comicbooks.
 
 # Requirements
+
 ```
-pip install requests
-pip install bs4
-pip install discord
-pip install google-api-python-client
+pip install -r requirements.txt
 ```
 ![example](https://raw.githubusercontent.com/Azrood/DCTbot/master/pictures/example.JPG)
 
