@@ -502,12 +502,11 @@ async def before_bonjour_madame():
     await bot.wait_until_ready()
 
 
-@bot.command()
-@commands.is_nsfw()
-async def nsfw(ctx):
+# @bot.command()
+# @commands.is_nsfw()
+# async def nsfw(ctx):
     # TODO : doctring
-    await ctx.send(content=reddit_nsfw())
-
+    # await ctx.send(content=reddit_nsfw())
 
 @bot.command()
 async def poke(ctx, people):
