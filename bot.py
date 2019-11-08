@@ -64,7 +64,6 @@ poke_help="azrod\nbane\nrun\nsergei\n" #see comment in line 509
 dir_path = os.path.dirname(os.path.realpath(__file__))
 my_giflist = GifJson("gifs.json")
 log = CommandLog("logs.json")
-datetime.datetime.strftime("dd/mm/yyyy")
 @bot.event
 async def on_ready():
     """Log in Discord."""
