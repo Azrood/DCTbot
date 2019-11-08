@@ -1,0 +1,10 @@
+{
+    "date": {
+        "time": {
+            "channel" : "channel",
+            "command" : "command",
+            "user" : "user"
+        }
+    }
+
+}

@@ -17,9 +17,10 @@ from utils.getcomics import getcomics_top_link
 from utils.gif_json import GifJson
 from utils.google import search_google, google_top_link
 from utils.header import get_header, get_monthly_url
+from utils.logs import CommandLog
 from utils.reddit import reddit_nsfw
 from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, nsfw_channel_id, admin_role  # noqa: E501
-from utils.tools import string_is_int
+from utils.tools import string_is_int, args_separator_for_log_function
 from utils.urban import UrbanSearch
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 
@@ -65,8 +66,7 @@ poke_help = "azrod\nbane\nrun\nsergei\n"  # see comment in line 509
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 my_giflist = GifJson("gifs.json")
-
-
+log = CommandLog("logs.json")
 @bot.event
 async def on_ready():
     """Log in Discord."""
@@ -77,7 +77,6 @@ async def on_ready():
     bot.guild = bot.get_guild(dcteam_id)  # se lier au serveur à partir de l'ID
     bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
     bot.role_modo = bot.guild.get_role(modo_role_id)
-
 
 @bot.command()
 async def help(ctx):
@@ -179,6 +178,9 @@ async def clear(ctx, number):
         await ctx.channel.delete_messages(messages)
         await ctx.send(content=f"J'ai supprimé {nbr_msg} messages",
                        delete_after=5)
+        today = datetime.date.today().strftime("%d/%m/%Y")
+        time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
+        log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
     else:
         await ctx.send(content=f"Tu n'as pas le pouvoir{ctx.author.mention} !")
 
@@ -272,6 +274,9 @@ async def kick(ctx):
     if ctx.author.top_role >= bot.role_modo:
         for member in member_list:
             await member.kick()
+        today = datetime.date.today().strftime("%d/%m/%Y")
+        time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
+        log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
     else:
         await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
 
@@ -283,6 +288,9 @@ async def ban(ctx):
     if ctx.author.top_role >= bot.role_modo:
         for member in member_list:
             await member.ban(delete_message_days=3)
+        today = datetime.date.today().strftime("%d/%m/%Y")
+        time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
+        log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
     else:
         await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
 
@@ -370,6 +378,7 @@ async def gif(ctx, name):
 
 
 @bot.command()
+@commands.is_owner()
 async def admin(ctx):
     """Help for admin user."""
     embed = discord.Embed(color=0x0000FF)
@@ -377,8 +386,9 @@ async def admin(ctx):
                     value="!gifadd <name> <url> <bool> (bool : public(True) or private(False) )",  # noqa: E501
                     inline=False)
     embed.add_field(name="gifdelete", value="!gifdelete <name>", inline=False)
-    if ctx.author.top_role > bot.guild.get_role(admin_id):
-        await ctx.author.send(embed=embed)
+    embed.add_field(name="log_latest", value="!log_latest <int>", inline=False)
+    embed.add_field(name="logs", value="!logs <date> <user> <command> <channel>\n args are optional for filtering, for today, say <date> = today. Otherwise date=dd/mm/yyyy", inline=False)
+    await ctx.author.send(embed=embed)
 
 
 @bot.command()
@@ -386,8 +396,10 @@ async def admin(ctx):
 async def gifadd(ctx, name, url, bool):
     """Add gif in gif dictionary and gif json file."""
     name = name.lower()
-    my_giflist.gif_add(name, url, bool)
 
+    bool = bool.lower()
+    my_giflist.gif_add(name, url, bool)
+    await ctx.send(content=f"gif {name} ajouté !",delete_after=2)
 
 @bot.command()
 @commands.is_owner()
@@ -395,6 +407,7 @@ async def gifdelete(ctx, name):
     """Delete gif in gif dictionary and gif json file."""
     name = name.lower()
     my_giflist.gif_delete(name)
+    await ctx.send(content=f"gif {name} supprimé !", delete_after=2)
 
 
 @bot.command()
@@ -524,5 +537,69 @@ async def poke(ctx, people):
         embed = discord.Embed()
         embed.set_image(url="attachment://"+people+".jpg")  # better safe than sorry  # noqa: E501,E226
         await ctx.send(file=f, embed=embed)
+
+@bot.command()
+@commands.is_owner()
+async def logs(ctx,date, *, args=""):
+    embed = discord.Embed(title="logs",colour=0xe7191f)
+    [user,command,channel] = args_separator_for_log_function(bot.guild, args)
+    if date == "today":
+        date = datetime.date.today().strftime("%d/%m/%Y")
+    if log.log_read(date, user, command, channel) is not None: # if it is None, there are no logs on the given date
+        list_log = log.log_read(date, user, command, channel) # to avoid multiple calling
+        # if entries are not specified, then they are None
+        if [user,command,channel] == [None,None,None]: # all 3 entries are None so
+            for tuple in list_log:       # we get a list of tuple in this format [(time,user,command,channel)]
+                embed.add_field(name=tuple[0], value=f"{tuple[1]} used {tuple[2]} in {tuple[3]}", inline=False) # nice embed
+        elif user is None: # user is None (i.e : not specified)
+            if command is None : # so we test for the other entries, here command is None, so channel is specified
+                embed.set_footer(text=channel)
+                for tuple in list_log: # the list_log is in format [(time,user,command)]
+                    embed.add_field(name=tuple[0], value=f"{tuple[1]} used {tuple[2]}", inline=False)
+            elif channel is not None: # in this case, command is specified
+                # we get a list of tuple [(time,user,command)] where the command in tuple is the command specified
+                embed.set_footer(text=f"users of {command} in {channel}")
+                for tuple in list_log: # so we want list of users who used the given command in the specified channel
+                    embed.add_field(name=tuple[0], value=f"{tuple[1]}", inline=False) # nice embed
+            else: # this case is if user was not specified, and command not specified
+                embed.set_footer(text=f"users of {command}") 
+                for tuple in list_log:
+                    embed.add_field(name=tuple[0], value=f"{tuple[1]} in {tuple[2]}", inline=False)
+        elif command is None: # user was specified 
+            if channel is None: # if both command and channel are not specified
+                embed.set_footer(text=user) # then only user was specified
+                for tuple in list_log: # we get a list of the commands and channels used by the given user
+                    # format [(time,command,channel)]
+                    embed.add_field(name=tuple[0], value=f"used {tuple[1]} in {tuple[2]}", inline=False)
+            else: # channel is specified
+                embed.set_footer(text=f"{user} commands in {channel}") # commands used by the specified user in the given channel
+                for tuple in list_log: # we get only the list of tuples where channels match the specified channel
+                    embed.add_field(name=tuple[0], value=f"used {tuple[2]}", inline=False)
+        elif channel is None: # at this point, if channel is not specified, then both user and command are specified, otherwise it would get
+            # treated in the tests above, so we only get the channels where specified user used given command
+            embed.set_footer(text=f"{user} used {command}")
+            for tuple in list_log:
+                embed.add_field(name=tuple[0], value=f"used in {tuple[2]}", inline=False)
+        else: # in this case, all 3 entries are specified
+
+            #word count(specified) = over 9000
+            # we get the dates and the times where given user used the specified command in the given channel
+            embed.set_footer(text=f"{user} used {command} in {channel}")
+            for tuple in list_log:
+                embed.add_field(name=tuple[0],value=f"{tuple[1]}", inline=False)
+        await ctx.author.send(embed=embed) 
+    else: # no logs in the given date
+        await ctx.author.send(content="Rien dans cette date !")
+
+
+
+@bot.command()
+@commands.is_owner()
+async def log_latest(ctx,numb=10):
+    embed=discord.Embed(title="latest logs")
+    latest = log.log_latest(int(numb))
+    for i in latest:
+        embed.add_field(name='\u200B',value=i,inline=False)
+    await ctx.author.send(embed=embed)
 bonjour_madame.start()
 bot.run(token)
