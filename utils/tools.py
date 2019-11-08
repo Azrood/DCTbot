@@ -3,6 +3,7 @@
 import requests  # lib for going on internet
 from bs4 import BeautifulSoup
 
+
 def string_is_int(string):
     """Return if 'string' is an int or not (bool)."""
     try:
