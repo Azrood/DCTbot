@@ -179,7 +179,7 @@ async def clear(ctx, number):
                     delete_after=5)
     today = datetime.date.today().strftime("%d/%m/%Y")
     time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-    log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
+    log.log_write(today,time,ctx.channel.name.lower(),ctx.command.name.lower(),ctx.author.name.lower())
 
 @clear.error
 async def clear_error(ctx, error):
@@ -278,7 +278,7 @@ async def kick(ctx):
         await member.kick()
     today = datetime.date.today().strftime("%d/%m/%Y")
     time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-    log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
+    log.log_write(today,time,ctx.channel.name.lower(),ctx.command.name.lower(),ctx.author.name.lower())
 
 @kick.error
 async def kick_error(ctx, error):
@@ -295,7 +295,7 @@ async def ban(ctx):
         await member.ban(delete_message_days=3)
     today = datetime.date.today().strftime("%d/%m/%Y")
     time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-    log.log_write(today,time,ctx.channel.name,ctx.command.name,ctx.author.name)
+    log.log_write(today,time,ctx.channel.name.lower(),ctx.command.name.lower(),ctx.author.name.lower())
 
 @ban.error
 async def ban_error(ctx, error):
