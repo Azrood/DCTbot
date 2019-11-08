@@ -24,7 +24,15 @@ from utils.tools import string_is_int, args_separator_for_log_function
 from utils.urban import UrbanSearch
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 
-bot = commands.Bot(command_prefix='!', help_command=None,
+prefix = '!'
+
+if len(sys.argv) > 1:
+    if sys.argv[1] == "--debug":
+        print("You are in debug mode.")
+        print("Prefix is now '?'")
+        prefix = '?'
+
+bot = commands.Bot(command_prefix=prefix, help_command=None,
                    description=None, case_insensitive=True)
 
 urban_logo = "https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5MuDJw8LUbwqZM9BW9oey5I/https/i.imgur.com/VFXr0ID.jpg"  # noqa: E501
@@ -486,7 +494,7 @@ async def on_message(ctx):
     embed = discord.Embed()
     for key in my_giflist.gifs.keys():
         # Added simple hardcoded prefix
-        command = '!' + key
+        command = prefix + key
         if ctx.content.lower() == command:
             found = True
             try:
