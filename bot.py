@@ -553,14 +553,18 @@ async def logs(ctx,date, *, args=""):
                 embed.set_footer(text=channel)
                 for tuple in list_log: # the list_log is in format [(time,user,command)]
                     embed.add_field(name=tuple[0], value=f"{tuple[1]} used {tuple[2]}", inline=False)
-            else: # in this case, command and channel are both specified
+            elif channel is not None: # in this case, command is specified
                 # we get a list of tuple [(time,user,command)] where the command in tuple is the command specified
                 embed.set_footer(text=f"users of {command} in {channel}")
                 for tuple in list_log: # so we want list of users who used the given command in the specified channel
                     embed.add_field(name=tuple[0], value=f"{tuple[1]}", inline=False) # nice embed
-        elif command is None: 
+            else: # this case is if user was not specified, and command not specified
+                embed.set_footer(text=f"users of {command}") 
+                for tuple in list_log:
+                    embed.add_field(name=tuple[0], value=f"{tuple[1]} in {tuple[2]}", inline=False)
+        elif command is None: # user was specified 
             if channel is None: # if both command and channel are not specified
-                embed.set_footer(text=user)
+                embed.set_footer(text=user) # then only user was specified
                 for tuple in list_log: # we get a list of the commands and channels used by the given user
                     # format [(time,command,channel)]
                     embed.add_field(name=tuple[0], value=f"used {tuple[1]} in {tuple[2]}", inline=False)
