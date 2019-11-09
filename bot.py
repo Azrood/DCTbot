@@ -518,7 +518,7 @@ async def on_message(ctx):
 @tasks.loop(hours=24)  # will take time as argument when v1.3 is released  # noqa: E501
 async def bonjour_madame():
     """Send daily bonjourmadame."""
-    if 0 <= datetime.date.today().weekday() <= 5:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
+    if 0 <= datetime.date.today().weekday() <= 4:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
         embed = discord.Embed()
         embed.set_image(url=latest_madame())
         embed.set_footer(text="Bonjour Madame")
