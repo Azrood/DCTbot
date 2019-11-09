@@ -91,55 +91,55 @@ class CommandLog:
         return self._get_dates(num)
 
     def log_read(self, date, user, command, channel):
-        """returns logs in a list depending on the parameters passed.""" 
+        """Return logs in a list depending on the parameters passed."""
         # channel, user and command will be called "entries"
-        if date not in self._get_dates(): #if date is not in the logs, then there are no logs :)
+
+        args_list = [user, command, channel]
+        bin_array = [int(i is not None) for i in args_list]  # convert ["foo", None, None] to [1, 0, 0]  # noqa:E501
+        n = int("".join(str(x) for x in bin_array), 2)  # binary array to int
+
+        if date not in self._get_dates():  # if date is not in the logs, then there are no logs :)
             return None
-        # Note that if entries are not specified, they are None
-        elif channel is not None and user is not None and command is not None: #if all 3 entries are specified
-            return self._get_date_time(user, command, channel) # return a list of tuple [(date,time),(date,time)]
-        elif channel is not None : # if channel is specified
-            if user is None and command is None: # user and command are not specified
-                # returns the users who used any logged command in the specified channnel
-                return self._get_channel(date,channel)  # [(time,user,command),(time,user,command)]
-            elif user is None: # if user is not specified, then command was specified
-                sorry = self._get_channel(date,channel) # just to avoid calling the function multiple times
-                # below is a list of tuples whose commands only the specified command
-                tired = [ tuple for tuple in sorry if tuple[2] == command ]
-            elif command is None: # command is not specified so user is specified
-                sorry = self._get_channel(date,channel) 
-                # below is a list of tuples whose users are only the specified user
-                tired = [ tuple for tuple in sorry if tuple[1] == user ]
-            return tired
-        elif command is not None: # command is specified
-            if user is None and channel is None: # but user and channel are not
-                # so returns a list of tuples with all users who used the specified command in any channel
-                return self._get_command(date,command) # [(time,user,channel),(time,user,channel)]
-            elif channel is None: # channel is None, so user is specified
-                sorry = self._get_command(date,command)
-                # list of tuples whose users are only the specified user
-                tired = [ tuple for tuple in sorry if tuple[1] == user ]
-                # at this point I think you got the idea but I'll go one :)
-                # by the way, list/dict comprehension is fucking amazing
-            elif user is None: # user is None so channel is specified
-                sorry = self._get_command(date,command)
-                # list of tuples whose channels are only the specified channel
-                tired = [tuple for tuple in sorry if tuple[2] == channel ]
-            return tired
-        elif user is not None : # user was specified
-            if channel is None and command is None: # but channel and command were not
-                # so we return a list of tuple with the commands used and the channels where they were used
-                return self._get_user(date,user) # [(time,command,channel),(time,command,channel)]
-            elif channel is None: # channel is None so command was specified
-                sorry = self._get_user(date,user)
-                # list of tuples whose commands are only the specified command
-                tired = [ tuple for tuple in sorry if tuple[1] == command ]
-            elif command is None: # command is None so channel is specified
-                sorry = self._get_user(date,user)
-                # list of tuples whose channels are only the specified channel
-                tired = [ tuple for tuple in sorry if tuple[2] == channel ]
-            return tired
-        else: # if all the entries are not specified (None)
+
+        elif n == 0:  # [None, None, None]
             # returns list of tuples of when all logged users used the commands in the logged channels of a given date
-            return self._get_log_day(date) # [(time,user,command,channel)]
-        
+            return self._get_log_day(date)  # [(time,user,command,channel)]
+
+        elif n == 1:  # [user, None, None]
+            return self._get_user(date, user)  # [(time,command,channel),(time,command,channel)]
+
+        elif n == 2:  # [None, command, None]
+            return self._get_command(date, command)  # [(time,user,channel),(time,user,channel)]
+
+        elif n == 3:  # [user, command, None]
+            tmp = self._get_command(date, command)
+            # list of tuples whose users are only the specified user
+            return [tuple_ for tuple_ in tmp if tuple_[1] == user]
+            # or
+            # sorry = self._get_user(date,user)
+            # # list of tuples whose commands are only the specified command
+            # return [ tuple for tuple in sorry if tuple[1] == command ]
+
+        elif n == 4:  # [None, None, channel]
+            return self._get_channel(date, channel)  # [(time,user,command),(time,user,command)]
+
+        elif n == 5:  # [user, None, channel]
+            tmp = self._get_channel(date, channel)
+            # below is a list of tuples whose users are only the specified user
+            return [tuple_ for tuple_ in tmp if tuple_[1] == user]
+            # or
+            # sorry = self._get_user(date,user)
+            # list of tuples whose channels are only the specified channel
+            # return [ tuple for tuple in sorry if tuple[2] == channel ]
+
+        elif n == 6:  # [None, command, channel]
+            tmp = self._get_channel(date, channel)  # just to avoid calling the function multiple times
+            # below is a list of tuples whose commands only the specified command
+            return [tuple_ for tuple_ in tmp if tuple_[2] == command]
+            # or :
+            # tmp = self._get_command(date, command)
+            # # list of tuples whose channels are only the specified channel
+            # return [tuple_ for tuple_ in sorry if tuple_[2] == channel]
+
+        elif n == 7:  # [user, command, channel]
+            return self._get_date_time(user, command, channel)  # return a list of tuple [(date,time),(date,time)]
