@@ -105,23 +105,23 @@ class CommandLog:
             # returns list of tuples of when all logged users used the commands in the logged channels of a given date
             return self._get_log_day(date)  # [(time,user,command,channel)]
 
-        elif n == 1:  # [user, None, None]
-            return self._get_user(date, user)  # [(time,command,channel),(time,command,channel)]
+        elif n == 1:  # [None, None, channel]
+            return self._get_channel(date, channel)  # [(time,user,command),(time,user,command)]
 
         elif n == 2:  # [None, command, None]
             return self._get_command(date, command)  # [(time,user,channel),(time,user,channel)]
 
-        elif n == 3:  # [user, command, None]
-            tmp = self._get_command(date, command)
-            # list of tuples whose users are only the specified user
-            return [tuple_ for tuple_ in tmp if tuple_[1] == user]
-            # or
-            # sorry = self._get_user(date,user)
-            # # list of tuples whose commands are only the specified command
-            # return [ tuple for tuple in sorry if tuple[1] == command ]
+        elif n == 3:  # [None, command, channel]
+            tmp = self._get_channel(date, channel)  # just to avoid calling the function multiple times
+            # below is a list of tuples whose commands only the specified command
+            return [tuple_ for tuple_ in tmp if tuple_[2] == command]
+            # or :
+            # tmp = self._get_command(date, command)
+            # # list of tuples whose channels are only the specified channel
+            # return [tuple_ for tuple_ in sorry if tuple_[2] == channel]
 
-        elif n == 4:  # [None, None, channel]
-            return self._get_channel(date, channel)  # [(time,user,command),(time,user,command)]
+        elif n == 4:  # [user, None, None]
+            return self._get_user(date, user)  # [(time,command,channel),(time,command,channel)]
 
         elif n == 5:  # [user, None, channel]
             tmp = self._get_channel(date, channel)
@@ -132,14 +132,14 @@ class CommandLog:
             # list of tuples whose channels are only the specified channel
             # return [ tuple for tuple in sorry if tuple[2] == channel ]
 
-        elif n == 6:  # [None, command, channel]
-            tmp = self._get_channel(date, channel)  # just to avoid calling the function multiple times
-            # below is a list of tuples whose commands only the specified command
-            return [tuple_ for tuple_ in tmp if tuple_[2] == command]
-            # or :
-            # tmp = self._get_command(date, command)
-            # # list of tuples whose channels are only the specified channel
-            # return [tuple_ for tuple_ in sorry if tuple_[2] == channel]
+        elif n == 6:  # [user, command, None]
+            tmp = self._get_command(date, command)
+            # list of tuples whose users are only the specified user
+            return [tuple_ for tuple_ in tmp if tuple_[1] == user]
+            # or
+            # sorry = self._get_user(date,user)
+            # # list of tuples whose commands are only the specified command
+            # return [ tuple for tuple in sorry if tuple[1] == command ]
 
         elif n == 7:  # [user, command, channel]
             return self._get_date_time(user, command, channel)  # return a list of tuple [(date,time),(date,time)]

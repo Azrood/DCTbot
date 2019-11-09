@@ -53,7 +53,7 @@ def args_separator_for_log_function(guild,args):
     [user,command,channel] = [None,None,None] # They are defaulted to None, if any of them is specified, it will be changed
     for word in args:
         if disc_get(guild.members, name=word) is not None: # if word is a member of the guild
-            user = word
+            user = word.lower()
         elif disc_get(guild.text_channels, name=word) is not None: # if word is a channel of the guild
             channel = word
         elif word in commands: # if word is a command

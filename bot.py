@@ -592,35 +592,35 @@ async def logs(ctx, date, *args):
             for v in list_log:
                 embed.add_field(name=v[0], value=f"{v[1]} used {v[2]} in {v[3]}", inline=False)  # nice embed
 
-        elif n == 1:  # [user, None, None]
-            embed.set_footer(text=user)
+        elif n == 1:  # [None, None, channel]
+            embed.set_footer(text=channel)
             for v in list_log:
-                embed.add_field(name=v[0], value=f"used {v[1]} in {v[2]}", inline=False)
+                embed.add_field(name=v[0], value=f"{v[1]} used {v[2]}", inline=False)
 
         elif n == 2:  # [None, command, None]
             embed.set_footer(text=f"users of {command}")
             for v in list_log:
                 embed.add_field(name=v[0], value=f"{v[1]} in {v[2]}", inline=False)
 
-        elif n == 3:  # [user, command, None]
-            embed.set_footer(text=f"{user} used {command}")
+        elif n == 3:  # [None, command, channel]
+            embed.set_footer(text=f"users of {command} in {channel}")
             for v in list_log:
-                embed.add_field(name=v[0], value=f"used in {v[2]}", inline=False)
+                embed.add_field(name=v[0], value=f"{v[1]}", inline=False)
 
-        elif n == 4:  # [None, None, channel]
-            embed.set_footer(text=channel)
+        elif n == 4:  # [user, None, None]
+            embed.set_footer(text=user)
             for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]} used {v[2]}", inline=False)
+                embed.add_field(name=v[0], value=f"used {v[1]} in {v[2]}", inline=False)
 
         elif n == 5:  # [user, None, channel]
             embed.set_footer(text=f"{user} commands in {channel}")
             for v in list_log:
                 embed.add_field(name=v[0], value=f"used {v[2]}", inline=False)
 
-        elif n == 6:  # [None, command, channel]
-            embed.set_footer(text=f"users of {command} in {channel}")
+        elif n == 6:  # [user, command, None]
+            embed.set_footer(text=f"{user} used {command}")
             for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]}", inline=False)
+                embed.add_field(name=v[0], value=f"used in {v[2]}", inline=False)
 
         else:  # [user, command, channel]
             embed.set_footer(text=f"{user} used {command} in {channel}")
