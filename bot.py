@@ -67,7 +67,8 @@ help_team = [
     ]
 help_above = [
     {'name': 'kick', 'value': 'kick la(les) personne(s) mentionnée(s)\n (syntaxe : !kick [@membre] (optionel)[@membre2]...'},  # noqa: E501
-    {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'}  # noqa: E501
+    {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'},  # noqa: E501
+    {'name': 'nomorespoil', 'value': 'spam des "..." pour cacher les spoils'}
     ]
 
 poke_help = "azrod\nbane\nrun\nsergei\n"  # see comment in line 509
@@ -518,7 +519,7 @@ async def on_message(ctx):
 @tasks.loop(hours=24)  # will take time as argument when v1.3 is released  # noqa: E501
 async def bonjour_madame():
     """Send daily bonjourmadame."""
-    if 0 <= datetime.date.today().weekday() <= 5:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
+    if 0 <= datetime.date.today().weekday() <= 4:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
         embed = discord.Embed()
         embed.set_image(url=latest_madame())
         embed.set_footer(text="Bonjour Madame")
@@ -617,5 +618,15 @@ async def log_latest(ctx,numb=10):
     for i in latest:
         embed.add_field(name='\u200B',value=i,inline=False)
     await ctx.author.send(embed=embed)
+
+
+@bot.command()
+@commands.has_any_role(*mods_role)
+async def nomorespoil(ctx):
+    """Spam dots to clear potential spoils."""
+    # TODO  : add help
+    await ctx.send("\n".join(["..." for i in range(50)]))
+
+
 bonjour_madame.start()
 bot.run(token)
