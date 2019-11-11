@@ -39,7 +39,7 @@ def getcomics_directlink(comic_url):
     # We follow temp_url to find final URL
     time.sleep(1)
 
-    res2 = requests.get(temp_url, allow_redirects=False, stream=True, timeout=3)
+    res2 = requests.get(temp_url, allow_redirects=False, stream=True, timeout=3)  # noqa:E501
     res2.close()
 
     if res2.status_code == 200:

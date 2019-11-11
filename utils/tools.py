@@ -2,7 +2,7 @@
 
 import requests  # lib for going on internet
 from bs4 import BeautifulSoup
-from discord.utils import get as disc_get
+# from discord.utils import get as disc_get
 from discord.utils import find as disc_find
 
 
@@ -48,18 +48,19 @@ def get_soup_html(url):
     # BeautifulSoup will transform raw HTML in a tree easy to parse
     return BeautifulSoup(res.text, 'html.parser')
 
-def args_separator_for_log_function(guild,args):
-    """check the args if there are user, channel and command""" 
-    commands = ['kick','clear','ban']
-    [user,command,channel] = [None,None,None] # They are defaulted to None, if any of them is specified, it will be changed
+
+def args_separator_for_log_function(guild, args):
+    """Check the args if there are user, channel and command."""
+    commands = ['kick', 'clear', 'ban']
+    [user, command, channel] = [None, None, None]  # They are defaulted to None, if any of them is specified, it will be changed  # noqa:E501
     for word in args:
-        # if disc_get(guild.members, name=word) is not None: # if word is a member of the guild
-        if disc_find(lambda m: m.name.lower() == word.lower(), guild.members) is not None:  # same, but case insensitive
+        # if disc_get(guild.members, name=word) is not None: # if word is a member of the guild  # noqa:E501
+        if disc_find(lambda m: m.name.lower() == word.lower(), guild.members) is not None:  # same, but case insensitive  # noqa:E501
             user = word.lower()
-        # elif disc_get(guild.text_channels, name=word) is not None: # if word is a channel of the guild
-        elif disc_find(lambda t: t.name.lower() == word.lower(), guild.text_channels) is not None:  # same, but case insensitive
+        # elif disc_get(guild.text_channels, name=word) is not None: # if word is a channel of the guild  # noqa:E501
+        elif disc_find(lambda t: t.name.lower() == word.lower(), guild.text_channels) is not None:  # same, but case insensitive  # noqa:E501
             channel = word.lower()
         elif word in commands:  # if word is a command
             command = word.lower()
-    return [user, command, channel]  # variables not specified in the args are defaulted to None
-    
+    # variables not specified in the args are defaulted to None
+    return [user, command, channel]
