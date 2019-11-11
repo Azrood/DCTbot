@@ -530,6 +530,7 @@ async def bonjour_madame():
 async def before_bonjour_madame():
     # TODO : doctring
     await bot.wait_until_ready()
+    await asyncio.sleep(37800)  # Wait 10hours 30min, to lauch at 10:30AM
 
 
 # @bot.command()
