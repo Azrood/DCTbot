@@ -1,6 +1,10 @@
-"""Module to handle logging for moderator commands (kick,ban,clear) and reading logs (logs are stored in json file)"""
+"""Module to handle logging for moderator commands (kick,ban,clear).
+
+Write and read logs in json file.
+"""
 import json
 import os
+
 
 class CommandLog:
     """Class to handle reading and writing logs in json file."""
@@ -33,61 +37,71 @@ class CommandLog:
             data = json.load(json_file)
         self.logs = data
         return data
-    
+
     def _file_write(self, data):
-        with open(self.file,'w') as outfile:
+        with open(self.file, 'w') as outfile:
             json.dump(data, outfile, sort_keys=True, indent=4)
 
     def _get_dates(self, num=10):
-            days = list(self.logs.keys())
-            return days[:num]
+        days = list(self.logs.keys())
+        return days[:num]
 
     def _get_channel(self, date, channel):
         try:
-            return [ (k,v['user'],v['command']) for k,v in self.logs[date].items() if v['channel'] == channel ]
+            return [(k, v['user'], v['command'])
+                    for k, v in self.logs[date].items()
+                    if v['channel'] == channel]
         except KeyError:
             return None
 
     def _get_command(self, date, command):
         try:
-            return [ (k,v['user'],v['channel']) for k,v in self.logs[date].items() if v['command'] == command ]
+            return [(k, v['user'], v['channel'])
+                    for k, v in self.logs[date].items()
+                    if v['command'] == command]
         except KeyError:
             return None
 
     def _get_user(self, date, user):
         try:
-            return [ (k,v["command"],v["channel"]) for k,v in self.logs[date].items() if v['user'] == user ]
+            return [(k, v["command"], v["channel"])
+                    for k, v in self.logs[date].items() if v['user'] == user]
         except KeyError:
             return None
-    
+
     def _get_log_day(self, date):
         try:
-            return [ (k,v["user"],v["command"],v["channel"]) for k,v in self.logs[date].items()]
+            return [(k, v["user"], v["command"], v["channel"])
+                    for k, v in self.logs[date].items()]
         except KeyError:
             return None
 
-    def _get_date_time(self,user,command,channel):
+    def _get_date_time(self, user, command, channel):
         try:
-            return [(k,time) for k,v in self.logs.items() for time in v.keys()  if {'channel':channel,'user':user,'command':command} in v.values() ]
+            return [(k, time) for k, v in self.logs.items()for time in v.keys()
+                    if {'channel': channel, 'user': user, 'command': command} in v.values()]  # noqa:E501
         except KeyError:
             return None
 
-    def log_write(self, date, time, channel, command,user):
-        """write logs in json file. All parameters are `str`
-        
-        `date` in format \'dd/mm/yyyy\' 
+    def log_write(self, date, time, channel, command, user):
+        """Write logs in json file. All parameters are `str`.
 
-        `time` in format \'24h60m60s\'
+        `date` in format 'dd/mm/yyyy'
+
+        `time` in format '24h60m60s'
         """
-        new_entry = {date:{time:{"channel": channel,"command":command,"user":user}}}
-        if date in self.logs.keys() :
+        new_entry = {
+            date: {time: {"channel": channel, "command": command, "user": user}}  # noqa:E501
+        }
+
+        if date in self.logs.keys():
             self.logs[date].update(new_entry[date])
         else:
             self.logs.update(new_entry)
         self._file_write(self.logs)
-    
+
     def log_latest(self, num=10):
-        """return 'num' latest dates in the log file. Default to 10"""
+        """Return 'num' latest dates in the log file. Default to 10."""
         return self._get_dates(num)
 
     def log_read(self, date, user, command, channel):

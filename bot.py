@@ -19,7 +19,9 @@ from utils.google import search_google, google_top_link
 from utils.header import get_header, get_monthly_url
 from utils.logs import CommandLog
 from utils.reddit import reddit_nsfw
-from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id, dcteam_category_id, admin_id, nsfw_channel_id, admin_role, staff_role, mods_role  # noqa: E501
+from utils.secret import (token, dcteam_role_id, dcteam_id, modo_role_id,
+                          dcteam_category_id, nsfw_channel_id,
+                          admin_role, staff_role, mods_role)
 from utils.tools import string_is_int, args_separator_for_log_function
 from utils.urban import UrbanSearch
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
@@ -87,6 +89,7 @@ async def on_ready():
     bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
     bot.role_modo = bot.guild.get_role(modo_role_id)
 
+
 @bot.command()
 async def help(ctx):
     """Display available commands."""
@@ -144,9 +147,10 @@ async def team(ctx):
             return None
         await ctx.send(content="Bienvenue dans la Team !")
 
+
 @team.error
 async def team_error(ctx, error):
-    """handle error in command !team (MissingAnyRole)"""
+    """Handle error in command !team (MissingAnyRole)."""
     await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
 
 
@@ -184,15 +188,18 @@ async def clear(ctx, number):
     nbr_msg = int(number)
     messages = await ctx.channel.history(limit=nbr_msg + 1).flatten()
     await ctx.channel.delete_messages(messages)
-    await ctx.send(content=f"J'ai supprimé {nbr_msg} messages",
-                    delete_after=5)
+    await ctx.send(content=f"J'ai supprimé {nbr_msg} messages", delete_after=5)
     today = datetime.date.today().strftime("%d/%m/%Y")
     time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-    log.log_write(today,time,ctx.channel.name.lower(),ctx.command.name.lower(),ctx.author.name.lower())
+    log.log_write(today, time,
+                  ctx.channel.name.lower(),
+                  ctx.command.name.lower(),
+                  ctx.author.name.lower())
+
 
 @clear.error
 async def clear_error(ctx, error):
-    """handle error in !clear command (MissingAnyRole)"""
+    """Handle error in !clear command (MissingAnyRole)."""
     await ctx.send(content=f"Tu n'as pas le pouvoir{ctx.author.mention} !")
 
 
@@ -287,11 +294,15 @@ async def kick(ctx):
         await member.kick()
     today = datetime.date.today().strftime("%d/%m/%Y")
     time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-    log.log_write(today,time,ctx.channel.name.lower(),ctx.command.name.lower(),ctx.author.name.lower())
+    log.log_write(today, time,
+                  ctx.channel.name.lower(),
+                  ctx.command.name.lower(),
+                  ctx.author.name.lower())
+
 
 @kick.error
 async def kick_error(ctx, error):
-    """handle error in !kick command (MissingAnyRole)"""
+    """Handle error in !kick command (MissingAnyRole)."""
     await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
 
 
@@ -304,11 +315,15 @@ async def ban(ctx):
         await member.ban(delete_message_days=3)
     today = datetime.date.today().strftime("%d/%m/%Y")
     time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-    log.log_write(today,time,ctx.channel.name.lower(),ctx.command.name.lower(),ctx.author.name.lower())
+    log.log_write(today, time,
+                  ctx.channel.name.lower(),
+                  ctx.command.name.lower(),
+                  ctx.author.name.lower())
+
 
 @ban.error
 async def ban_error(ctx, error):
-    """handle error in !ban command (MissingAnyRole)"""
+    """Handle error in !ban command (MissingAnyRole)."""
     await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
 
 
@@ -404,7 +419,7 @@ async def admin(ctx):
                     inline=False)
     embed.add_field(name="gifdelete", value="!gifdelete <name>", inline=False)
     embed.add_field(name="log_latest", value="!log_latest <int>", inline=False)
-    embed.add_field(name="logs", value="!logs <date> <user> <command> <channel>\n args are optional for filtering, for today, say <date> = today. Otherwise date=dd/mm/yyyy", inline=False)
+    embed.add_field(name="logs", value="!logs <date> <user> <command> <channel>\n args are optional for filtering, for today, say <date> = today. Otherwise date=dd/mm/yyyy", inline=False)  # noqa:E501
     await ctx.author.send(embed=embed)
 
 
@@ -416,7 +431,8 @@ async def gifadd(ctx, name, url, bool):
 
     bool = bool.lower()
     my_giflist.gif_add(name, url, bool)
-    await ctx.send(content=f"gif {name} ajouté !",delete_after=2)
+    await ctx.send(content=f"gif {name} ajouté !", delete_after=2)
+
 
 @bot.command()
 @commands.is_owner()
@@ -528,7 +544,7 @@ async def bonjour_madame():
 
 @bonjour_madame.before_loop
 async def before_bonjour_madame():
-    # TODO : doctring
+    """Intiliaze bonjour_madame loop."""
     await bot.wait_until_ready()
 
 
@@ -583,7 +599,7 @@ async def logs(ctx, date, *args):
 
     user, command, channel = args_list
 
-    if log.log_read(date, *args_list) is not None:  # if it is None, there are no logs on the given date
+    if log.log_read(date, *args_list) is not None:  # if it is None, there are no logs on the given date  # noqa:E501
 
         # we get a list of tuple in this format [(time,user,command,channel)]
         list_log = log.log_read(date, *args_list)  # to avoid multiple calling
@@ -591,17 +607,17 @@ async def logs(ctx, date, *args):
         # if entries are not specified, then they are None
         if n == 0:  # [None, None, None]
             for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]} used {v[2]} in {v[3]}", inline=False)  # nice embed
+                embed.add_field(name=v[0], value=f"{v[1]} used {v[2]} in {v[3]}", inline=False)  # nice embed  # noqa:E501
 
         elif n == 1:  # [None, None, channel]
             embed.set_footer(text=channel)
             for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]} used {v[2]}", inline=False)
+                embed.add_field(name=v[0], value=f"{v[1]} used {v[2]}", inline=False)  # noqa:E501
 
         elif n == 2:  # [None, command, None]
             embed.set_footer(text=f"users of {command}")
             for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]} in {v[2]}", inline=False)
+                embed.add_field(name=v[0], value=f"{v[1]} in {v[2]}", inline=False)  # noqa:E501
 
         elif n == 3:  # [None, command, channel]
             embed.set_footer(text=f"users of {command} in {channel}")
@@ -611,7 +627,7 @@ async def logs(ctx, date, *args):
         elif n == 4:  # [user, None, None]
             embed.set_footer(text=user)
             for v in list_log:
-                embed.add_field(name=v[0], value=f"used {v[1]} in {v[2]}", inline=False)
+                embed.add_field(name=v[0], value=f"used {v[1]} in {v[2]}", inline=False)  # noqa:E501
 
         elif n == 5:  # [user, None, channel]
             embed.set_footer(text=f"{user} commands in {channel}")
@@ -621,7 +637,7 @@ async def logs(ctx, date, *args):
         elif n == 6:  # [user, command, None]
             embed.set_footer(text=f"{user} used {command}")
             for v in list_log:
-                embed.add_field(name=v[0], value=f"used in {v[2]}", inline=False)
+                embed.add_field(name=v[0], value=f"used in {v[2]}", inline=False)  # noqa:E501
 
         else:  # [user, command, channel]
             embed.set_footer(text=f"{user} used {command} in {channel}")
@@ -635,11 +651,12 @@ async def logs(ctx, date, *args):
 
 @bot.command()
 @commands.is_owner()
-async def log_latest(ctx,numb=10):
-    embed=discord.Embed(title="latest logs")
+async def log_latest(ctx, numb=10):
+    """Send latest logs."""
+    embed = discord.Embed(title="latest logs")
     latest = log.log_latest(int(numb))
     for i in latest:
-        embed.add_field(name='\u200B',value=i,inline=False)
+        embed.add_field(name='\u200B', value=i, inline=False)
     await ctx.author.send(embed=embed)
 
 
