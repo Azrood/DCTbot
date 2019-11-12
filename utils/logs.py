@@ -78,8 +78,8 @@ class CommandLog:
 
     def _get_date_time(self, user, command, channel):
         try:
-            return [(k, time) for k, v in self.logs.items()for time in v.keys()
-                    if {'channel': channel, 'user': user, 'command': command} in v.values()]  # noqa:E501
+            return [(k, time) for k, v in self.logs.items() for time in v.keys()  # noqa:E501
+                    if v[time] == {'channel': channel, 'user': user, 'command': command}]  # noqa:E501
         except KeyError:
             return None
 
