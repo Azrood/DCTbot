@@ -11,9 +11,11 @@ modo_role_id = "XXXXXXXXXXXXXXX"  # int
 token_youtube = "XXXXXXXXXXXXXXXXXXX"  # str
 DEVELOPER_CX = "XXXXXXXXXXXXXXXXXXXXXXXXXXX"  # str
 dcteam_category_id = "XXXXXXXXXXXXXXXXXx"  # int
-admin = "XXXXXXXXXXXXXXXXXX"  # int
+
 admin_role = ["XXX"]  # list of str
-admin_id = "XXXXXXXXXXXXXXXXXX"  # int
+staff_role = ["XXX"]
+mods_role = ["XXX"]
+
 nsfw_channel_id = "XXXXXXXXXXXXXXXXX"  # int
 
 reddit_secret = "XXXXXXXXX"

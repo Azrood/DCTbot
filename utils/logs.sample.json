@@ -1,10 +1,29 @@
 {
-    "date": {
-        "time": {
-            "channel" : "channel",
-            "command" : "command",
-            "user" : "user"
+    "08/11/2019": {
+        "22h35m37s": {
+            "channel": "general",
+            "command": "clear",
+            "user": "homer"
+        },
+        "23h07m12s": {
+            "channel": "faq",
+            "command": "kick",
+            "user": "bart"
+        },
+        "23h07m21s": {
+            "channel": "general",
+            "command": "clear",
+            "user": "lisa"
+        },
+        "23h07m25s": {
+            "channel": "faq",
+            "command": "clear",
+            "user": "lisa"
+        },
+        "23h07m32s": {
+            "channel": "general",
+            "command": "ban",
+            "user": "homer"
         }
     }
-
 }
