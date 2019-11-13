@@ -8,7 +8,7 @@ import shutil
 import time
 from PIL import Image
 
-import requests
+import aiohttp
 from urllib.parse import urljoin
 
 from utils.tools import get_soup_html, get_soup_lxml
@@ -25,18 +25,20 @@ def _get_header_img(soup, n):
     return soup.select(f'#dog{n+1} > center > span.btn-cover a')
 
 
-def _download_img(h_list, path):
+async def _download_img(h_list, path):
     """Download list of images.
 
     n is 1, 2, 3 or 4 for different headers.
     """
+    session = aiohttp.ClientSession()
     for h in h_list[:9]:
         index = h_list.index(h)
         img_url = urljoin(dctrad_base, h.img['src'])
-        response = requests.get(img_url, stream=True)
+        response = await session.get(img_url, stream=True)
         file_ = os.path.join(path, f"img{index}.jpg")
         with open(file_, 'wb') as out_file:
             shutil.copyfileobj(response.raw, out_file)
+    session.close()
     del response
 
 

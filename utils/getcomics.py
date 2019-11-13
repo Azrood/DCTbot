@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 """Module to search on getcomics.info."""
 
-import time
-import requests  # lib for going on internet
+import asyncio
+import aiohttp  # lib for going on internet
 import urllib.parse
 from utils.tools import get_soup_html
 
 
-def getcomics_top_link(user_input):
+async def getcomics_top_link(user_input):
     """Search getcomics and return first result."""
     formated_search = urllib.parse.quote_plus(user_input.lower(),
                                               safe='', encoding=None,
@@ -16,20 +16,20 @@ def getcomics_top_link(user_input):
     getcomics_search = f"https://getcomics.info/?s={formated_search}"
 
     # BeautifulSoup will transform raw HTML in a tree easy to parse
-    soup = get_soup_html(getcomics_search)
+    soup = await get_soup_html(getcomics_search)
 
     first = soup.find('h1', class_='post-title')
 
     title = first.text
     url = first.a['href']
-    url_dl = getcomics_directlink(url)
+    url_dl = await getcomics_directlink(url)
     return title, url_dl
 
 
-def getcomics_directlink(comic_url):
+async def getcomics_directlink(comic_url):
     """Get download links in a getcomics post."""
     # BeautifulSoup will transform raw HTML in a tree easy to parse
-    soup = get_soup_html(comic_url)
+    soup = await get_soup_html(comic_url)
 
     direct_download = soup.find('a', class_='aio-red')
 
@@ -37,10 +37,13 @@ def getcomics_directlink(comic_url):
     temp_url = direct_download['href']
 
     # We follow temp_url to find final URL
-    time.sleep(1)
+    await asyncio.sleep(1)
+    
+    session = aiohttp.ClientSession()
 
-    res2 = requests.get(temp_url, allow_redirects=False, stream=True, timeout=3)  # noqa:E501
-    res2.close()
+
+    res2 = await session.get(temp_url, allow_redirects=False, timeout=3, ssl=False)  # noqa:E501
+    await session.close()
 
     if res2.status_code == 200:
         # print("req 2 code 200")

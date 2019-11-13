@@ -1,6 +1,7 @@
 """File for some tools."""
 
-import requests  # lib for going on internet
+import aiohttp  # asynchronous lib for going on internet 
+
 from bs4 import BeautifulSoup
 # from discord.utils import get as disc_get
 from discord.utils import find as disc_find
@@ -15,7 +16,7 @@ def string_is_int(string):
         return False
 
 
-def get_soup_lxml(url):
+async def get_soup_lxml(url):
     """Return a BeautifulSoup soup from given url, Parser is lxml.
 
     Args:
@@ -25,14 +26,16 @@ def get_soup_lxml(url):
         BeautifulSoup: soup
 
     """
-    # get HTML page with requests.get
-    res = requests.get(url, timeout=3)
-    res.close()
+    # get HTML page with async GET request
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, timeout=3, ssl=False) as resp:
+            text = await resp.text()
+        await session.close()
     # BeautifulSoup will transform raw HTML in a tree easy to parse
-    return BeautifulSoup(res.text, 'lxml')
+    return BeautifulSoup(text, 'lxml')
 
 
-def get_soup_html(url):
+async def get_soup_html(url):
     """Return a BeautifulSoup soup from given url, Parser is html.parser.
 
     Args:
@@ -42,11 +45,13 @@ def get_soup_html(url):
         BeautifulSoup: soup
 
     """
-    # get HTML page with requests.get
-    res = requests.get(url, timeout=3)
-    res.close()
+    # get HTML page with async GET request
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, timeout=3, ssl=False) as resp:
+            text = await resp.text()
+        await session.close()
     # BeautifulSoup will transform raw HTML in a tree easy to parse
-    return BeautifulSoup(res.text, 'html.parser')
+    return BeautifulSoup(text, 'html.parser')
 
 
 def args_separator_for_log_function(guild, args):

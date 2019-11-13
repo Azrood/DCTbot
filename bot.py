@@ -157,7 +157,7 @@ async def team_error(ctx, error):
 @bot.command()
 async def getcomics(ctx, *, user_input):
     """Send direct download link for getcomics search result."""
-    title, url = getcomics_top_link(user_input)
+    title, url = await getcomics_top_link(user_input)
     embed = discord.Embed(title=f"{title}",
                           description="cliquez sur le titre pour télécharger votre comic",  # noqa: E501
                           color=0x882640, url=url)
@@ -276,10 +276,10 @@ async def comicsblog(ctx, num):
         num (int): number of results to send
 
     """
-    list = get_comicsblog(num)
+    list = await get_comicsblog(num)
     embed = discord.Embed(title=f"les {num} derniers articles de comicsblog",
                           color=0xe3951a)
-    for l in list:
+    async for l in list:
         embed.add_field(name=l.find('title').text, value=l.find('guid').text,
                         inline=False)
     await ctx.send(embed=embed)
@@ -331,7 +331,7 @@ async def ban_error(ctx, error):
 async def google(ctx, *, query):
     """Send first Google search result."""
     try:
-        result = google_top_link(query)
+        result = await google_top_link(query)
         await ctx.send(content=f"{result['title']}\n {result['url']}")
     except TypeError:
         pass
@@ -340,7 +340,7 @@ async def google(ctx, *, query):
 @bot.command()
 async def googlelist(ctx, num, *, args):
     """Send Google search results."""
-    result = search_google(args, num)
+    result = await search_google(args, num)
     embed = discord.Embed(title=f"Les {num} premiers résultats de la recherche",  # noqa: E501
                           color=0x3b5cbe)
     for r in result:
@@ -537,7 +537,7 @@ async def bonjour_madame():
     """Send daily bonjourmadame."""
     if 0 <= datetime.date.today().weekday() <= 4:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
         embed = discord.Embed()
-        embed.set_image(url=latest_madame())
+        embed.set_image(url=await latest_madame())
         embed.set_footer(text="Bonjour Madame")
         await bot.get_channel(nsfw_channel_id).send(embed=embed)
 
