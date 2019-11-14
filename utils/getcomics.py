@@ -25,7 +25,6 @@ async def getcomics_top_link(user_input):
     url_dl = await getcomics_directlink(url)
     return title, url_dl
 
-
 async def getcomics_directlink(comic_url):
     """Get download links in a getcomics post."""
     # BeautifulSoup will transform raw HTML in a tree easy to parse
@@ -45,13 +44,13 @@ async def getcomics_directlink(comic_url):
     res2 = await session.get(temp_url, allow_redirects=False, timeout=3, ssl=False)  # noqa:E501
     await session.close()
 
-    if res2.status_code == 200:
+    if res2.status == 200:
         # print("req 2 code 200")
         return res2.url
-    elif res2.status_code == 302:
+    elif res2.status == 302:
         # print("302, Found Comic URL")
         return res2.headers['location']
-    elif res2.status_code == 404:
+    elif res2.status == 404:
         # print('404, returning post url')
         # in this case, return the getcomics post url
         return comic_url

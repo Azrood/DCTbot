@@ -169,6 +169,7 @@ async def urban(ctx, *, user_input):
     """Send definition of user input on Urban Dictionary."""
     # create object urban of class Urban
     urban = UrbanSearch(user_input)
+    await urban.fetch()
     if urban.valid:
         title, meaning, example, search_url = urban.get_top_def()
         embed = discord.Embed(title=f"Definition of {title}",
@@ -279,7 +280,7 @@ async def comicsblog(ctx, num):
     list = await get_comicsblog(num)
     embed = discord.Embed(title=f"les {num} derniers articles de comicsblog",
                           color=0xe3951a)
-    async for l in list:
+    for l in list:
         embed.add_field(name=l.find('title').text, value=l.find('guid').text,
                         inline=False)
     await ctx.send(embed=embed)
@@ -482,22 +483,22 @@ async def say(ctx, *, args):
 async def header(ctx, arg):
     """Send header image."""
     arg = arg.lower()
-    monthly = get_monthly_url()
+    monthly = await get_monthly_url()
     embed = discord.Embed(title="Comics du mois", url=monthly)
     if arg == "rebirth" or arg == "dcrebirth":
-        file_path = get_header(1)
+        file_path = await get_header(1)
         await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
     elif arg == "hors" or arg == "horsrebirth":
-        file_path = get_header(2)
+        file_path = await get_header(2)
         await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
     elif arg in ["indé", "indés", "inde", "indé"]:
-        file_path = get_header(3)
+        file_path = await get_header(3)
         await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
     elif arg == "marvel":
-        file_path = get_header(4)
+        file_path = await get_header(4)
         await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
 

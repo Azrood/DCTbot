@@ -34,12 +34,19 @@ async def _download_img(h_list, path):
     for h in h_list[:9]:
         index = h_list.index(h)
         img_url = urljoin(dctrad_base, h.img['src'])
-        response = await session.get(img_url, stream=True)
+        response = await session.get(url=img_url)
+        with open("content", 'wb') as fd:
+            while True:
+                chunk = await response.content.read(1024)
+                if not chunk:
+                    break
+            fd.write(chunk)
         file_ = os.path.join(path, f"img{index}.jpg")
+        content = open("content",'rb')
         with open(file_, 'wb') as out_file:
-            shutil.copyfileobj(response.raw, out_file)
-    session.close()
-    del response
+            shutil.copyfileobj(content, out_file)
+    await session.close()
+    del content
 
 
 def _make_header(n, path):
@@ -73,19 +80,19 @@ def _make_header(n, path):
     return file_
 
 
-def get_monthly_url():
+async def get_monthly_url():
     """Get 'Comics du mois' topic url."""
     # TODO
     # Class ?
     # For not fetching soup again ?
-    soup = get_soup_lxml(dctrad_url)
+    soup = await get_soup_lxml(dctrad_url)
     monthly_url = soup.select_one(
         'div#dog2 > center > span.text > a.btn-cm')['href']
     # #dog2 > center > span.text > a.btn-cm
     return monthly_url
 
 
-def get_header(n):
+async def get_header(n):
     """Get header.
 
     n is 1, 2, 3 or 4 for different headers.
@@ -94,8 +101,8 @@ def get_header(n):
     dirname = os.path.dirname(__file__)  # -> ./
     ress_path = os.path.join(dirname, os.pardir, "ressources/")  # -> ./../ressources  # noqa:E501
 
-    soup = get_soup_html(dctrad_url)
+    soup = await get_soup_html(dctrad_url)
     h_list = _get_header_img(soup, n)
-    _download_img(h_list, ress_path)
+    await _download_img(h_list, ress_path)
     file_path = _make_header(n, ress_path)
     return file_path
