@@ -35,14 +35,8 @@ async def _download_img(h_list, path):
         index = h_list.index(h)
         img_url = urljoin(dctrad_base, h.img['src'])
         response = await session.get(url=img_url)
-        with open("content", 'wb') as fd:
-            while True:
-                chunk = await response.content.read(1024)
-                if not chunk:
-                    break
-            fd.write(chunk)
+        content = await response.content.read(1024)
         file_ = os.path.join(path, f"img{index}.jpg")
-        content = open("content",'rb')
         with open(file_, 'wb') as out_file:
             shutil.copyfileobj(content, out_file)
     await session.close()
