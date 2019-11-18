@@ -3,17 +3,13 @@
 """Bonjourmadame feed parser."""
 
 import aiohttp
-from bs4 import BeautifulSoup
+from utils.tools import get_soup_lxml
 
 
 async def latest_madame():
     """Fetch last Bonjourmadame picture."""
     madames = "http://feeds2.feedburner.com/BonjourMadame"
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url=madames) as resp:
-            text = await resp.text()
-    await session.close()
-    soup = BeautifulSoup(text, 'lxml')
+    soup = await get_soup_lxml(madames)
     item = soup.find('item')
     url = item.find('img')['src']
 
