@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """Bonjourmadame feed parser."""
 
-import aiohttp
 from utils.tools import get_soup_lxml
 
 

@@ -1,6 +1,6 @@
 """File for some tools."""
 
-import aiohttp  # asynchronous lib for going on internet 
+import aiohttp  # asynchronous lib for going on internet
 
 from bs4 import BeautifulSoup
 # from discord.utils import get as disc_get

@@ -32,17 +32,17 @@ async def search_google(user_input, number):
     }
     session = aiohttp.ClientSession()
 
-    response = await session.get(google_search_url, params=params, timeout=3, ssl=False)
+    response = await session.get(google_search_url,
+                                 params=params, timeout=3, ssl=False)
     text = await response.text()
     await session.close()
-    
+
     try:
         json_data = json.loads(text)["items"]
     except KeyError:
         json_data = []
 
     return [{'title': j['title'], 'url': j['link']} for j in json_data]
-
 
 
 async def google_top_link(user_input):

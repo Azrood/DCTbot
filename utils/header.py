@@ -7,7 +7,7 @@ import os
 import shutil
 import time
 from PIL import Image
-import io # will use it to convert the bytes read with aiohttp to file-like object
+import io  # will use it to convert the bytes read with aiohttp to file-like object  # noqa:E501
 import aiohttp
 from urllib.parse import urljoin
 
@@ -34,8 +34,8 @@ async def _download_img(h_list, path):
     for h in h_list[:9]:
         index = h_list.index(h)
         img_url = urljoin(dctrad_base, h.img['src'])
-        resp = await session.get(url=img_url) 
-        buffer = io.BytesIO(await resp.read()) # buffer is a file-like object
+        resp = await session.get(url=img_url)
+        buffer = io.BytesIO(await resp.read())  # buffer is a file-like object
         file_ = os.path.join(path, f"img{index}.jpg")
         with open(file_, 'wb') as out_file:
             shutil.copyfileobj(buffer, out_file)

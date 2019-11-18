@@ -25,6 +25,7 @@ async def getcomics_top_link(user_input):
     url_dl = await getcomics_directlink(url)
     return title, url_dl
 
+
 async def getcomics_directlink(comic_url):
     """Get download links in a getcomics post."""
     # BeautifulSoup will transform raw HTML in a tree easy to parse
@@ -37,7 +38,7 @@ async def getcomics_directlink(comic_url):
 
     # We follow temp_url to find final URL
     await asyncio.sleep(1)
-    
+
     session = aiohttp.ClientSession()
 
     res2 = await session.get(temp_url, allow_redirects=False, timeout=3, ssl=False)  # noqa:E501
