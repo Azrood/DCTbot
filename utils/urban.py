@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """Module to search on urban dictionary."""
-import aiohttp
 
 from urllib.parse import quote_plus
 from utils.tools import get_soup_lxml
