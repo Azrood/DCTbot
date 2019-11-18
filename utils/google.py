@@ -2,13 +2,13 @@
 """Module to search on Google."""
 
 # import os
-import requests
+import aiohttp
 import json
 from urllib.parse import quote_plus
 from utils.secret import token_youtube, DEVELOPER_CX
 
 
-def search_google(user_input, number):
+async def search_google(user_input, number):
     """Search on Google.
 
     Args:
@@ -30,17 +30,22 @@ def search_google(user_input, number):
         'fields': 'items(kind,link,title)',
         'key': token_youtube
     }
+    session = aiohttp.ClientSession()
 
-    response = requests.get(google_search_url, params=params, timeout=3)
+    response = await session.get(google_search_url,
+                                 params=params, timeout=3, ssl=False)
+    text = await response.text()
+    await session.close()
+
     try:
-        json_data = json.loads(response.text)["items"]
+        json_data = json.loads(text)["items"]
     except KeyError:
         json_data = []
 
     return [{'title': j['title'], 'url': j['link']} for j in json_data]
 
 
-def google_top_link(user_input):
+async def google_top_link(user_input):
     """Get first result of Google search.
 
     Args:
@@ -51,7 +56,7 @@ def google_top_link(user_input):
 
     """
     try:
-        result = search_google(user_input, number=1)
+        result = await search_google(user_input, number=1)
         return result[0]
     except IndexError:
         return None

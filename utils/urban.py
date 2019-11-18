@@ -3,7 +3,6 @@
 """Module to search on urban dictionary."""
 
 from urllib.parse import quote_plus
-
 from utils.tools import get_soup_lxml
 
 
@@ -19,10 +18,10 @@ class UrbanSearch:
 
         # Make search url: www.urbandictionary.com/define.php?term=distro+hop
         self.search_url = self.urban_url + formated_input
-        self.soup = get_soup_lxml(self.search_url)
-        self.isokay()
+        self.soup = None
+        self.valid = False
 
-    def isokay(self):
+    def _isokay(self):
         """Test if the page is a definition, or is dummy."""
         # Test if I can find the div for :
         # Sorry, we couldn't find XXX
@@ -31,6 +30,10 @@ class UrbanSearch:
             self.valid = False
         else:
             self.valid = True
+
+    async def fetch(self):
+        self.soup = await get_soup_lxml(self.search_url)
+        self._isokay()
 
     def get_top_def(self):
         """Parse the HTML soup to find Top Definition title, meaning, example."""  # noqa:E501

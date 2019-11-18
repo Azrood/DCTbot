@@ -3,7 +3,7 @@
 from utils.tools import get_soup_html
 
 
-def get_comicsblog(numb):
+async def get_comicsblog(numb):
     """Get latest news on comicsblog.fr.
 
     Args:
@@ -16,7 +16,7 @@ def get_comicsblog(numb):
     num = int(numb)
     c_blog_rss = "http://www.comicsblog.fr/comicsblog.rss"
 
-    soup = get_soup_html(c_blog_rss)
+    soup = await get_soup_html(c_blog_rss)
     ls = soup.select('item')
     out = ls[:num]
 
