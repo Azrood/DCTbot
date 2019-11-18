@@ -44,6 +44,7 @@ async def search_google(user_input, number):
     return [{'title': j['title'], 'url': j['link']} for j in json_data]
 
 
+
 async def google_top_link(user_input):
     """Get first result of Google search.
 
