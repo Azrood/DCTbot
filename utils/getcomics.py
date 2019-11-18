@@ -40,7 +40,6 @@ async def getcomics_directlink(comic_url):
     
     session = aiohttp.ClientSession()
 
-
     res2 = await session.get(temp_url, allow_redirects=False, timeout=3, ssl=False)  # noqa:E501
     await session.close()
 
