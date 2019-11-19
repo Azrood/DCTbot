@@ -74,7 +74,7 @@ help_above = [
     {'name': 'nomorespoil', 'value': 'spam des "..." pour cacher les spoils'}
     ]
 
-poke_help = "azrod\nbane\nrun\nsergei\n"  # see comment in line 509
+poke_help = "azrod\nbane\nrun\nsergei\nxanatos\n"  # see comment in line 509
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 my_giflist = GifJson("gifs.json")
