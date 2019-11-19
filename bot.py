@@ -62,7 +62,8 @@ helps = [
     {'name': 'roulette', 'value': '1/6 chance de se faire kick, la roulette russe avec le bon Colt !'},  # noqa: E501
     {'name': 'choose', 'value': "choisit aléatoiremement parmi plusieurs arguments \n Syntaxe : !choose arg1 arg2 \"phrase avec plusieurs mots\" (si vous voulez des choix avec plusieurs mots, mettez vos choix entre \"\" comme pâr exemple \n !choose \"manger chinois\" \"manger italien \" \" manger quelqu'un \" ) "},  # noqa: E501
     {"name": "coinflip", 'value': "fais un lancer de pile ou face"},
-    {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"}  # noqa: E501
+    {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"},  # noqa: E501
+    {'name': 'ping', 'value': "Ping le bot pour voir s'il est en ligne"}
     ]
 help_team = [
     {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},  # noqa: E501
@@ -702,6 +703,10 @@ async def kill(ctx):
     """Kill the bot."""
     bot.logout()
 
+@bot.command()
+async def ping(ctx):
+    """Ping the bot."""
+    await ctx.send(content="pong !")
 
 bonjour_madame.start()
 bot.run(token)
