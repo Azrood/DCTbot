@@ -7,6 +7,7 @@ import datetime
 import os
 import random
 import sys
+import time
 
 import discord
 from discord.ext import commands, tasks
@@ -421,6 +422,7 @@ async def admin(ctx):
     embed.add_field(name="gifdelete", value="!gifdelete <name>", inline=False)
     embed.add_field(name="log_latest", value="!log_latest <int>", inline=False)
     embed.add_field(name="logs", value="!logs <date> <user> <command> <channel>\n args are optional for filtering, for today, say <date> = today. Otherwise date=dd/mm/yyyy", inline=False)  # noqa:E501
+    embed.add_field(name="sleep", value="make the bot sleep for <numb> seconds\n  Syntax : !sleep <number>", inline=False)
     await ctx.author.send(embed=embed)
 
 
@@ -666,8 +668,26 @@ async def log_latest(ctx, numb=10):
 @commands.has_any_role(*mods_role)
 async def nomorespoil(ctx):
     """Spam dots to clear potential spoils."""
-    # TODO  : add help
     await ctx.send("\n".join(["..." for i in range(50)]))
+
+@bot.command()
+@commands.is_owner()
+async def sleep(ctx,numb):
+    """`time` is blocking for async functions. Delay the bots for `numb` seconds"""
+    await ctx.send(content=f"Going to sleep for {numb}. Good night !")
+    time.sleep(int(numb))
+    morning = random.choice(["Good morning !",
+                            "Bonjour !",
+                            "I'm back bitches !",
+                            "Ohayo gozaimasu !",
+                            "Je suis de retour pour vous jouer un mauvais tour !",
+                            "Wake up ! Grab a brush and put a little makeup !",
+                            "Wake me up ! Wake me up inside !"
+                            ]
+                        )
+    await ctx.send(content=morning)
+
+
 
 
 bonjour_madame.start()
