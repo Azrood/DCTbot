@@ -7,6 +7,7 @@ import datetime
 import os
 import random
 import sys
+import time
 
 import discord
 from discord.ext import commands, tasks
@@ -61,7 +62,8 @@ helps = [
     {'name': 'roulette', 'value': '1/6 chance de se faire kick, la roulette russe avec le bon Colt !'},  # noqa: E501
     {'name': 'choose', 'value': "choisit aléatoiremement parmi plusieurs arguments \n Syntaxe : !choose arg1 arg2 \"phrase avec plusieurs mots\" (si vous voulez des choix avec plusieurs mots, mettez vos choix entre \"\" comme pâr exemple \n !choose \"manger chinois\" \"manger italien \" \" manger quelqu'un \" ) "},  # noqa: E501
     {"name": "coinflip", 'value': "fais un lancer de pile ou face"},
-    {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"}  # noqa: E501
+    {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"},  # noqa: E501
+    {'name': 'ping', 'value': "Ping le bot pour voir s'il est en ligne"}
     ]
 help_team = [
     {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},  # noqa: E501
@@ -73,7 +75,7 @@ help_above = [
     {'name': 'nomorespoil', 'value': 'spam des "..." pour cacher les spoils'}
     ]
 
-poke_help = "azrod\nbane\nrun\nsergei\n"  # see comment in line 509
+poke_help = "azrod\nbane\nrun\nsergei\nxanatos\n"  # see comment in line 509
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 my_giflist = GifJson("gifs.json")
@@ -363,12 +365,20 @@ async def timer(ctx, numb, *, args):
 async def roulette(ctx):
     """Plays russian roulette and kick user if shot."""
     if random.randrange(6) == 3:
-        await ctx.send(content=f"Pan !")
+        await ctx.send(content=random.choice(["Pan !","I am inevitable !","Say my name","Bye bitch !","Omae wa mou shindeiru","Boom"]))
         await ctx.send(content=snap_url, delete_after=4)
         await asyncio.sleep(2.4, result=None, loop=None)
         await ctx.author.kick()
     else:
-        await ctx.send(content="*clic*....Tu restes vivant !")
+        close = random.choice(["*clic*....Tu restes vivant !",
+                            "Ouh c'était chaud !",
+                            f"Dios mio that was close sinior {ctx.author.mention}",
+                            "T'as toujours toute ta tête mon petit gars ?",
+                            "J'en connais qui a vu la mort devant en face !",
+                            "Ouh à un cheveu près ! Allez la prochaine c'est la bonne !"
+                                ]
+                        )
+        await ctx.send(content=close)
 
 
 @bot.command()
@@ -421,6 +431,8 @@ async def admin(ctx):
     embed.add_field(name="gifdelete", value="!gifdelete <name>", inline=False)
     embed.add_field(name="log_latest", value="!log_latest <int>", inline=False)
     embed.add_field(name="logs", value="!logs <date> <user> <command> <channel>\n args are optional for filtering, for today, say <date> = today. Otherwise date=dd/mm/yyyy", inline=False)  # noqa:E501
+    embed.add_field(name="sleep", value="make the bot sleep for <numb> seconds\n  Syntax : !sleep <number>", inline=False)
+    embed.add_field(name="kill", value="Kill the bot.", inline=False)
     await ctx.author.send(embed=embed)
 
 
@@ -666,9 +678,35 @@ async def log_latest(ctx, numb=10):
 @commands.has_any_role(*mods_role)
 async def nomorespoil(ctx):
     """Spam dots to clear potential spoils."""
-    # TODO  : add help
     await ctx.send("\n".join(["..." for i in range(50)]))
 
+@bot.command()
+@commands.is_owner()
+async def sleep(ctx,numb):
+    """`time` is blocking for async functions. Delay the bots for `numb` seconds"""
+    await ctx.send(content=f"Going to sleep for {numb} seconds. Good night !")
+    time.sleep(int(numb))
+    morning = random.choice(["Good morning !",
+                            "Bonjour !",
+                            "I'm back bitches !",
+                            "Ohayo gozaimasu !",
+                            "Je suis de retour pour vous jouer un mauvais tour !",
+                            "Wake up ! Grab a brush and put a little makeup !",
+                            "Wake me up ! Wake me up inside !"
+                            ]
+                        )
+    await ctx.send(content=morning)
+
+@bot.command()
+@commands.is_owner()
+async def kill(ctx):
+    """Kill the bot."""
+    await bot.logout()
+
+@bot.command()
+async def ping(ctx):
+    """Ping the bot."""
+    await ctx.send(content="pong !")
 
 bonjour_madame.start()
 bot.run(token)
