@@ -369,7 +369,15 @@ async def roulette(ctx):
         await asyncio.sleep(2.4, result=None, loop=None)
         await ctx.author.kick()
     else:
-        await ctx.send(content="*clic*....Tu restes vivant !")
+        close = random.choice(["*clic*....Tu restes vivant !",
+                            "Ouh c'était chaud !",
+                            f"Dios mio that was close sinior {ctx.author}",
+                            "T'as toujours toute ta tête mon petit gars ?",
+                            "J'en connais qui a vu la mort devant en face !",
+                            "Ouh à un cheveu près ! Allez la prochaine c'est la bonne !"
+                                ]
+                        )
+        await ctx.send(content=close)
 
 
 @bot.command()
