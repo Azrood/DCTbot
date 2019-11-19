@@ -423,6 +423,7 @@ async def admin(ctx):
     embed.add_field(name="log_latest", value="!log_latest <int>", inline=False)
     embed.add_field(name="logs", value="!logs <date> <user> <command> <channel>\n args are optional for filtering, for today, say <date> = today. Otherwise date=dd/mm/yyyy", inline=False)  # noqa:E501
     embed.add_field(name="sleep", value="make the bot sleep for <numb> seconds\n  Syntax : !sleep <number>", inline=False)
+    embed.add_field(name="kill", value="Kill the bot.", inline=False)
     await ctx.author.send(embed=embed)
 
 
@@ -687,7 +688,11 @@ async def sleep(ctx,numb):
                         )
     await ctx.send(content=morning)
 
-
+@bot.command()
+@commands.is_owner()
+async def kill(ctx):
+    """Kill the bot."""
+    bot.logout()
 
 
 bonjour_madame.start()
