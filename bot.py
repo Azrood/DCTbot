@@ -100,7 +100,8 @@ async def on_ready():
                             "Good morning motherfuckers !",
                             "Yo les gros ! ça roule ?",
                             "Yo les juifs ! ça gaze ?",
-                            "Hola amigos ! Bonne journée !"
+                            "Hola amigos ! Bonne journée !",
+                            "Roulette pour tout le monde ! TOUT DE SUITE !!"
                             ]
                         )
     await asyncio.sleep(delay=36000) # bot is rebooted every day at 00:00 so we wait 10 hours after logging in
