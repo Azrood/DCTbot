@@ -7,6 +7,7 @@ import datetime
 import os
 import random
 import sys
+import time
 
 import discord
 from discord.ext import commands, tasks
@@ -61,7 +62,8 @@ helps = [
     {'name': 'roulette', 'value': '1/6 chance de se faire kick, la roulette russe avec le bon Colt !'},  # noqa: E501
     {'name': 'choose', 'value': "choisit aléatoiremement parmi plusieurs arguments \n Syntaxe : !choose arg1 arg2 \"phrase avec plusieurs mots\" (si vous voulez des choix avec plusieurs mots, mettez vos choix entre \"\" comme pâr exemple \n !choose \"manger chinois\" \"manger italien \" \" manger quelqu'un \" ) "},  # noqa: E501
     {"name": "coinflip", 'value': "fais un lancer de pile ou face"},
-    {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"}  # noqa: E501
+    {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"},  # noqa: E501
+    {'name': 'ping', 'value': "Ping le bot pour voir s'il est en ligne"}
     ]
 help_team = [
     {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},  # noqa: E501
@@ -73,7 +75,7 @@ help_above = [
     {'name': 'nomorespoil', 'value': 'spam des "..." pour cacher les spoils'}
     ]
 
-poke_help = "azrod\nbane\nrun\nsergei\n"  # see comment in line 509
+poke_help = "azrod\nbane\nrun\nsergei\nxanatos\n"  # see comment in line 509
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 my_giflist = GifJson("gifs.json")
@@ -157,7 +159,7 @@ async def team_error(ctx, error):
 @bot.command()
 async def getcomics(ctx, *, user_input):
     """Send direct download link for getcomics search result."""
-    title, url = getcomics_top_link(user_input)
+    title, url = await getcomics_top_link(user_input)
     embed = discord.Embed(title=f"{title}",
                           description="cliquez sur le titre pour télécharger votre comic",  # noqa: E501
                           color=0x882640, url=url)
@@ -169,6 +171,7 @@ async def urban(ctx, *, user_input):
     """Send definition of user input on Urban Dictionary."""
     # create object urban of class Urban
     urban = UrbanSearch(user_input)
+    await urban.fetch()
     if urban.valid:
         title, meaning, example, search_url = urban.get_top_def()
         embed = discord.Embed(title=f"Definition of {title}",
@@ -276,7 +279,7 @@ async def comicsblog(ctx, num):
         num (int): number of results to send
 
     """
-    list = get_comicsblog(num)
+    list = await get_comicsblog(num)
     embed = discord.Embed(title=f"les {num} derniers articles de comicsblog",
                           color=0xe3951a)
     for l in list:
@@ -331,7 +334,7 @@ async def ban_error(ctx, error):
 async def google(ctx, *, query):
     """Send first Google search result."""
     try:
-        result = google_top_link(query)
+        result = await google_top_link(query)
         await ctx.send(content=f"{result['title']}\n {result['url']}")
     except TypeError:
         pass
@@ -340,7 +343,7 @@ async def google(ctx, *, query):
 @bot.command()
 async def googlelist(ctx, num, *, args):
     """Send Google search results."""
-    result = search_google(args, num)
+    result = await search_google(args, num)
     embed = discord.Embed(title=f"Les {num} premiers résultats de la recherche",  # noqa: E501
                           color=0x3b5cbe)
     for r in result:
@@ -362,12 +365,20 @@ async def timer(ctx, numb, *, args):
 async def roulette(ctx):
     """Plays russian roulette and kick user if shot."""
     if random.randrange(6) == 3:
-        await ctx.send(content=f"Pan !")
+        await ctx.send(content=random.choice(["Pan !","I am inevitable !","Say my name","Bye bitch !","Omae wa mou shindeiru","Boom"]))
         await ctx.send(content=snap_url, delete_after=4)
         await asyncio.sleep(2.4, result=None, loop=None)
         await ctx.author.kick()
     else:
-        await ctx.send(content="*clic*....Tu restes vivant !")
+        close = random.choice(["*clic*....Tu restes vivant !",
+                            "Ouh c'était chaud !",
+                            f"Dios mio that was close sinior {ctx.author.mention}",
+                            "T'as toujours toute ta tête mon petit gars ?",
+                            "J'en connais qui a vu la mort devant en face !",
+                            "Ouh à un cheveu près ! Allez la prochaine c'est la bonne !"
+                                ]
+                        )
+        await ctx.send(content=close)
 
 
 @bot.command()
@@ -420,6 +431,8 @@ async def admin(ctx):
     embed.add_field(name="gifdelete", value="!gifdelete <name>", inline=False)
     embed.add_field(name="log_latest", value="!log_latest <int>", inline=False)
     embed.add_field(name="logs", value="!logs <date> <user> <command> <channel>\n args are optional for filtering, for today, say <date> = today. Otherwise date=dd/mm/yyyy", inline=False)  # noqa:E501
+    embed.add_field(name="sleep", value="make the bot sleep for <numb> seconds\n  Syntax : !sleep <number>", inline=False)
+    embed.add_field(name="kill", value="Kill the bot.", inline=False)
     await ctx.author.send(embed=embed)
 
 
@@ -482,22 +495,22 @@ async def say(ctx, *, args):
 async def header(ctx, arg):
     """Send header image."""
     arg = arg.lower()
-    monthly = get_monthly_url()
+    monthly = await get_monthly_url()
     embed = discord.Embed(title="Comics du mois", url=monthly)
     if arg == "rebirth" or arg == "dcrebirth":
-        file_path = get_header(1)
+        file_path = await get_header(1)
         await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
     elif arg == "hors" or arg == "horsrebirth":
-        file_path = get_header(2)
+        file_path = await get_header(2)
         await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
     elif arg in ["indé", "indés", "inde", "indé"]:
-        file_path = get_header(3)
+        file_path = await get_header(3)
         await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
     elif arg == "marvel":
-        file_path = get_header(4)
+        file_path = await get_header(4)
         await ctx.send(embed=embed, file=discord.File(file_path))
         os.remove(file_path)
 
@@ -537,7 +550,7 @@ async def bonjour_madame():
     """Send daily bonjourmadame."""
     if 0 <= datetime.date.today().weekday() <= 4:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
         embed = discord.Embed()
-        embed.set_image(url=latest_madame())
+        embed.set_image(url=await latest_madame())
         embed.set_footer(text="Bonjour Madame")
         await bot.get_channel(nsfw_channel_id).send(embed=embed)
 
@@ -665,9 +678,35 @@ async def log_latest(ctx, numb=10):
 @commands.has_any_role(*mods_role)
 async def nomorespoil(ctx):
     """Spam dots to clear potential spoils."""
-    # TODO  : add help
     await ctx.send("\n".join(["..." for i in range(50)]))
 
+@bot.command()
+@commands.is_owner()
+async def sleep(ctx,numb):
+    """`time` is blocking for async functions. Delay the bots for `numb` seconds"""
+    await ctx.send(content=f"Going to sleep for {numb} seconds. Good night !")
+    time.sleep(int(numb))
+    morning = random.choice(["Good morning !",
+                            "Bonjour !",
+                            "I'm back bitches !",
+                            "Ohayo gozaimasu !",
+                            "Je suis de retour pour vous jouer un mauvais tour !",
+                            "Wake up ! Grab a brush and put a little makeup !",
+                            "Wake me up ! Wake me up inside !"
+                            ]
+                        )
+    await ctx.send(content=morning)
+
+@bot.command()
+@commands.is_owner()
+async def kill(ctx):
+    """Kill the bot."""
+    await bot.logout()
+
+@bot.command()
+async def ping(ctx):
+    """Ping the bot."""
+    await ctx.send(content="pong !")
 
 bonjour_madame.start()
 bot.run(token)

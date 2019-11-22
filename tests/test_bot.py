@@ -18,21 +18,21 @@ class TestDiscordBot(unittest.TestCase):
     # Each method with name beginning with 'test_'
     # is a test.
 
-    def test_google_top_link(self):
+    async def test_google_top_link(self):
         """Test google_top_link."""
-        res = google_top_link("python.org unittest")
+        res = await google_top_link("python.org unittest")
         ref = "https://docs.python.org/3/library/unittest.html"
         self.assertEqual(res['url'], ref)
 
-    def test_google_top_link_fail(self):
+    async def test_google_top_link_fail(self):
         """Test google_top_link Fail (return None)."""
-        res = google_top_link("qsdfqdsfkqdmflkjdflj")
+        res = await google_top_link("qsdfqdsfkqdmflkjdflj")
         self.assertIsNone(res)
 
-    def test_get_top_def(self):
+    async def test_get_top_def(self):
         """Test UrbanSearch.get_top_def."""
         urban = UrbanSearch("Distro Hop")
-        res = urban.get_top_def()
+        res = await urban.get_top_def()
         ref = "Distro Hop"
         self.assertEqual(res[0], ref)
 
@@ -43,9 +43,9 @@ class TestDiscordBot(unittest.TestCase):
         # print(res[0])
         self.assertEqual(res[0], ref)
 
-    def test_get_comicsblog(self):
+    async def test_get_comicsblog(self):
         """Test get_comicsblog."""
-        res = get_comicsblog(1)[0]
+        res = await get_comicsblog(1)[0]
         # print(res.find('title').text)
         self.assertIsNotNone(res)
 
@@ -61,9 +61,9 @@ class TestDiscordBot(unittest.TestCase):
         my_gif = gifs.get_gif("toto")
         self.assertIsNone(my_gif)  # gif toto return none
 
-    def test_getcomics_top_link_title(self):
+    async def test_getcomics_top_link_title(self):
         """Test getcomics_top_link (title only)."""
-        title = getcomics_top_link("Batman #79")[0]
+        title = await getcomics_top_link("Batman #79")[0]
         ref = "Batman #79 (2019)"
         self.assertEqual(title, ref)
 
