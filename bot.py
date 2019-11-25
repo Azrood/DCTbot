@@ -11,7 +11,6 @@ import time
 
 import discord
 from discord.ext import commands, tasks
-from discord.utils import get
 
 from utils.bonjourmadame import latest_madame
 from utils.comicsblog import get_comicsblog
@@ -92,7 +91,7 @@ async def on_ready():
     bot.guild = bot.get_guild(dcteam_id)  # se lier au serveur à partir de l'ID
     bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
     bot.role_modo = bot.guild.get_role(modo_role_id)
-    channel_general = get(bot.guild.text_channels, name='roles')
+    channel_general = discord.utils.get(bot.guild.text_channels, name='general')
     greeting = random.choice(["Bonjour tout le monde !",
                             "Yo tout le monde ! Vous allez bien ?",
                             "Comment allez-vous en cette magnifique journée ?",
@@ -733,11 +732,11 @@ async def on_raw_reaction_add(payload):
     """
     user = bot.guild.get_member(payload.user_id)
     if payload.emoji.name == "\U0001f3ae" and payload.message_id == react_role_msg_id:
-        freegame_role = get(bot.guild.roles, name="jeux gratuits")
+        freegame_role = discord.utils.get(bot.guild.roles, name="jeux gratuits")
         await user.add_roles(freegame_role)
         await user.send(content="Vous serez notifié lorsqu'un jeu gratuit sera posté !")
     if payload.emoji.name == "\U0001f514" and payload.message_id == react_role_msg_id:
-        header_role = get(bot.guild.roles, name="header release")
+        header_role = discord.utils.get(bot.guild.roles, name="header release")
         await user.add_roles(header_role)
         await user.send(content="Vous serez notifié lorsqu'une release sera postée !")
 
@@ -749,11 +748,11 @@ async def on_raw_reaction_remove(payload):
     """
     user = bot.guild.get_member(payload.user_id)
     if payload.emoji.name == "\U0001f3ae" and payload.message_id == react_role_msg_id:
-        freegame_role = get(bot.guild.roles, name="jeux gratuits")
+        freegame_role = discord.utils.get(bot.guild.roles, name="jeux gratuits")
         await user.remove_roles(freegame_role)
         await user.send(content="Vous __**ne**__ serez __**plus**__ notifié lorsqu'un jeu gratuit sera posté !")
     if payload.emoji.name == "\U0001f514" and payload.message_id == react_role_msg_id:
-        header_role = get(bot.guild.roles, name="header release")
+        header_role = discord.utils.get(bot.guild.roles, name="header release")
         await user.remove_roles(header_role)
         await user.send(content="Vous __**ne**__ serez __**plus**__ notifié lorsqu'une release sera postée!")
 
