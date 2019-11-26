@@ -11,7 +11,6 @@ import time
 
 import discord
 from discord.ext import commands, tasks
-from discord.utils import get
 
 from utils.bonjourmadame import latest_madame
 from utils.comicsblog import get_comicsblog
@@ -61,7 +60,7 @@ helps = [
     {'name': 'google', 'value': 'donne le premier lien de la recherche google avec les mots-clés saisis'},  # noqa: E501
     {'name': 'googlelist', 'value': 'donne une liste des X premiers liens de la recherche google\n Syntaxe : !googlelist [numero] [mots-clés] \nExemple : !googlelist 3 the final countdown'},  # noqa: E501
     {'name': 'roulette', 'value': '1/6 chance de se faire kick, la roulette russe avec le bon Colt !'},  # noqa: E501
-    {'name': 'choose', 'value': "choisit aléatoiremement parmi plusieurs arguments \n Syntaxe : !choose arg1 arg2 \"phrase avec plusieurs mots\" (si vous voulez des choix avec plusieurs mots, mettez vos choix entre \"\" comme pâr exemple \n !choose \"manger chinois\" \"manger italien \" \" manger quelqu'un \" ) "},  # noqa: E501
+    {'name': 'choose', 'value': "choisit aléatoiremement parmi plusieurs arguments \n Syntaxe : !choose arg1 arg2 \"phrase avec plusieurs mots\" (si vous voulez des choix avec plusieurs mots, mettez vos choix entre \"\" comme par exemple \n !choose \"manger chinois\" \"manger italien \" \" manger quelqu'un \" ) "},  # noqa: E501
     {"name": "coinflip", 'value': "fais un lancer de pile ou face"},
     {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"},  # noqa: E501
     {'name': 'ping', 'value': "Ping le bot pour voir s'il est en ligne"}
@@ -92,7 +91,7 @@ async def on_ready():
     bot.guild = bot.get_guild(dcteam_id)  # se lier au serveur à partir de l'ID
     bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
     bot.role_modo = bot.guild.get_role(modo_role_id)
-    channel_general = get(bot.guild.text_channels, name='roles')
+    channel_general = discord.utils.get(bot.guild.text_channels, name='general')
     greeting = random.choice(["Bonjour tout le monde !",
                             "Yo tout le monde ! Vous allez bien ?",
                             "Comment allez-vous en cette magnifique journée ?",
@@ -101,7 +100,12 @@ async def on_ready():
                             "Yo les gros ! ça roule ?",
                             "Yo les juifs ! ça gaze ?",
                             "Hola amigos ! Bonne journée !",
-                            "Roulette pour tout le monde ! TOUT DE SUITE !!"
+                            "Roulette pour tout le monde ! TOUT DE SUITE !!",
+                            "I'm back bitches !",
+                            "Ohayo gozaimasu !",
+                            "Je suis de retour pour vous jouer un mauvais tour !",
+                            "Wake up ! Grab a brush and put a little makeup !",
+                            "Wake me up ! Wake me up inside !"
                             ]
                         )
     await asyncio.sleep(delay=36000) # bot is rebooted every day at 00:00 so we wait 10 hours after logging in
@@ -225,8 +229,8 @@ async def clear_error(ctx, error):
 @bot.command()
 async def recrutement(ctx):
     """Send 'recrutement' topic url."""
-    embed = discord.Embed(title="Rejoins le team DCTrad !",
-                          description="allez n'aies pas peur de cliquer et deviens un héros !",  # noqa: E501
+    embed = discord.Embed(title="Rejoins la team DCTrad !",
+                          description="allez n'aie pas peur de cliquer et deviens un héros !",  # noqa: E501
                           color=0x0000FF, url=dctrad_recru)
     embed.set_thumbnail(url=dctradlogo)
     await ctx.send(embed=embed)
@@ -317,6 +321,7 @@ async def kick(ctx):
                   ctx.channel.name.lower(),
                   ctx.command.name.lower(),
                   ctx.author.name.lower())
+    await ctx.send(content="Adios muchachos !")
 
 
 @kick.error
@@ -390,7 +395,7 @@ async def roulette(ctx):
                             "Ouh c'était chaud !",
                             f"Dios mio that was close sinior {ctx.author.mention}",
                             "T'as toujours toute ta tête mon petit gars ?",
-                            "J'en connais qui a vu la mort devant en face !",
+                            "J'en connais qui a vu la mort en face !",
                             "Ouh à un cheveu près ! Allez la prochaine c'est la bonne !"
                                 ]
                         )
@@ -703,12 +708,7 @@ async def sleep(ctx,numb):
     await ctx.send(content=f"Going to sleep for {numb} seconds. Good night !")
     time.sleep(int(numb))
     morning = random.choice(["Good morning !",
-                            "Bonjour !",
-                            "I'm back bitches !",
-                            "Ohayo gozaimasu !",
-                            "Je suis de retour pour vous jouer un mauvais tour !",
-                            "Wake up ! Grab a brush and put a little makeup !",
-                            "Wake me up ! Wake me up inside !"
+                            "Bonjour !"
                             ]
                         )
     await ctx.send(content=morning)
@@ -732,11 +732,11 @@ async def on_raw_reaction_add(payload):
     """
     user = bot.guild.get_member(payload.user_id)
     if payload.emoji.name == "\U0001f3ae" and payload.message_id == react_role_msg_id:
-        freegame_role = get(bot.guild.roles, name="jeux gratuits")
+        freegame_role = discord.utils.get(bot.guild.roles, name="jeux gratuits")
         await user.add_roles(freegame_role)
         await user.send(content="Vous serez notifié lorsqu'un jeu gratuit sera posté !")
     if payload.emoji.name == "\U0001f514" and payload.message_id == react_role_msg_id:
-        header_role = get(bot.guild.roles, name="header release")
+        header_role = discord.utils.get(bot.guild.roles, name="header release")
         await user.add_roles(header_role)
         await user.send(content="Vous serez notifié lorsqu'une release sera postée !")
 
@@ -748,11 +748,11 @@ async def on_raw_reaction_remove(payload):
     """
     user = bot.guild.get_member(payload.user_id)
     if payload.emoji.name == "\U0001f3ae" and payload.message_id == react_role_msg_id:
-        freegame_role = get(bot.guild.roles, name="jeux gratuits")
+        freegame_role = discord.utils.get(bot.guild.roles, name="jeux gratuits")
         await user.remove_roles(freegame_role)
         await user.send(content="Vous __**ne**__ serez __**plus**__ notifié lorsqu'un jeu gratuit sera posté !")
     if payload.emoji.name == "\U0001f514" and payload.message_id == react_role_msg_id:
-        header_role = get(bot.guild.roles, name="header release")
+        header_role = discord.utils.get(bot.guild.roles, name="header release")
         await user.remove_roles(header_role)
         await user.send(content="Vous __**ne**__ serez __**plus**__ notifié lorsqu'une release sera postée!")
 
