@@ -5,13 +5,13 @@
 
 import unittest
 
+from cogs.getcomics import getcomics_top_link
 from cogs.urban import UrbanSearch
 
 from utils.google import google_top_link
 from utils.youtube import youtube_top_link
 from utils.comicsblog import get_comicsblog
 from utils.gif_json import GifJson
-from utils.getcomics import getcomics_top_link
 
 
 class TestDiscordBot(unittest.TestCase):

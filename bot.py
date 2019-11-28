@@ -12,11 +12,11 @@ import time
 import discord
 from discord.ext import commands, tasks
 
+from cogs.getcomics import Getcomics
 from cogs.urban import Urban
 
 from utils.bonjourmadame import latest_madame
 from utils.comicsblog import get_comicsblog
-from utils.getcomics import getcomics_top_link
 from utils.gif_json import GifJson
 from utils.google import search_google, google_top_link
 from utils.header import get_header, get_monthly_url
@@ -173,16 +173,6 @@ async def team(ctx):
 async def team_error(ctx, error):
     """Handle error in command !team (MissingAnyRole)."""
     await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
-
-
-@bot.command()
-async def getcomics(ctx, *, user_input):
-    """Send direct download link for getcomics search result."""
-    title, url = await getcomics_top_link(user_input)
-    embed = discord.Embed(title=f"{title}",
-                          description="cliquez sur le titre pour télécharger votre comic",  # noqa: E501
-                          color=0x882640, url=url)
-    await ctx.send(embed=embed)
 
 
 @bot.command()
@@ -739,5 +729,8 @@ async def on_raw_reaction_remove(payload):
 
 
 bonjour_madame.start()
+
+bot.add_cog(Getcomics(bot))
 bot.add_cog(Urban(bot))
+
 bot.run(token)
