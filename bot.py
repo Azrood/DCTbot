@@ -13,12 +13,12 @@ import discord
 from discord.ext import commands, tasks
 
 from cogs.getcomics import Getcomics
+from cogs.google import Google
 from cogs.urban import Urban
 
 from utils.bonjourmadame import latest_madame
 from utils.comicsblog import get_comicsblog
 from utils.gif_json import GifJson
-from utils.google import search_google, google_top_link
 from utils.header import get_header, get_monthly_url
 from utils.logs import CommandLog
 from utils.reddit import reddit_nsfw
@@ -320,27 +320,6 @@ async def ban(ctx):
 async def ban_error(ctx, error):
     """Handle error in !ban command (MissingAnyRole)."""
     await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
-
-
-@bot.command()
-async def google(ctx, *, query):
-    """Send first Google search result."""
-    try:
-        result = await google_top_link(query)
-        await ctx.send(content=f"{result['title']}\n {result['url']}")
-    except TypeError:
-        pass
-
-
-@bot.command()
-async def googlelist(ctx, num, *, args):
-    """Send Google search results."""
-    result = await search_google(args, num)
-    embed = discord.Embed(title=f"Les {num} premiers résultats de la recherche",  # noqa: E501
-                          color=0x3b5cbe)
-    for r in result:
-        embed.add_field(name=r['title'], value=r['url'], inline=False)
-    await ctx.send(embed=embed)
 
 
 @bot.command()
@@ -731,6 +710,7 @@ async def on_raw_reaction_remove(payload):
 bonjour_madame.start()
 
 bot.add_cog(Getcomics(bot))
+bot.add_cog(Google(bot))
 bot.add_cog(Urban(bot))
 
 bot.run(token)
