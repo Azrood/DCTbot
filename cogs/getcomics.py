@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""Module to search on getcomics.info."""
+"""Getcomics cog."""
+
+import discord
+from discord.ext import commands
 
 import asyncio
 import aiohttp  # lib for going on internet
@@ -58,3 +61,17 @@ async def getcomics_directlink(comic_url):
         # in this case, return the getcomics post url
         # print("unkwnown response code")
         return comic_url
+
+
+class Getcomics(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def getcomics(self, ctx, *, user_input):
+        """Send direct download link for getcomics search result."""
+        title, url = await getcomics_top_link(user_input)
+        embed = discord.Embed(title=f"{title}",
+                            description="cliquez sur le titre pour télécharger votre comic",  # noqa: E501
+                            color=0x882640, url=url)
+        await ctx.send(embed=embed)
