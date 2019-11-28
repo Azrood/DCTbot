@@ -12,6 +12,8 @@ import time
 import discord
 from discord.ext import commands, tasks
 
+from cogs.urban import Urban
+
 from utils.bonjourmadame import latest_madame
 from utils.comicsblog import get_comicsblog
 from utils.getcomics import getcomics_top_link
@@ -24,7 +26,6 @@ from utils.secret import (token, dcteam_role_id, dcteam_id, modo_role_id,
                           dcteam_category_id, nsfw_channel_id,
                           admin_role, staff_role, mods_role, react_role_msg_id)
 from utils.tools import string_is_int, args_separator_for_log_function
-from utils.urban import UrbanSearch
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 
 prefix = '!'
@@ -37,8 +38,6 @@ if len(sys.argv) > 1:
 
 bot = commands.Bot(command_prefix=prefix, help_command=None,
                    description=None, case_insensitive=True)
-
-urban_logo = "https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5MuDJw8LUbwqZM9BW9oey5I/https/i.imgur.com/VFXr0ID.jpg"  # noqa: E501
 
 dctradlogo = "http://www.dctrad.fr/ext/planetstyles/flightdeck/store/logodctweb.png"  # noqa: E501
 
@@ -183,24 +182,6 @@ async def getcomics(ctx, *, user_input):
     embed = discord.Embed(title=f"{title}",
                           description="cliquez sur le titre pour télécharger votre comic",  # noqa: E501
                           color=0x882640, url=url)
-    await ctx.send(embed=embed)
-
-
-@bot.command()
-async def urban(ctx, *, user_input):
-    """Send definition of user input on Urban Dictionary."""
-    # create object urban of class Urban
-    urban = UrbanSearch(user_input)
-    await urban.fetch()
-    if urban.valid:
-        title, meaning, example, search_url = urban.get_top_def()
-        embed = discord.Embed(title=f"Definition of {title}",
-                              description=meaning, color=0x00FFFF,
-                              url=search_url)
-        embed.add_field(name="Example", value=example, inline=False)
-        embed.set_thumbnail(url=urban_logo)
-    else:
-        embed = discord.Embed(title=f"Definition of {user_input} doesn't exist")  # noqa: E501
     await ctx.send(embed=embed)
 
 
@@ -756,5 +737,7 @@ async def on_raw_reaction_remove(payload):
         await user.remove_roles(header_role)
         await user.send(content="Vous __**ne**__ serez __**plus**__ notifié lorsqu'une release sera postée!")
 
+
 bonjour_madame.start()
+bot.add_cog(Urban(bot))
 bot.run(token)
