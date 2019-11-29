@@ -13,6 +13,7 @@ from discord.ext import commands, tasks
 
 from cogs.getcomics import Getcomics
 from cogs.google import Google
+from cogs.misc import Misc
 from cogs.urban import Urban
 
 from utils.bonjourmadame import latest_madame
@@ -640,6 +641,7 @@ bonjour_madame.start()
 
 bot.add_cog(Getcomics(bot))
 bot.add_cog(Google(bot))
+bot.add_cog(Misc(bot))
 bot.add_cog(Urban(bot))
 
 bot.run(token)
