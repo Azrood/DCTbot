@@ -74,7 +74,7 @@ help_above = [
     {'name': 'nomorespoil', 'value': 'spam des "..." pour cacher les spoils'}
     ]
 
-poke_help = "azrod\nbane\nrun\nsergei\nxanatos\n"  # see comment in line 509
+poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 my_giflist = GifJson("gifs.json")
@@ -127,8 +127,8 @@ async def help(ctx):
     if ctx.author.top_role >= bot.role_modo:
         for h in help_above:
             embed_2.add_field(name=h['name'], value=h['value'], inline=False)
-    if ctx.channel.category_id == dcteam_category_id:
-        embed.add_field(name='nsfw', value="affiche une image nsfw", inline=False)  # noqa: E501
+    # if ctx.channel.category_id == dcteam_category_id:
+        # embed.add_field(name='nsfw', value="affiche une image nsfw", inline=False)  # noqa: E501
     msg = await ctx.send(embed=embed)
     await msg.add_reaction("\U000025c0")
     await msg.add_reaction("\U000025b6")
@@ -336,7 +336,16 @@ async def timer(ctx, numb, *, args):
 async def roulette(ctx):
     """Plays russian roulette and kick user if shot."""
     if random.randrange(6) == 3:
-        await ctx.send(content=random.choice(["Pan !","I am inevitable !","Say my name","Bye bitch !","Omae wa mou shindeiru","Boom"]))
+        await ctx.send(content=random.choice(["Pan !",
+                                            "I am inevitable !",
+                                            "Say my name",
+                                            "Bye bitch !",
+                                            "Omae wa mou shindeiru",
+                                            "Boom",
+                                            "Hasta la vista baby !"
+                                            ]
+                                            )
+                        )
         await ctx.send(content=snap_url, delete_after=4)
         await asyncio.sleep(2.4, result=None, loop=None)
         await ctx.author.kick()
@@ -344,9 +353,11 @@ async def roulette(ctx):
         close = random.choice(["*clic*....Tu restes vivant !",
                             "Ouh c'était chaud !",
                             f"Dios mio that was close sinior {ctx.author.mention}",
-                            "T'as toujours toute ta tête mon petit gars ?",
+                            "T'as toujours toute ta tête mon petit humain ?",
                             "J'en connais qui a vu la mort en face !",
-                            "Ouh à un cheveu près ! Allez la prochaine c'est la bonne !"
+                            "Ouh à un cheveu près ! Allez la prochaine c'est la bonne !",
+                            "Ah ah ! Ca joue les durs à cuire à ce que je vois !",
+                            "MAIS T'ES MALADE !"
                                 ]
                         )
         await ctx.send(content=close)
