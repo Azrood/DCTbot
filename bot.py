@@ -15,12 +15,13 @@ from discord.ext import commands, tasks
 from cogs.getcomics import Getcomics
 from cogs.google import Google
 from cogs.urban import Urban
+from cogs.team import Team
 
+from utils.logs import CommandLog
 from utils.bonjourmadame import latest_madame
 from utils.comicsblog import get_comicsblog
 from utils.gif_json import GifJson
 from utils.header import get_header, get_monthly_url
-from utils.logs import CommandLog
 from utils.reddit import reddit_nsfw
 from utils.secret import (token, dcteam_role_id, dcteam_id, modo_role_id,
                           dcteam_category_id, nsfw_channel_id,
@@ -90,6 +91,11 @@ async def on_ready():
     bot.guild = bot.get_guild(dcteam_id)  # se lier au serveur à partir de l'ID
     bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
     bot.role_modo = bot.guild.get_role(modo_role_id)
+    bot.log = CommandLog("logs.json")
+    bot.add_cog(Getcomics(bot))
+    bot.add_cog(Google(bot))
+    bot.add_cog(Urban(bot))
+    bot.add_cog(Team(bot))
     channel_general = discord.utils.get(bot.guild.text_channels, name='general')
     greeting = random.choice(["Bonjour tout le monde !",
                             "Yo tout le monde ! Vous allez bien ?",
@@ -149,53 +155,6 @@ async def help(ctx):
         await reaction.remove(user)
     await msg.delete(delay=60)
     helperloop.start()
-
-
-@bot.command()
-@commands.has_any_role(*staff_role)
-async def team(ctx):
-    """Give 'team' role to user list."""
-    member_list = ctx.message.mentions  # une liste d'objets
-    counter = 0
-    if not member_list:
-        pass
-    else:
-        for member in member_list:
-            if bot.role_dcteam in member.roles:  # le counter c'est pour voir si tous les membres mentionnés  # noqa: E501
-                counter += 1
-            await member.add_roles(bot.role_dcteam)  # sont dans la team, alors on n'affiche pas le message de bienvenue  # noqa: E501
-        if counter == len(member_list):
-            return None
-        await ctx.send(content="Bienvenue dans la Team !")
-
-
-@team.error
-async def team_error(ctx, error):
-    """Handle error in command !team (MissingAnyRole)."""
-    await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
-
-
-@bot.command()
-@commands.has_any_role(*staff_role)
-async def clear(ctx, number):
-    """Clear n messages."""
-    nbr_msg = int(number)
-    messages = await ctx.channel.history(limit=nbr_msg + 1).flatten()
-    await ctx.channel.delete_messages(messages)
-    await ctx.send(content=f"J'ai supprimé {nbr_msg} messages", delete_after=5)
-    today = datetime.date.today().strftime("%d/%m/%Y")
-    time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-    log.log_write(today, time,
-                  ctx.channel.name.lower(),
-                  ctx.command.name.lower(),
-                  ctx.author.name.lower())
-
-
-@clear.error
-async def clear_error(ctx, error):
-    """Handle error in !clear command (MissingAnyRole)."""
-    await ctx.send(content=f"Tu n'as pas le pouvoir{ctx.author.mention} !")
-
 
 @bot.command()
 async def recrutement(ctx):
@@ -708,9 +667,5 @@ async def on_raw_reaction_remove(payload):
 
 
 bonjour_madame.start()
-
-bot.add_cog(Getcomics(bot))
-bot.add_cog(Google(bot))
-bot.add_cog(Urban(bot))
 
 bot.run(token)
