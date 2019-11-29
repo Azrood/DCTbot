@@ -6,6 +6,7 @@
 import os
 import shutil
 import time
+import datetime
 from PIL import Image
 import io  # will use it to convert the bytes read with aiohttp to file-like object  # noqa:E501
 import aiohttp
@@ -76,13 +77,9 @@ def _make_header(n, path):
 
 async def get_monthly_url():
     """Get 'Comics du mois' topic url."""
-    # TODO
-    # Class ?
-    # For not fetching soup again ?
-    soup = await get_soup_lxml(dctrad_url)
-    monthly_url = soup.select_one(
-        'div#dog2 > center > span.text > a.btn-cm')['href']
-    # #dog2 > center > span.text > a.btn-cm
+    year = datetime.date.today().year
+    month = datetime.date.today().month
+    monthly_url = f"http://www.dctrad.fr/app.php/releases/{year}/{month}"
     return monthly_url
 
 

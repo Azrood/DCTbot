@@ -5,7 +5,6 @@
 import asyncio
 import datetime
 import os
-import random
 import sys
 import time
 
@@ -14,6 +13,7 @@ from discord.ext import commands, tasks
 
 from cogs.getcomics import Getcomics
 from cogs.google import Google
+from cogs.misc import Misc
 from cogs.urban import Urban
 from cogs.team import Team
 
@@ -40,11 +40,6 @@ if len(sys.argv) > 1:
 bot = commands.Bot(command_prefix=prefix, help_command=None,
                    description=None, case_insensitive=True)
 
-dctradlogo = "http://www.dctrad.fr/ext/planetstyles/flightdeck/store/logodctweb.png"  # noqa: E501
-
-dctrad_recru = "http://www.dctrad.fr/viewforum.php?f=21"
-
-snap_url = "https://media.tenor.com/images/8d7d2e757f934793bb4154cede8a4afa/tenor.gif"  # noqa: E501
 
 helps = [
     {'name': 'help', 'value': 'affiche la liste des commandes'},
@@ -75,7 +70,7 @@ help_above = [
     {'name': 'nomorespoil', 'value': 'spam des "..." pour cacher les spoils'}
     ]
 
-poke_help = "azrod\nbane\nrun\nsergei\nxanatos\n"  # see comment in line 509
+poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 my_giflist = GifJson("gifs.json")
@@ -96,6 +91,7 @@ async def on_ready():
     bot.add_cog(Google(bot))
     bot.add_cog(Urban(bot))
     bot.add_cog(Team(bot))
+    bot.add_cog(Misc(bot))
     channel_general = discord.utils.get(bot.guild.text_channels, name='general')
     greeting = random.choice(["Bonjour tout le monde !",
                             "Yo tout le monde ! Vous allez bien ?",
@@ -133,8 +129,8 @@ async def help(ctx):
     if ctx.author.top_role >= bot.role_modo:
         for h in help_above:
             embed_2.add_field(name=h['name'], value=h['value'], inline=False)
-    if ctx.channel.category_id == dcteam_category_id:
-        embed.add_field(name='nsfw', value="affiche une image nsfw", inline=False)  # noqa: E501
+    # if ctx.channel.category_id == dcteam_category_id:
+        # embed.add_field(name='nsfw', value="affiche une image nsfw", inline=False)  # noqa: E501
     msg = await ctx.send(embed=embed)
     await msg.add_reaction("\U000025c0")
     await msg.add_reaction("\U000025b6")
@@ -155,16 +151,6 @@ async def help(ctx):
         await reaction.remove(user)
     await msg.delete(delay=60)
     helperloop.start()
-
-@bot.command()
-async def recrutement(ctx):
-    """Send 'recrutement' topic url."""
-    embed = discord.Embed(title="Rejoins la team DCTrad !",
-                          description="allez n'aie pas peur de cliquer et deviens un héros !",  # noqa: E501
-                          color=0x0000FF, url=dctrad_recru)
-    embed.set_thumbnail(url=dctradlogo)
-    await ctx.send(embed=embed)
-
 
 @bot.command()
 async def youtube(ctx, *, user_input):
@@ -282,36 +268,6 @@ async def ban_error(ctx, error):
 
 
 @bot.command()
-async def timer(ctx, numb, *, args):
-    """Program a timer."""
-    num = int(numb)
-    await ctx.send(content=f"{ctx.author.mention} : timer enregistré !",
-                   delete_after=10)
-    await asyncio.sleep(num, result=None, loop=None)
-    await ctx.send(content=f"temps écoulé ! : {ctx.author.mention} {args}")
-
-
-@bot.command()
-async def roulette(ctx):
-    """Plays russian roulette and kick user if shot."""
-    if random.randrange(6) == 3:
-        await ctx.send(content=random.choice(["Pan !","I am inevitable !","Say my name","Bye bitch !","Omae wa mou shindeiru","Boom"]))
-        await ctx.send(content=snap_url, delete_after=4)
-        await asyncio.sleep(2.4, result=None, loop=None)
-        await ctx.author.kick()
-    else:
-        close = random.choice(["*clic*....Tu restes vivant !",
-                            "Ouh c'était chaud !",
-                            f"Dios mio that was close sinior {ctx.author.mention}",
-                            "T'as toujours toute ta tête mon petit gars ?",
-                            "J'en connais qui a vu la mort en face !",
-                            "Ouh à un cheveu près ! Allez la prochaine c'est la bonne !"
-                                ]
-                        )
-        await ctx.send(content=close)
-
-
-@bot.command()
 async def gif(ctx, name):
     """Send gif corresponding to 'name'."""
     name = name.lower()
@@ -398,27 +354,6 @@ async def restart(ctx):
 async def restart_error(ctx, error):
     """Handle error in !restart command (MissingAnyRole)."""
     await ctx.send('Nope.')
-
-
-@bot.command()
-async def choose(ctx, *choices):
-    """Randomly choose user's choices."""
-    if len(choices) < 1:
-        return None
-    await ctx.send(random.choice(choices))
-
-
-@bot.command()
-async def coinflip(ctx):
-    """Launch a coinflip and print 'pile' or 'face'."""
-    await ctx.send(random.choice(["pile", "face"]))
-
-
-@bot.command()
-async def say(ctx, *, args):
-    """Bot writes user message content, and delete original user message."""
-    await ctx.message.delete()
-    await ctx.send(content=args)
 
 
 @bot.command()
@@ -628,10 +563,6 @@ async def kill(ctx):
     """Kill the bot."""
     await bot.logout()
 
-@bot.command()
-async def ping(ctx):
-    """Ping the bot."""
-    await ctx.send(content="pong !")
 
 @bot.event
 async def on_raw_reaction_add(payload):
@@ -668,4 +599,5 @@ async def on_raw_reaction_remove(payload):
 
 bonjour_madame.start()
 
+                        
 bot.run(token)
