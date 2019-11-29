@@ -68,7 +68,7 @@ help_above = [
     {'name': 'nomorespoil', 'value': 'spam des "..." pour cacher les spoils'}
     ]
 
-poke_help = "azrod\nbane\nrun\nsergei\nxanatos\n"  # see comment in line 509
+poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 my_giflist = GifJson("gifs.json")
@@ -121,8 +121,8 @@ async def help(ctx):
     if ctx.author.top_role >= bot.role_modo:
         for h in help_above:
             embed_2.add_field(name=h['name'], value=h['value'], inline=False)
-    if ctx.channel.category_id == dcteam_category_id:
-        embed.add_field(name='nsfw', value="affiche une image nsfw", inline=False)  # noqa: E501
+    # if ctx.channel.category_id == dcteam_category_id:
+        # embed.add_field(name='nsfw', value="affiche une image nsfw", inline=False)  # noqa: E501
     msg = await ctx.send(embed=embed)
     await msg.add_reaction("\U000025c0")
     await msg.add_reaction("\U000025b6")
