@@ -7,6 +7,7 @@ import datetime
 import os
 import sys
 import time
+import random
 
 import discord
 from discord.ext import commands, tasks
