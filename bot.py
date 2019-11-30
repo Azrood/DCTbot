@@ -17,6 +17,7 @@ from cogs.google import Google
 from cogs.misc import Misc
 from cogs.urban import Urban
 from cogs.team import Team
+from cogs.mod import Mod
 
 from utils.logs import CommandLog
 from utils.bonjourmadame import latest_madame
@@ -26,7 +27,7 @@ from utils.header import get_header, get_monthly_url
 from utils.reddit import reddit_nsfw
 from utils.secret import (token, dcteam_role_id, dcteam_id, modo_role_id,
                           dcteam_category_id, nsfw_channel_id,
-                          admin_role, staff_role, mods_role, react_role_msg_id)
+                          admin_role, staff_role, react_role_msg_id)
 from utils.tools import string_is_int, args_separator_for_log_function
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 
@@ -73,9 +74,10 @@ help_above = [
 
 poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
 my_giflist = GifJson("gifs.json")
 log = CommandLog("logs.json")
+
+cogs = [Getcomics, Google, Urban, Team, Misc, Mod]
 
 @bot.event
 async def on_ready():
@@ -88,11 +90,8 @@ async def on_ready():
     bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
     bot.role_modo = bot.guild.get_role(modo_role_id)
     bot.log = CommandLog("logs.json")
-    bot.add_cog(Getcomics(bot))
-    bot.add_cog(Google(bot))
-    bot.add_cog(Urban(bot))
-    bot.add_cog(Team(bot))
-    bot.add_cog(Misc(bot))
+    for cog in cogs:
+        bot.add_cog(cog(bot))
     channel_general = discord.utils.get(bot.guild.text_channels, name='general')
     greeting = random.choice(["Bonjour tout le monde !",
                             "Yo tout le monde ! Vous allez bien ?",
@@ -223,49 +222,6 @@ async def comicsblog(ctx, num):
         embed.add_field(name=l.find('title').text, value=l.find('guid').text,
                         inline=False)
     await ctx.send(embed=embed)
-
-
-@bot.command()
-@commands.has_any_role(*mods_role)
-async def kick(ctx):
-    """Kick user."""
-    member_list = ctx.message.mentions
-    for member in member_list:
-        await member.kick()
-    today = datetime.date.today().strftime("%d/%m/%Y")
-    time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-    log.log_write(today, time,
-                  ctx.channel.name.lower(),
-                  ctx.command.name.lower(),
-                  ctx.author.name.lower())
-    await ctx.send(content="Adios muchachos !")
-
-
-@kick.error
-async def kick_error(ctx, error):
-    """Handle error in !kick command (MissingAnyRole)."""
-    await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
-
-
-@bot.command()
-@commands.has_any_role(*mods_role)
-async def ban(ctx):
-    """Ban user."""
-    member_list = ctx.message.mentions
-    for member in member_list:
-        await member.ban(delete_message_days=3)
-    today = datetime.date.today().strftime("%d/%m/%Y")
-    time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-    log.log_write(today, time,
-                  ctx.channel.name.lower(),
-                  ctx.command.name.lower(),
-                  ctx.author.name.lower())
-
-
-@ban.error
-async def ban_error(ctx, error):
-    """Handle error in !ban command (MissingAnyRole)."""
-    await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
 
 
 @bot.command()
@@ -454,11 +410,11 @@ async def poke(ctx, people):
 
 @bot.command()
 @commands.is_owner()
-async def logs(ctx, date, *args):
+async def logs(ctx, date="today", *args):
     """Send some logs in private message about moderation commands usage.
 
     Args:
-        date (str): today or date as DD/MM/YYYY
+        date (str): today(default) or date as DD/MM/YYYY
         args: up to 3 elements, speifying command, user, channel
 
     Examples:
@@ -538,13 +494,6 @@ async def log_latest(ctx, numb=10):
     for i in latest:
         embed.add_field(name='\u200B', value=i, inline=False)
     await ctx.author.send(embed=embed)
-
-
-@bot.command()
-@commands.has_any_role(*mods_role)
-async def nomorespoil(ctx):
-    """Spam dots to clear potential spoils."""
-    await ctx.send("\n".join(["..." for i in range(50)]))
 
 @bot.command()
 @commands.is_owner()
