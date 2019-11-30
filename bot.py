@@ -6,7 +6,6 @@ import asyncio
 import datetime
 import os
 import sys
-import time
 import random
 
 import discord
@@ -18,6 +17,7 @@ from cogs.misc import Misc
 from cogs.urban import Urban
 from cogs.team import Team
 from cogs.mod import Mod
+from cogs.admin import Admin
 
 from utils.logs import CommandLog
 from utils.bonjourmadame import latest_madame
@@ -26,8 +26,8 @@ from utils.gif_json import GifJson
 from utils.header import get_header, get_monthly_url
 from utils.reddit import reddit_nsfw
 from utils.secret import (token, dcteam_role_id, dcteam_id, modo_role_id,
-                          dcteam_category_id, nsfw_channel_id,
-                          admin_role, staff_role, react_role_msg_id)
+                          dcteam_category_id, nsfw_channel_id, react_role_msg_id
+                          )
 from utils.tools import string_is_int, args_separator_for_log_function
 from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 
@@ -75,9 +75,8 @@ help_above = [
 poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
 
 my_giflist = GifJson("gifs.json")
-log = CommandLog("logs.json")
 
-cogs = [Getcomics, Google, Urban, Team, Misc, Mod]
+cogs = [Getcomics, Google, Urban, Team, Misc, Mod, Admin]
 
 @bot.event
 async def on_ready():
@@ -90,6 +89,7 @@ async def on_ready():
     bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
     bot.role_modo = bot.guild.get_role(modo_role_id)
     bot.log = CommandLog("logs.json")
+    bot.gifs = GifJson("gifs.json")
     for cog in cogs:
         bot.add_cog(cog(bot))
     channel_general = discord.utils.get(bot.guild.text_channels, name='general')
@@ -263,54 +263,7 @@ async def gif(ctx, name):
         pass
 
 
-@bot.command()
-@commands.is_owner()
-async def admin(ctx):
-    """Help for admin user."""
-    embed = discord.Embed(color=0x0000FF)
-    embed.add_field(name="gifadd",
-                    value="!gifadd <name> <url> <bool> (bool : public(True) or private(False) )",  # noqa: E501
-                    inline=False)
-    embed.add_field(name="gifdelete", value="!gifdelete <name>", inline=False)
-    embed.add_field(name="log_latest", value="!log_latest <int>", inline=False)
-    embed.add_field(name="logs", value="!logs <date> <user> <command> <channel>\n args are optional for filtering, for today, say <date> = today. Otherwise date=dd/mm/yyyy", inline=False)  # noqa:E501
-    embed.add_field(name="sleep", value="make the bot sleep for <numb> seconds\n  Syntax : !sleep <number>", inline=False)
-    embed.add_field(name="kill", value="Kill the bot.", inline=False)
-    await ctx.author.send(embed=embed)
 
-
-@bot.command()
-@commands.is_owner()
-async def gifadd(ctx, name, url, bool):
-    """Add gif in gif dictionary and gif json file."""
-    name = name.lower()
-
-    bool = bool.lower()
-    my_giflist.gif_add(name, url, bool)
-    await ctx.send(content=f"gif {name} ajouté !", delete_after=2)
-
-
-@bot.command()
-@commands.is_owner()
-async def gifdelete(ctx, name):
-    """Delete gif in gif dictionary and gif json file."""
-    name = name.lower()
-    my_giflist.gif_delete(name)
-    await ctx.send(content=f"gif {name} supprimé !", delete_after=2)
-
-
-@bot.command()
-@commands.has_any_role(*admin_role)
-async def restart(ctx):
-    """Restart bot."""
-    await ctx.send('Restarting.')
-    os.execv(__file__, sys.argv)
-
-
-@restart.error
-async def restart_error(ctx, error):
-    """Handle error in !restart command (MissingAnyRole)."""
-    await ctx.send('Nope.')
 
 
 @bot.command()
@@ -406,113 +359,6 @@ async def poke(ctx, people):
         embed = discord.Embed()
         embed.set_image(url="attachment://"+people+".jpg")  # better safe than sorry  # noqa: E501,E226
         await ctx.send(file=f, embed=embed)
-
-
-@bot.command()
-@commands.is_owner()
-async def logs(ctx, date="today", *args):
-    """Send some logs in private message about moderation commands usage.
-
-    Args:
-        date (str): today(default) or date as DD/MM/YYYY
-        args: up to 3 elements, speifying command, user, channel
-
-    Examples:
-        log today homer general: list homer commands in #general channel
-        log 05/06/2019 faq: list all moderaiton commands in #faq on 05/06/2019
-
-    """
-    embed = discord.Embed(title="logs", colour=0xe7191f)
-
-    # arg_lists is always ["user", "command", "channel"]
-    args_list = args_separator_for_log_function(bot.guild, args)
-
-    if date == "today":
-        date = datetime.date.today().strftime("%d/%m/%Y")
-
-    bin_array = [int(i is not None) for i in args_list]  # convert ["foo", None, None] to [1, 0, 0]  # noqa:E501
-    n = int("".join(str(x) for x in bin_array), 2)  # binary array to int
-
-    user, command, channel = args_list
-
-    if log.log_read(date, *args_list) is not None:  # if it is None, there are no logs on the given date  # noqa:E501
-
-        # we get a list of tuple in this format [(time,user,command,channel)]
-        list_log = log.log_read(date, *args_list)  # to avoid multiple calling
-
-        # if entries are not specified, then they are None
-        if n == 0:  # [None, None, None]
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]} used {v[2]} in {v[3]}", inline=False)  # nice embed  # noqa:E501
-
-        elif n == 1:  # [None, None, channel]
-            embed.set_footer(text=channel)
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]} used {v[2]}", inline=False)  # noqa:E501
-
-        elif n == 2:  # [None, command, None]
-            embed.set_footer(text=f"users of {command}")
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]} in {v[2]}", inline=False)  # noqa:E501
-
-        elif n == 3:  # [None, command, channel]
-            embed.set_footer(text=f"users of {command} in {channel}")
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]}", inline=False)
-
-        elif n == 4:  # [user, None, None]
-            embed.set_footer(text=user)
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"used {v[1]} in {v[2]}", inline=False)  # noqa:E501
-
-        elif n == 5:  # [user, None, channel]
-            embed.set_footer(text=f"{user} commands in {channel}")
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"used {v[2]}", inline=False)
-
-        elif n == 6:  # [user, command, None]
-            embed.set_footer(text=f"{user} used {command}")
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"used in {v[2]}", inline=False)  # noqa:E501
-
-        else:  # [user, command, channel]
-            embed.set_footer(text=f"{user} used {command} in {channel}")
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]}", inline=False)
-
-        await ctx.author.send(embed=embed)
-    else:  # no logs in the given date
-        await ctx.author.send(content="Rien dans cette date !")
-
-
-@bot.command()
-@commands.is_owner()
-async def log_latest(ctx, numb=10):
-    """Send latest logs."""
-    embed = discord.Embed(title="latest logs")
-    latest = log.log_latest(int(numb))
-    for i in latest:
-        embed.add_field(name='\u200B', value=i, inline=False)
-    await ctx.author.send(embed=embed)
-
-@bot.command()
-@commands.is_owner()
-async def sleep(ctx,numb):
-    """`time` is blocking for async functions. Delay the bots for `numb` seconds"""
-    await ctx.send(content=f"Going to sleep for {numb} seconds. Good night !")
-    time.sleep(int(numb))
-    morning = random.choice(["Good morning !",
-                            "Bonjour !"
-                            ]
-                        )
-    await ctx.send(content=morning)
-
-@bot.command()
-@commands.is_owner()
-async def kill(ctx):
-    """Kill the bot."""
-    await bot.logout()
-
 
 @bot.event
 async def on_raw_reaction_add(payload):
