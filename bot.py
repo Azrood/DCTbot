@@ -12,6 +12,7 @@ import random
 import discord
 from discord.ext import commands, tasks
 
+from cogs.comicsblog import Comicsblog
 from cogs.getcomics import Getcomics
 from cogs.google import Google
 from cogs.misc import Misc
@@ -22,7 +23,6 @@ from cogs.youtube import Youtube
 
 from utils.logs import CommandLog
 from utils.bonjourmadame import latest_madame
-from utils.comicsblog import get_comicsblog
 from utils.gif_json import GifJson
 from utils.header import get_header, get_monthly_url
 from utils.reddit import reddit_nsfw
@@ -77,7 +77,7 @@ poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
 my_giflist = GifJson("gifs.json")
 log = CommandLog("logs.json")
 
-cogs = [Getcomics, Google, Urban, Team, Misc, Mod, Youtube]
+cogs = [Comicsblog, Getcomics, Google, Urban, Team, Misc, Mod, Youtube]
 
 @bot.event
 async def on_ready():
@@ -151,23 +151,6 @@ async def help(ctx):
         await reaction.remove(user)
     await msg.delete(delay=60)
     helperloop.start()
-
-
-@bot.command()
-async def comicsblog(ctx, num):
-    """Send latest comicsblog news.
-
-    Args:
-        num (int): number of results to send
-
-    """
-    list = await get_comicsblog(num)
-    embed = discord.Embed(title=f"les {num} derniers articles de comicsblog",
-                          color=0xe3951a)
-    for l in list:
-        embed.add_field(name=l.find('title').text, value=l.find('guid').text,
-                        inline=False)
-    await ctx.send(embed=embed)
 
 
 @bot.command()
