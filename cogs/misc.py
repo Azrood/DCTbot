@@ -83,7 +83,7 @@ class Misc(commands.Cog):
                 f"Dios mio that was close sinior {ctx.author.mention}",
                 "T'as toujours toute ta tête mon petit gars ?",
                 "J'en connais qui a vu la mort en face !",
-                "Ouh à un cheveu près ! Allez la prochaine c'est la bonne !"  # noqa:E501
+                "Ouh à un cheveu près ! Allez la prochaine c'est la bonne !",
                 "MAIS T'ES MALADE !",
                 "C'est bientot fini ?"
                 ])
