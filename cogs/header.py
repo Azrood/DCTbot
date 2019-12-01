@@ -12,7 +12,10 @@ import io  # will use it to convert the bytes read with aiohttp to file-like obj
 import aiohttp
 from urllib.parse import urljoin
 
-from utils.tools import get_soup_html, get_soup_lxml
+import discord
+from discord.ext import commands
+
+from utils.tools import get_soup_html
 
 dctrad_base = "http://www.dctrad.fr"
 dctrad_url = "http://www.dctrad.fr/index.php"
@@ -98,3 +101,31 @@ async def get_header(n):
     await _download_img(h_list, ress_path)
     file_path = _make_header(n, ress_path)
     return file_path
+
+
+class Header(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def header(self, ctx, arg):
+        """Send header image."""
+        arg = arg.lower()
+        monthly = await get_monthly_url()
+        embed = discord.Embed(title="Comics du mois", url=monthly)
+        if arg == "rebirth" or arg == "dcrebirth":
+            file_path = await get_header(1)
+            await ctx.send(embed=embed, file=discord.File(file_path))
+            os.remove(file_path)
+        elif arg == "hors" or arg == "horsrebirth":
+            file_path = await get_header(2)
+            await ctx.send(embed=embed, file=discord.File(file_path))
+            os.remove(file_path)
+        elif arg in ["indé", "indés", "inde", "indé"]:
+            file_path = await get_header(3)
+            await ctx.send(embed=embed, file=discord.File(file_path))
+            os.remove(file_path)
+        elif arg == "marvel":
+            file_path = await get_header(4)
+            await ctx.send(embed=embed, file=discord.File(file_path))
+            os.remove(file_path)
