@@ -98,7 +98,7 @@ async def on_ready():
     bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
     bot.role_modo = bot.guild.get_role(modo_role_id)
     bot.log = CommandLog("logs.json")
-    bot.gifs = GifJson("gifs.json")
+    bot.gifs = my_giflist
     for cog in cogs:
         bot.add_cog(cog(bot))
     channel_general = discord.utils.get(bot.guild.text_channels, name='general')
