@@ -18,6 +18,7 @@ from cogs.misc import Misc
 from cogs.urban import Urban
 from cogs.team import Team
 from cogs.mod import Mod
+from cogs.youtube import Youtube
 
 from utils.logs import CommandLog
 from utils.bonjourmadame import latest_madame
@@ -28,8 +29,7 @@ from utils.reddit import reddit_nsfw
 from utils.secret import (token, dcteam_role_id, dcteam_id, modo_role_id,
                           dcteam_category_id, nsfw_channel_id,
                           admin_role, staff_role, react_role_msg_id)
-from utils.tools import string_is_int, args_separator_for_log_function
-from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
+from utils.tools import args_separator_for_log_function
 
 prefix = '!'
 
@@ -77,7 +77,7 @@ poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
 my_giflist = GifJson("gifs.json")
 log = CommandLog("logs.json")
 
-cogs = [Getcomics, Google, Urban, Team, Misc, Mod]
+cogs = [Getcomics, Google, Urban, Team, Misc, Mod, Youtube]
 
 @bot.event
 async def on_ready():
@@ -151,60 +151,6 @@ async def help(ctx):
         await reaction.remove(user)
     await msg.delete(delay=60)
     helperloop.start()
-
-@bot.command()
-async def youtube(ctx, *, user_input):
-    """Send first Youtube search result."""
-    title, url = youtube_top_link(user_input.lower())
-    link = await ctx.send(content=f"{title}\n{url}")
-
-    def check(message):
-        return message == ctx.message
-    await bot.wait_for("message_delete", check=check, timeout=1200)
-    await link.delete(delay=None)
-
-
-@bot.command()
-async def youtubelist(ctx, num, *, query):
-    """Send n Youtube search results."""
-    number = int(num)
-    if number > 10:
-        number = 10
-    result = search_youtube(user_input=query, number=number)
-    embed = discord.Embed(color=0xFF0000)
-    embed.set_footer(text="Tapez un nombre pour faire votre choix "
-                          "ou dites \"cancel\" pour annuler")
-    for s in result:
-        url = get_youtube_url(s)
-        embed.add_field(name=f"{result.index(s)+1}.{s['type']}",
-                        value=f"[{s['title']}]({url})", inline=False)
-    self_message = await ctx.send(embed=embed)
-
-    def check(message):
-        return (message.author == ctx.author
-                and (message.content == "cancel"
-                     or string_is_int(message.content)))
-    try:
-        msg = await bot.wait_for("message", check=check, timeout=15)
-        if msg.content == "cancel":
-            await ctx.send("Annulé !", delete_after=5)
-            await self_message.delete(delay=None)
-            await ctx.message.delete(delay=2)
-            await msg.delete(delay=1)
-        else:
-            num = int(msg.content)
-            if 0 < num <= len(result):
-                url = get_youtube_url(result[num - 1])
-                await ctx.send(content=f"{url}")
-                await ctx.message.delete(delay=2)
-                await self_message.delete(delay=None)
-                await msg.delete(delay=1)
-
-    except asyncio.TimeoutError:
-        await ctx.send("Tu as pris trop de temps pour répondre !",
-                       delete_after=5)
-        await self_message.delete(delay=None)
-        await ctx.message.delete(delay=2)
 
 
 @bot.command()
