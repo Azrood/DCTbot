@@ -75,7 +75,16 @@ poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
 
 my_giflist = GifJson("gifs.json")
 
-cogs = [Comicsblog, Getcomics, Google, Header, Urban, Team, Misc, Mod, Youtube, Admin]
+cogs = [Admin,
+        Comicsblog,
+        Getcomics,
+        Google,
+        Header,
+        Misc,
+        Mod,
+        Team,
+        Urban,
+        Youtube]
 
 
 @bot.event
@@ -267,7 +276,7 @@ async def poke(ctx, people):
 
 @bot.event
 async def on_raw_reaction_add(payload):
-    """Read all the reactions added (even those not in cache) 
+    """Read all the reactions added (even those not in cache)
         and filter by messageID to check the message where the reaction was removed
         and give the user whose reaction was removed a specific role
     """
@@ -283,7 +292,7 @@ async def on_raw_reaction_add(payload):
 
 @bot.event
 async def on_raw_reaction_remove(payload):
-    """Read all the reactions removed (even those not in cache) 
+    """Read all the reactions removed (even those not in cache)
         and filter by messageID to check the message where the reaction was removed
         and give the user whose reaction was removed a specific role
     """
@@ -300,5 +309,4 @@ async def on_raw_reaction_remove(payload):
 
 bonjour_madame.start()
 
-                        
 bot.run(token)
