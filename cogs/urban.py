@@ -64,10 +64,10 @@ class Urban(commands.Cog):
         await urban.fetch()
         if urban.valid:
             title, meaning, example, search_url = urban.get_top_def()
-            embed = discord.Embed(title=f"Definition of {title}",
-                                  description=meaning, color=0x00FFFF,
+            embed = discord.Embed(title=f"Definition of {title[:100]}",
+                                  description=meaning[:2048], color=0x00FFFF,
                                   url=search_url)
-            embed.add_field(name="Example", value=example, inline=False)
+            embed.add_field(name="Example", value=example[:2048], inline=False)
             embed.set_thumbnail(url=urban_logo)
         else:
             embed = discord.Embed(title=f"Definition of {user_input} doesn't exist")  # noqa: E501
