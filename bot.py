@@ -11,25 +11,24 @@ import random
 import discord
 from discord.ext import commands, tasks
 
+from cogs.comicsblog import Comicsblog
 from cogs.getcomics import Getcomics
 from cogs.google import Google
+from cogs.header import Header
 from cogs.misc import Misc
 from cogs.urban import Urban
 from cogs.team import Team
 from cogs.mod import Mod
 from cogs.admin import Admin
+from cogs.youtube import Youtube
 
 from utils.logs import CommandLog
 from utils.bonjourmadame import latest_madame
-from utils.comicsblog import get_comicsblog
 from utils.gif_json import GifJson
-from utils.header import get_header, get_monthly_url
 from utils.reddit import reddit_nsfw
 from utils.secret import (token, dcteam_role_id, dcteam_id, modo_role_id,
                           dcteam_category_id, nsfw_channel_id, react_role_msg_id
                           )
-from utils.tools import string_is_int, args_separator_for_log_function
-from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
 
 prefix = '!'
 
@@ -76,7 +75,8 @@ poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
 
 my_giflist = GifJson("gifs.json")
 
-cogs = [Getcomics, Google, Urban, Team, Misc, Mod, Admin]
+cogs = [Comicsblog, Getcomics, Google, Header, Urban, Team, Misc, Mod, Youtube, Admin]
+
 
 @bot.event
 async def on_ready():
@@ -152,77 +152,6 @@ async def help(ctx):
     await msg.delete(delay=60)
     helperloop.start()
 
-@bot.command()
-async def youtube(ctx, *, user_input):
-    """Send first Youtube search result."""
-    title, url = youtube_top_link(user_input.lower())
-    link = await ctx.send(content=f"{title}\n{url}")
-
-    def check(message):
-        return message == ctx.message
-    await bot.wait_for("message_delete", check=check, timeout=1200)
-    await link.delete(delay=None)
-
-
-@bot.command()
-async def youtubelist(ctx, num, *, query):
-    """Send n Youtube search results."""
-    number = int(num)
-    if number > 10:
-        number = 10
-    result = search_youtube(user_input=query, number=number)
-    embed = discord.Embed(color=0xFF0000)
-    embed.set_footer(text="Tapez un nombre pour faire votre choix "
-                          "ou dites \"cancel\" pour annuler")
-    for s in result:
-        url = get_youtube_url(s)
-        embed.add_field(name=f"{result.index(s)+1}.{s['type']}",
-                        value=f"[{s['title']}]({url})", inline=False)
-    self_message = await ctx.send(embed=embed)
-
-    def check(message):
-        return (message.author == ctx.author
-                and (message.content == "cancel"
-                     or string_is_int(message.content)))
-    try:
-        msg = await bot.wait_for("message", check=check, timeout=15)
-        if msg.content == "cancel":
-            await ctx.send("Annulé !", delete_after=5)
-            await self_message.delete(delay=None)
-            await ctx.message.delete(delay=2)
-            await msg.delete(delay=1)
-        else:
-            num = int(msg.content)
-            if 0 < num <= len(result):
-                url = get_youtube_url(result[num - 1])
-                await ctx.send(content=f"{url}")
-                await ctx.message.delete(delay=2)
-                await self_message.delete(delay=None)
-                await msg.delete(delay=1)
-
-    except asyncio.TimeoutError:
-        await ctx.send("Tu as pris trop de temps pour répondre !",
-                       delete_after=5)
-        await self_message.delete(delay=None)
-        await ctx.message.delete(delay=2)
-
-
-@bot.command()
-async def comicsblog(ctx, num):
-    """Send latest comicsblog news.
-
-    Args:
-        num (int): number of results to send
-
-    """
-    list = await get_comicsblog(num)
-    embed = discord.Embed(title=f"les {num} derniers articles de comicsblog",
-                          color=0xe3951a)
-    for l in list:
-        embed.add_field(name=l.find('title').text, value=l.find('guid').text,
-                        inline=False)
-    await ctx.send(embed=embed)
-
 
 @bot.command()
 async def gif(ctx, name):
@@ -264,30 +193,6 @@ async def gif(ctx, name):
 
 
 
-
-
-@bot.command()
-async def header(ctx, arg):
-    """Send header image."""
-    arg = arg.lower()
-    monthly = await get_monthly_url()
-    embed = discord.Embed(title="Comics du mois", url=monthly)
-    if arg == "rebirth" or arg == "dcrebirth":
-        file_path = await get_header(1)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-    elif arg == "hors" or arg == "horsrebirth":
-        file_path = await get_header(2)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-    elif arg in ["indé", "indés", "inde", "indé"]:
-        file_path = await get_header(3)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-    elif arg == "marvel":
-        file_path = await get_header(4)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
 
 
 @bot.event
