@@ -15,6 +15,7 @@ from discord.ext import commands, tasks
 from cogs.comicsblog import Comicsblog
 from cogs.getcomics import Getcomics
 from cogs.google import Google
+from cogs.header import Header
 from cogs.misc import Misc
 from cogs.urban import Urban
 from cogs.team import Team
@@ -24,7 +25,6 @@ from cogs.youtube import Youtube
 from utils.logs import CommandLog
 from utils.bonjourmadame import latest_madame
 from utils.gif_json import GifJson
-from utils.header import get_header, get_monthly_url
 from utils.reddit import reddit_nsfw
 from utils.secret import (token, dcteam_role_id, dcteam_id, modo_role_id,
                           dcteam_category_id, nsfw_channel_id,
@@ -77,7 +77,8 @@ poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
 my_giflist = GifJson("gifs.json")
 log = CommandLog("logs.json")
 
-cogs = [Comicsblog, Getcomics, Google, Urban, Team, Misc, Mod, Youtube]
+cogs = [Comicsblog, Getcomics, Google, Header, Urban, Team, Misc, Mod, Youtube]
+
 
 @bot.event
 async def on_ready():
@@ -240,30 +241,6 @@ async def restart(ctx):
 async def restart_error(ctx, error):
     """Handle error in !restart command (MissingAnyRole)."""
     await ctx.send('Nope.')
-
-
-@bot.command()
-async def header(ctx, arg):
-    """Send header image."""
-    arg = arg.lower()
-    monthly = await get_monthly_url()
-    embed = discord.Embed(title="Comics du mois", url=monthly)
-    if arg == "rebirth" or arg == "dcrebirth":
-        file_path = await get_header(1)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-    elif arg == "hors" or arg == "horsrebirth":
-        file_path = await get_header(2)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-    elif arg in ["indé", "indés", "inde", "indé"]:
-        file_path = await get_header(3)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-    elif arg == "marvel":
-        file_path = await get_header(4)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
 
 
 @bot.event
