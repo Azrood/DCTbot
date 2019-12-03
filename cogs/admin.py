@@ -1,9 +1,6 @@
 import datetime
 import os
-import random
 import sys
-
-
 
 import discord
 from discord.ext import commands
@@ -12,16 +9,16 @@ from utils.logs import CommandLog
 from utils.tools import args_separator_for_log_function
 from utils.secret import admin_role
 
+
 class Admin(commands.Cog):
-    def __init__ (self,bot):
+    def __init__(self, bot):
         self.bot = bot
         self.giflist = bot.gifs
         self.log = bot.log
 
-
     @commands.command()
     @commands.is_owner()
-    async def admin(self,ctx):
+    async def admin(self, ctx):
         """Help for admin user."""
         embed = discord.Embed(color=0x0000FF)
         embed.add_field(name="gifadd",
@@ -34,10 +31,9 @@ class Admin(commands.Cog):
         embed.add_field(name="kill", value="Kill the bot.", inline=False)
         await ctx.author.send(embed=embed)
 
-
     @commands.command()
     @commands.is_owner()
-    async def gifadd(self,ctx, name, url, bool):
+    async def gifadd(self, ctx, name, url, bool):
         """Add gif in gif dictionary and gif json file."""
         name = name.lower()
 
@@ -45,10 +41,9 @@ class Admin(commands.Cog):
         self.giflist.gif_add(name, url, bool)
         await ctx.send(content=f"gif {name} ajouté !", delete_after=2)
 
-
     @commands.command()
     @commands.is_owner()
-    async def gifdelete(self,ctx, name):
+    async def gifdelete(self, ctx, name):
         """Delete gif in gif dictionary and gif json file."""
         name = name.lower()
         self.giflist.gif_delete(name)
@@ -56,20 +51,23 @@ class Admin(commands.Cog):
 
     @commands.command()
     @commands.has_any_role(*admin_role)
-    async def restart(self,ctx):
+    async def restart(self, ctx):
         """Restart bot."""
         await ctx.send('Restarting.')
-        os.execv(__file__, sys.argv)
-
+        # os.execv(__file__, sys.argv)  # old code (before cog)
+        os.execv(sys.executable, [sys.executable] + sys.argv)
 
     @restart.error
-    async def restart_error(self,ctx, error):
+    async def restart_error(self, ctx, error):
         """Handle error in !restart command (MissingAnyRole)."""
-        await ctx.send('Nope.')
+        if isinstance(error, commands.MissingAnyRole):
+            await ctx.send('Nope.')
+        else:
+            raise error
 
     @commands.command()
     @commands.is_owner()
-    async def logs(self,ctx, date="today", *args):
+    async def logs(self, ctx, date="today", *args):
         """Send some logs in private message about moderation commands usage.
 
         Args:
@@ -143,10 +141,9 @@ class Admin(commands.Cog):
         else:  # no logs in the given date
             await ctx.author.send(content="Rien dans cette date !")
 
-
     @commands.command()
     @commands.is_owner()
-    async def log_latest(self,ctx, numb=10):
+    async def log_latest(self, ctx, numb=10):
         """Send latest logs."""
         embed = discord.Embed(title="latest logs")
         latest = self.log.log_latest(int(numb))
@@ -156,6 +153,6 @@ class Admin(commands.Cog):
 
     @commands.command()
     @commands.is_owner()
-    async def kill(self,ctx):
+    async def kill(self, ctx):
         """Kill the bot."""
         await self.bot.logout()
