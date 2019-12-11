@@ -3,7 +3,6 @@
 """Awesome Discord Bot."""
 
 import asyncio
-import datetime
 import os
 import sys
 import random
@@ -11,6 +10,7 @@ import random
 import discord
 from discord.ext import commands, tasks
 
+from cogs.bonjourmadame import BonjourMadame
 from cogs.comicsblog import Comicsblog
 from cogs.getcomics import Getcomics
 from cogs.google import Google
@@ -23,12 +23,10 @@ from cogs.admin import Admin
 from cogs.youtube import Youtube
 
 from utils.logs import CommandLog
-from utils.bonjourmadame import latest_madame
 from utils.gif_json import GifJson
 from utils.reddit import reddit_nsfw
 from utils.secret import (token, dcteam_role_id, dcteam_id, modo_role_id,
-                          dcteam_category_id, nsfw_channel_id, react_role_msg_id
-                          )
+                          dcteam_category_id, react_role_msg_id)
 
 prefix = '!'
 
@@ -76,6 +74,7 @@ poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
 my_giflist = GifJson("gifs.json")
 
 cogs = [Admin,
+        BonjourMadame,
         Comicsblog,
         Getcomics,
         Google,
@@ -95,30 +94,35 @@ async def on_ready():
     print(bot.user.id)
     print('------')
     bot.guild = bot.get_guild(dcteam_id)  # se lier au serveur à partir de l'ID
-    bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
-    bot.role_modo = bot.guild.get_role(modo_role_id)
+    try:
+        bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
+        bot.role_modo = bot.guild.get_role(modo_role_id)
+    except AttributeError:
+        bot.role_dcteam = 0
+        bot.role_modo = 0
+    bot.nsfw_channel = discord.utils.get(bot.guild.text_channels, name='nsfw')  # noqa:E501
     bot.log = CommandLog("logs.json")
     bot.gifs = my_giflist
     for cog in cogs:
         bot.add_cog(cog(bot))
     channel_general = discord.utils.get(bot.guild.text_channels, name='general')
-    greeting = random.choice(["Bonjour tout le monde !",
-                            "Yo tout le monde ! Vous allez bien ?",
-                            "Comment allez-vous en cette magnifique journée ?",
-                            "Yo les biatches !",
-                            "Good morning motherfuckers !",
-                            "Yo les gros ! ça roule ?",
-                            "Yo les juifs ! ça gaze ?",
-                            "Hola amigos ! Bonne journée !",
-                            "Roulette pour tout le monde ! TOUT DE SUITE !!",
-                            "I'm back bitches !",
-                            "Ohayo gozaimasu !",
-                            "Je suis de retour pour vous jouer un mauvais tour !",
-                            "Wake up ! Grab a brush and put a little makeup !",
-                            "Wake me up ! Wake me up inside !"
-                            ]
-                        )
-    await asyncio.sleep(delay=36000) # bot is rebooted every day at 00:00 so we wait 10 hours after logging in
+    greeting = random.choice(
+        ["Bonjour tout le monde !",
+         "Yo tout le monde ! Vous allez bien ?",
+         "Comment allez-vous en cette magnifique journée ?",
+         "Yo les biatches !",
+         "Good morning motherfuckers !",
+         "Yo les gros ! ça roule ?",
+         "Yo les juifs ! ça gaze ?",
+         "Hola amigos ! Bonne journée !",
+         "Roulette pour tout le monde ! TOUT DE SUITE !!",
+         "I'm back bitches !",
+         "Ohayo gozaimasu !",
+         "Je suis de retour pour vous jouer un mauvais tour !",
+         "Wake up ! Grab a brush and put a little makeup !",
+         "Wake me up ! Wake me up inside !"
+         ])
+    await asyncio.sleep(delay=36000)  # bot is rebooted every day at 00:00 so we wait 10 hours after logging in
     await channel_general.send(content=greeting)
 
 
@@ -201,9 +205,6 @@ async def gif(ctx, name):
         pass
 
 
-
-
-
 @bot.event
 async def on_message(ctx):
     """Read all message and check if it's a gif command."""
@@ -233,29 +234,13 @@ async def on_message(ctx):
     if not found:
         await bot.process_commands(ctx)
 
-# time=date.time(hour=10)  will use it when v1.3 for discord.py is released
-@tasks.loop(hours=24)  # will take time as argument when v1.3 is released  # noqa: E501
-async def bonjour_madame():
-    """Send daily bonjourmadame."""
-    if 0 <= datetime.date.today().weekday() <= 4:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
-        embed = discord.Embed()
-        embed.set_image(url=await latest_madame())
-        embed.set_footer(text="Bonjour Madame")
-        await bot.get_channel(nsfw_channel_id).send(embed=embed)
-
-
-@bonjour_madame.before_loop
-async def before_bonjour_madame():
-    """Intiliaze bonjour_madame loop."""
-    await bot.wait_until_ready()
-    await asyncio.sleep(37800)  # Wait 10hours 30min, to lauch at 10:30AM
-
 
 # @bot.command()
 # @commands.is_nsfw()
 # async def nsfw(ctx):
     # TODO : doctring
     # await ctx.send(content=reddit_nsfw())
+
 
 @bot.command()
 async def poke(ctx, people):
@@ -273,6 +258,7 @@ async def poke(ctx, people):
         embed = discord.Embed()
         embed.set_image(url="attachment://"+people+".jpg")  # better safe than sorry  # noqa: E501,E226
         await ctx.send(file=f, embed=embed)
+
 
 @bot.event
 async def on_raw_reaction_add(payload):
@@ -295,7 +281,7 @@ async def on_raw_reaction_add(payload):
         await user.remove_roles(*roles)
         await user.add_roles(keupains_role)
         await user.send(content="Keupains pour toujours et à jamais !")
-        
+
 
 @bot.event
 async def on_raw_reaction_remove(payload):
@@ -313,7 +299,5 @@ async def on_raw_reaction_remove(payload):
         await user.remove_roles(header_role)
         await user.send(content="Vous __**ne**__ serez __**plus**__ notifié lorsqu'une release sera postée!")
 
-
-bonjour_madame.start()
 
 bot.run(token)
