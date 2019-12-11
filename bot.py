@@ -289,6 +289,13 @@ async def on_raw_reaction_add(payload):
         header_role = discord.utils.get(bot.guild.roles, name="header release")
         await user.add_roles(header_role)
         await user.send(content="Vous serez notifié lorsqu'une release sera postée !")
+    if payload.emoji.name == "\U0000274C" and payload.message_id == 654272251276820501:
+        roles = user.roles[1:]
+        keupains_role = discord.utils.get(bot.guild.roles, name="Keupains")
+        await user.remove_roles(*roles)
+        await user.add_roles(keupains_role)
+        await user.send(content="Keupains pour toujours et à jamais !")
+        
 
 @bot.event
 async def on_raw_reaction_remove(payload):
