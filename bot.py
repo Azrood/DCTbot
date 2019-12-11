@@ -3,29 +3,30 @@
 """Awesome Discord Bot."""
 
 import asyncio
-import datetime
 import os
-import random
 import sys
-import time
+import random
 
 import discord
 from discord.ext import commands, tasks
 
-from utils.bonjourmadame import latest_madame
-from utils.comicsblog import get_comicsblog
-from utils.getcomics import getcomics_top_link
-from utils.gif_json import GifJson
-from utils.google import search_google, google_top_link
-from utils.header import get_header, get_monthly_url
+from cogs.bonjourmadame import BonjourMadame
+from cogs.comicsblog import Comicsblog
+from cogs.getcomics import Getcomics
+from cogs.google import Google
+from cogs.header import Header
+from cogs.misc import Misc
+from cogs.urban import Urban
+from cogs.team import Team
+from cogs.mod import Mod
+from cogs.admin import Admin
+from cogs.youtube import Youtube
+
 from utils.logs import CommandLog
+from utils.gif_json import GifJson
 from utils.reddit import reddit_nsfw
 from utils.secret import (token, dcteam_role_id, dcteam_id, modo_role_id,
-                          dcteam_category_id, nsfw_channel_id,
-                          admin_role, staff_role, mods_role, react_role_msg_id)
-from utils.tools import string_is_int, args_separator_for_log_function
-from utils.urban import UrbanSearch
-from utils.youtube import youtube_top_link, search_youtube, get_youtube_url
+                          dcteam_category_id, react_role_msg_id)
 
 prefix = '!'
 
@@ -38,13 +39,6 @@ if len(sys.argv) > 1:
 bot = commands.Bot(command_prefix=prefix, help_command=None,
                    description=None, case_insensitive=True)
 
-urban_logo = "https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5MuDJw8LUbwqZM9BW9oey5I/https/i.imgur.com/VFXr0ID.jpg"  # noqa: E501
-
-dctradlogo = "http://www.dctrad.fr/ext/planetstyles/flightdeck/store/logodctweb.png"  # noqa: E501
-
-dctrad_recru = "http://www.dctrad.fr/viewforum.php?f=21"
-
-snap_url = "https://media.tenor.com/images/8d7d2e757f934793bb4154cede8a4afa/tenor.gif"  # noqa: E501
 
 helps = [
     {'name': 'help', 'value': 'affiche la liste des commandes'},
@@ -75,11 +69,22 @@ help_above = [
     {'name': 'nomorespoil', 'value': 'spam des "..." pour cacher les spoils'}
     ]
 
-poke_help = "azrod\nbane\nrun\nsergei\nxanatos\n"  # see comment in line 509
+poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
 my_giflist = GifJson("gifs.json")
-log = CommandLog("logs.json")
+
+cogs = [Admin,
+        BonjourMadame,
+        Comicsblog,
+        Getcomics,
+        Google,
+        Header,
+        Misc,
+        Mod,
+        Team,
+        Urban,
+        Youtube]
+
 
 @bot.event
 async def on_ready():
@@ -89,26 +94,35 @@ async def on_ready():
     print(bot.user.id)
     print('------')
     bot.guild = bot.get_guild(dcteam_id)  # se lier au serveur à partir de l'ID
-    bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
-    bot.role_modo = bot.guild.get_role(modo_role_id)
+    try:
+        bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
+        bot.role_modo = bot.guild.get_role(modo_role_id)
+    except AttributeError:
+        bot.role_dcteam = 0
+        bot.role_modo = 0
+    bot.nsfw_channel = discord.utils.get(bot.guild.text_channels, name='nsfw')  # noqa:E501
+    bot.log = CommandLog("logs.json")
+    bot.gifs = my_giflist
+    for cog in cogs:
+        bot.add_cog(cog(bot))
     channel_general = discord.utils.get(bot.guild.text_channels, name='general')
-    greeting = random.choice(["Bonjour tout le monde !",
-                            "Yo tout le monde ! Vous allez bien ?",
-                            "Comment allez-vous en cette magnifique journée ?",
-                            "Yo les biatches !",
-                            "Good morning motherfuckers !",
-                            "Yo les gros ! ça roule ?",
-                            "Yo les juifs ! ça gaze ?",
-                            "Hola amigos ! Bonne journée !",
-                            "Roulette pour tout le monde ! TOUT DE SUITE !!",
-                            "I'm back bitches !",
-                            "Ohayo gozaimasu !",
-                            "Je suis de retour pour vous jouer un mauvais tour !",
-                            "Wake up ! Grab a brush and put a little makeup !",
-                            "Wake me up ! Wake me up inside !"
-                            ]
-                        )
-    await asyncio.sleep(delay=36000) # bot is rebooted every day at 00:00 so we wait 10 hours after logging in
+    greeting = random.choice(
+        ["Bonjour tout le monde !",
+         "Yo tout le monde ! Vous allez bien ?",
+         "Comment allez-vous en cette magnifique journée ?",
+         "Yo les biatches !",
+         "Good morning motherfuckers !",
+         "Yo les gros ! ça roule ?",
+         "Yo les juifs ! ça gaze ?",
+         "Hola amigos ! Bonne journée !",
+         "Roulette pour tout le monde ! TOUT DE SUITE !!",
+         "I'm back bitches !",
+         "Ohayo gozaimasu !",
+         "Je suis de retour pour vous jouer un mauvais tour !",
+         "Wake up ! Grab a brush and put a little makeup !",
+         "Wake me up ! Wake me up inside !"
+         ])
+    await asyncio.sleep(delay=36000)  # bot is rebooted every day at 00:00 so we wait 10 hours after logging in
     await channel_general.send(content=greeting)
 
 
@@ -128,8 +142,8 @@ async def help(ctx):
     if ctx.author.top_role >= bot.role_modo:
         for h in help_above:
             embed_2.add_field(name=h['name'], value=h['value'], inline=False)
-    if ctx.channel.category_id == dcteam_category_id:
-        embed.add_field(name='nsfw', value="affiche une image nsfw", inline=False)  # noqa: E501
+    # if ctx.channel.category_id == dcteam_category_id:
+        # embed.add_field(name='nsfw', value="affiche une image nsfw", inline=False)  # noqa: E501
     msg = await ctx.send(embed=embed)
     await msg.add_reaction("\U000025c0")
     await msg.add_reaction("\U000025b6")
@@ -150,256 +164,6 @@ async def help(ctx):
         await reaction.remove(user)
     await msg.delete(delay=60)
     helperloop.start()
-
-
-@bot.command()
-@commands.has_any_role(*staff_role)
-async def team(ctx):
-    """Give 'team' role to user list."""
-    member_list = ctx.message.mentions  # une liste d'objets
-    counter = 0
-    if not member_list:
-        pass
-    else:
-        for member in member_list:
-            if bot.role_dcteam in member.roles:  # le counter c'est pour voir si tous les membres mentionnés  # noqa: E501
-                counter += 1
-            await member.add_roles(bot.role_dcteam)  # sont dans la team, alors on n'affiche pas le message de bienvenue  # noqa: E501
-        if counter == len(member_list):
-            return None
-        await ctx.send(content="Bienvenue dans la Team !")
-
-
-@team.error
-async def team_error(ctx, error):
-    """Handle error in command !team (MissingAnyRole)."""
-    await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
-
-
-@bot.command()
-async def getcomics(ctx, *, user_input):
-    """Send direct download link for getcomics search result."""
-    title, url = await getcomics_top_link(user_input)
-    embed = discord.Embed(title=f"{title}",
-                          description="cliquez sur le titre pour télécharger votre comic",  # noqa: E501
-                          color=0x882640, url=url)
-    await ctx.send(embed=embed)
-
-
-@bot.command()
-async def urban(ctx, *, user_input):
-    """Send definition of user input on Urban Dictionary."""
-    # create object urban of class Urban
-    urban = UrbanSearch(user_input)
-    await urban.fetch()
-    if urban.valid:
-        title, meaning, example, search_url = urban.get_top_def()
-        embed = discord.Embed(title=f"Definition of {title}",
-                              description=meaning, color=0x00FFFF,
-                              url=search_url)
-        embed.add_field(name="Example", value=example, inline=False)
-        embed.set_thumbnail(url=urban_logo)
-    else:
-        embed = discord.Embed(title=f"Definition of {user_input} doesn't exist")  # noqa: E501
-    await ctx.send(embed=embed)
-
-
-@bot.command()
-@commands.has_any_role(*staff_role)
-async def clear(ctx, number):
-    """Clear n messages."""
-    nbr_msg = int(number)
-    messages = await ctx.channel.history(limit=nbr_msg + 1).flatten()
-    await ctx.channel.delete_messages(messages)
-    await ctx.send(content=f"J'ai supprimé {nbr_msg} messages", delete_after=5)
-    today = datetime.date.today().strftime("%d/%m/%Y")
-    time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-    log.log_write(today, time,
-                  ctx.channel.name.lower(),
-                  ctx.command.name.lower(),
-                  ctx.author.name.lower())
-
-
-@clear.error
-async def clear_error(ctx, error):
-    """Handle error in !clear command (MissingAnyRole)."""
-    await ctx.send(content=f"Tu n'as pas le pouvoir{ctx.author.mention} !")
-
-
-@bot.command()
-async def recrutement(ctx):
-    """Send 'recrutement' topic url."""
-    embed = discord.Embed(title="Rejoins la team DCTrad !",
-                          description="allez n'aie pas peur de cliquer et deviens un héros !",  # noqa: E501
-                          color=0x0000FF, url=dctrad_recru)
-    embed.set_thumbnail(url=dctradlogo)
-    await ctx.send(embed=embed)
-
-
-@bot.command()
-async def youtube(ctx, *, user_input):
-    """Send first Youtube search result."""
-    title, url = youtube_top_link(user_input.lower())
-    link = await ctx.send(content=f"{title}\n{url}")
-
-    def check(message):
-        return message == ctx.message
-    await bot.wait_for("message_delete", check=check, timeout=1200)
-    await link.delete(delay=None)
-
-
-@bot.command()
-async def youtubelist(ctx, num, *, query):
-    """Send n Youtube search results."""
-    number = int(num)
-    if number > 10:
-        number = 10
-    result = search_youtube(user_input=query, number=number)
-    embed = discord.Embed(color=0xFF0000)
-    embed.set_footer(text="Tapez un nombre pour faire votre choix "
-                          "ou dites \"cancel\" pour annuler")
-    for s in result:
-        url = get_youtube_url(s)
-        embed.add_field(name=f"{result.index(s)+1}.{s['type']}",
-                        value=f"[{s['title']}]({url})", inline=False)
-    self_message = await ctx.send(embed=embed)
-
-    def check(message):
-        return (message.author == ctx.author
-                and (message.content == "cancel"
-                     or string_is_int(message.content)))
-    try:
-        msg = await bot.wait_for("message", check=check, timeout=15)
-        if msg.content == "cancel":
-            await ctx.send("Annulé !", delete_after=5)
-            await self_message.delete(delay=None)
-            await ctx.message.delete(delay=2)
-            await msg.delete(delay=1)
-        else:
-            num = int(msg.content)
-            if 0 < num <= len(result):
-                url = get_youtube_url(result[num - 1])
-                await ctx.send(content=f"{url}")
-                await ctx.message.delete(delay=2)
-                await self_message.delete(delay=None)
-                await msg.delete(delay=1)
-
-    except asyncio.TimeoutError:
-        await ctx.send("Tu as pris trop de temps pour répondre !",
-                       delete_after=5)
-        await self_message.delete(delay=None)
-        await ctx.message.delete(delay=2)
-
-
-@bot.command()
-async def comicsblog(ctx, num):
-    """Send latest comicsblog news.
-
-    Args:
-        num (int): number of results to send
-
-    """
-    list = await get_comicsblog(num)
-    embed = discord.Embed(title=f"les {num} derniers articles de comicsblog",
-                          color=0xe3951a)
-    for l in list:
-        embed.add_field(name=l.find('title').text, value=l.find('guid').text,
-                        inline=False)
-    await ctx.send(embed=embed)
-
-
-@bot.command()
-@commands.has_any_role(*mods_role)
-async def kick(ctx):
-    """Kick user."""
-    member_list = ctx.message.mentions
-    for member in member_list:
-        await member.kick()
-    today = datetime.date.today().strftime("%d/%m/%Y")
-    time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-    log.log_write(today, time,
-                  ctx.channel.name.lower(),
-                  ctx.command.name.lower(),
-                  ctx.author.name.lower())
-    await ctx.send(content="Adios muchachos !")
-
-
-@kick.error
-async def kick_error(ctx, error):
-    """Handle error in !kick command (MissingAnyRole)."""
-    await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
-
-
-@bot.command()
-@commands.has_any_role(*mods_role)
-async def ban(ctx):
-    """Ban user."""
-    member_list = ctx.message.mentions
-    for member in member_list:
-        await member.ban(delete_message_days=3)
-    today = datetime.date.today().strftime("%d/%m/%Y")
-    time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
-    log.log_write(today, time,
-                  ctx.channel.name.lower(),
-                  ctx.command.name.lower(),
-                  ctx.author.name.lower())
-
-
-@ban.error
-async def ban_error(ctx, error):
-    """Handle error in !ban command (MissingAnyRole)."""
-    await ctx.send(content=f"Tu n'as pas de pouvoirs{ctx.author.mention} !")  # noqa: E501
-
-
-@bot.command()
-async def google(ctx, *, query):
-    """Send first Google search result."""
-    try:
-        result = await google_top_link(query)
-        await ctx.send(content=f"{result['title']}\n {result['url']}")
-    except TypeError:
-        pass
-
-
-@bot.command()
-async def googlelist(ctx, num, *, args):
-    """Send Google search results."""
-    result = await search_google(args, num)
-    embed = discord.Embed(title=f"Les {num} premiers résultats de la recherche",  # noqa: E501
-                          color=0x3b5cbe)
-    for r in result:
-        embed.add_field(name=r['title'], value=r['url'], inline=False)
-    await ctx.send(embed=embed)
-
-
-@bot.command()
-async def timer(ctx, numb, *, args):
-    """Program a timer."""
-    num = int(numb)
-    await ctx.send(content=f"{ctx.author.mention} : timer enregistré !",
-                   delete_after=10)
-    await asyncio.sleep(num, result=None, loop=None)
-    await ctx.send(content=f"temps écoulé ! : {ctx.author.mention} {args}")
-
-
-@bot.command()
-async def roulette(ctx):
-    """Plays russian roulette and kick user if shot."""
-    if random.randrange(6) == 3:
-        await ctx.send(content=random.choice(["Pan !","I am inevitable !","Say my name","Bye bitch !","Omae wa mou shindeiru","Boom"]))
-        await ctx.send(content=snap_url, delete_after=4)
-        await asyncio.sleep(2.4, result=None, loop=None)
-        await ctx.author.kick()
-    else:
-        close = random.choice(["*clic*....Tu restes vivant !",
-                            "Ouh c'était chaud !",
-                            f"Dios mio that was close sinior {ctx.author.mention}",
-                            "T'as toujours toute ta tête mon petit gars ?",
-                            "J'en connais qui a vu la mort en face !",
-                            "Ouh à un cheveu près ! Allez la prochaine c'est la bonne !"
-                                ]
-                        )
-        await ctx.send(content=close)
 
 
 @bot.command()
@@ -441,101 +205,6 @@ async def gif(ctx, name):
         pass
 
 
-@bot.command()
-@commands.is_owner()
-async def admin(ctx):
-    """Help for admin user."""
-    embed = discord.Embed(color=0x0000FF)
-    embed.add_field(name="gifadd",
-                    value="!gifadd <name> <url> <bool> (bool : public(True) or private(False) )",  # noqa: E501
-                    inline=False)
-    embed.add_field(name="gifdelete", value="!gifdelete <name>", inline=False)
-    embed.add_field(name="log_latest", value="!log_latest <int>", inline=False)
-    embed.add_field(name="logs", value="!logs <date> <user> <command> <channel>\n args are optional for filtering, for today, say <date> = today. Otherwise date=dd/mm/yyyy", inline=False)  # noqa:E501
-    embed.add_field(name="sleep", value="make the bot sleep for <numb> seconds\n  Syntax : !sleep <number>", inline=False)
-    embed.add_field(name="kill", value="Kill the bot.", inline=False)
-    await ctx.author.send(embed=embed)
-
-
-@bot.command()
-@commands.is_owner()
-async def gifadd(ctx, name, url, bool):
-    """Add gif in gif dictionary and gif json file."""
-    name = name.lower()
-
-    bool = bool.lower()
-    my_giflist.gif_add(name, url, bool)
-    await ctx.send(content=f"gif {name} ajouté !", delete_after=2)
-
-
-@bot.command()
-@commands.is_owner()
-async def gifdelete(ctx, name):
-    """Delete gif in gif dictionary and gif json file."""
-    name = name.lower()
-    my_giflist.gif_delete(name)
-    await ctx.send(content=f"gif {name} supprimé !", delete_after=2)
-
-
-@bot.command()
-@commands.has_any_role(*admin_role)
-async def restart(ctx):
-    """Restart bot."""
-    await ctx.send('Restarting.')
-    os.execv(__file__, sys.argv)
-
-
-@restart.error
-async def restart_error(ctx, error):
-    """Handle error in !restart command (MissingAnyRole)."""
-    await ctx.send('Nope.')
-
-
-@bot.command()
-async def choose(ctx, *choices):
-    """Randomly choose user's choices."""
-    if len(choices) < 1:
-        return None
-    await ctx.send(random.choice(choices))
-
-
-@bot.command()
-async def coinflip(ctx):
-    """Launch a coinflip and print 'pile' or 'face'."""
-    await ctx.send(random.choice(["pile", "face"]))
-
-
-@bot.command()
-async def say(ctx, *, args):
-    """Bot writes user message content, and delete original user message."""
-    await ctx.message.delete()
-    await ctx.send(content=args)
-
-
-@bot.command()
-async def header(ctx, arg):
-    """Send header image."""
-    arg = arg.lower()
-    monthly = await get_monthly_url()
-    embed = discord.Embed(title="Comics du mois", url=monthly)
-    if arg == "rebirth" or arg == "dcrebirth":
-        file_path = await get_header(1)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-    elif arg == "hors" or arg == "horsrebirth":
-        file_path = await get_header(2)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-    elif arg in ["indé", "indés", "inde", "indé"]:
-        file_path = await get_header(3)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-    elif arg == "marvel":
-        file_path = await get_header(4)
-        await ctx.send(embed=embed, file=discord.File(file_path))
-        os.remove(file_path)
-
-
 @bot.event
 async def on_message(ctx):
     """Read all message and check if it's a gif command."""
@@ -565,29 +234,13 @@ async def on_message(ctx):
     if not found:
         await bot.process_commands(ctx)
 
-# time=date.time(hour=10)  will use it when v1.3 for discord.py is released
-@tasks.loop(hours=24)  # will take time as argument when v1.3 is released  # noqa: E501
-async def bonjour_madame():
-    """Send daily bonjourmadame."""
-    if 0 <= datetime.date.today().weekday() <= 4:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
-        embed = discord.Embed()
-        embed.set_image(url=await latest_madame())
-        embed.set_footer(text="Bonjour Madame")
-        await bot.get_channel(nsfw_channel_id).send(embed=embed)
-
-
-@bonjour_madame.before_loop
-async def before_bonjour_madame():
-    """Intiliaze bonjour_madame loop."""
-    await bot.wait_until_ready()
-    await asyncio.sleep(37800)  # Wait 10hours 30min, to lauch at 10:30AM
-
 
 # @bot.command()
 # @commands.is_nsfw()
 # async def nsfw(ctx):
     # TODO : doctring
     # await ctx.send(content=reddit_nsfw())
+
 
 @bot.command()
 async def poke(ctx, people):
@@ -607,126 +260,9 @@ async def poke(ctx, people):
         await ctx.send(file=f, embed=embed)
 
 
-@bot.command()
-@commands.is_owner()
-async def logs(ctx, date, *args):
-    """Send some logs in private message about moderation commands usage.
-
-    Args:
-        date (str): today or date as DD/MM/YYYY
-        args: up to 3 elements, speifying command, user, channel
-
-    Examples:
-        log today homer general: list homer commands in #general channel
-        log 05/06/2019 faq: list all moderaiton commands in #faq on 05/06/2019
-
-    """
-    embed = discord.Embed(title="logs", colour=0xe7191f)
-
-    # arg_lists is always ["user", "command", "channel"]
-    args_list = args_separator_for_log_function(bot.guild, args)
-
-    if date == "today":
-        date = datetime.date.today().strftime("%d/%m/%Y")
-
-    bin_array = [int(i is not None) for i in args_list]  # convert ["foo", None, None] to [1, 0, 0]  # noqa:E501
-    n = int("".join(str(x) for x in bin_array), 2)  # binary array to int
-
-    user, command, channel = args_list
-
-    if log.log_read(date, *args_list) is not None:  # if it is None, there are no logs on the given date  # noqa:E501
-
-        # we get a list of tuple in this format [(time,user,command,channel)]
-        list_log = log.log_read(date, *args_list)  # to avoid multiple calling
-
-        # if entries are not specified, then they are None
-        if n == 0:  # [None, None, None]
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]} used {v[2]} in {v[3]}", inline=False)  # nice embed  # noqa:E501
-
-        elif n == 1:  # [None, None, channel]
-            embed.set_footer(text=channel)
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]} used {v[2]}", inline=False)  # noqa:E501
-
-        elif n == 2:  # [None, command, None]
-            embed.set_footer(text=f"users of {command}")
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]} in {v[2]}", inline=False)  # noqa:E501
-
-        elif n == 3:  # [None, command, channel]
-            embed.set_footer(text=f"users of {command} in {channel}")
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]}", inline=False)
-
-        elif n == 4:  # [user, None, None]
-            embed.set_footer(text=user)
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"used {v[1]} in {v[2]}", inline=False)  # noqa:E501
-
-        elif n == 5:  # [user, None, channel]
-            embed.set_footer(text=f"{user} commands in {channel}")
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"used {v[2]}", inline=False)
-
-        elif n == 6:  # [user, command, None]
-            embed.set_footer(text=f"{user} used {command}")
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"used in {v[2]}", inline=False)  # noqa:E501
-
-        else:  # [user, command, channel]
-            embed.set_footer(text=f"{user} used {command} in {channel}")
-            for v in list_log:
-                embed.add_field(name=v[0], value=f"{v[1]}", inline=False)
-
-        await ctx.author.send(embed=embed)
-    else:  # no logs in the given date
-        await ctx.author.send(content="Rien dans cette date !")
-
-
-@bot.command()
-@commands.is_owner()
-async def log_latest(ctx, numb=10):
-    """Send latest logs."""
-    embed = discord.Embed(title="latest logs")
-    latest = log.log_latest(int(numb))
-    for i in latest:
-        embed.add_field(name='\u200B', value=i, inline=False)
-    await ctx.author.send(embed=embed)
-
-
-@bot.command()
-@commands.has_any_role(*mods_role)
-async def nomorespoil(ctx):
-    """Spam dots to clear potential spoils."""
-    await ctx.send("\n".join(["..." for i in range(50)]))
-
-@bot.command()
-@commands.is_owner()
-async def sleep(ctx,numb):
-    """`time` is blocking for async functions. Delay the bots for `numb` seconds"""
-    await ctx.send(content=f"Going to sleep for {numb} seconds. Good night !")
-    time.sleep(int(numb))
-    morning = random.choice(["Good morning !",
-                            "Bonjour !"
-                            ]
-                        )
-    await ctx.send(content=morning)
-
-@bot.command()
-@commands.is_owner()
-async def kill(ctx):
-    """Kill the bot."""
-    await bot.logout()
-
-@bot.command()
-async def ping(ctx):
-    """Ping the bot."""
-    await ctx.send(content="pong !")
-
 @bot.event
 async def on_raw_reaction_add(payload):
-    """Read all the reactions added (even those not in cache) 
+    """Read all the reactions added (even those not in cache)
         and filter by messageID to check the message where the reaction was removed
         and give the user whose reaction was removed a specific role
     """
@@ -739,10 +275,17 @@ async def on_raw_reaction_add(payload):
         header_role = discord.utils.get(bot.guild.roles, name="header release")
         await user.add_roles(header_role)
         await user.send(content="Vous serez notifié lorsqu'une release sera postée !")
+    if payload.emoji.name == "\U0000274C" and payload.message_id == 654272251276820501:
+        roles = user.roles[1:]
+        keupains_role = discord.utils.get(bot.guild.roles, name="Keupains")
+        await user.remove_roles(*roles)
+        await user.add_roles(keupains_role)
+        await user.send(content="Keupains pour toujours et à jamais !")
+
 
 @bot.event
 async def on_raw_reaction_remove(payload):
-    """Read all the reactions removed (even those not in cache) 
+    """Read all the reactions removed (even those not in cache)
         and filter by messageID to check the message where the reaction was removed
         and give the user whose reaction was removed a specific role
     """
@@ -756,5 +299,5 @@ async def on_raw_reaction_remove(payload):
         await user.remove_roles(header_role)
         await user.send(content="Vous __**ne**__ serez __**plus**__ notifié lorsqu'une release sera postée!")
 
-bonjour_madame.start()
+
 bot.run(token)

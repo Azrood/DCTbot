@@ -6,12 +6,16 @@
 import os
 import shutil
 import time
+import datetime
 from PIL import Image
 import io  # will use it to convert the bytes read with aiohttp to file-like object  # noqa:E501
 import aiohttp
 from urllib.parse import urljoin
 
-from utils.tools import get_soup_html, get_soup_lxml
+import discord
+from discord.ext import commands
+
+from utils.tools import get_soup_html
 
 dctrad_base = "http://www.dctrad.fr"
 dctrad_url = "http://www.dctrad.fr/index.php"
@@ -76,13 +80,9 @@ def _make_header(n, path):
 
 async def get_monthly_url():
     """Get 'Comics du mois' topic url."""
-    # TODO
-    # Class ?
-    # For not fetching soup again ?
-    soup = await get_soup_lxml(dctrad_url)
-    monthly_url = soup.select_one(
-        'div#dog2 > center > span.text > a.btn-cm')['href']
-    # #dog2 > center > span.text > a.btn-cm
+    year = datetime.date.today().year
+    month = datetime.date.today().month
+    monthly_url = f"http://www.dctrad.fr/app.php/releases/{year}/{month}"
     return monthly_url
 
 
@@ -101,3 +101,31 @@ async def get_header(n):
     await _download_img(h_list, ress_path)
     file_path = _make_header(n, ress_path)
     return file_path
+
+
+class Header(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def header(self, ctx, arg):
+        """Send header image."""
+        arg = arg.lower()
+        monthly = await get_monthly_url()
+        embed = discord.Embed(title="Comics du mois", url=monthly)
+        if arg == "rebirth" or arg == "dcrebirth":
+            file_path = await get_header(1)
+            await ctx.send(embed=embed, file=discord.File(file_path))
+            os.remove(file_path)
+        elif arg == "hors" or arg == "horsrebirth":
+            file_path = await get_header(2)
+            await ctx.send(embed=embed, file=discord.File(file_path))
+            os.remove(file_path)
+        elif arg in ["indé", "indés", "inde", "indé"]:
+            file_path = await get_header(3)
+            await ctx.send(embed=embed, file=discord.File(file_path))
+            os.remove(file_path)
+        elif arg == "marvel":
+            file_path = await get_header(4)
+            await ctx.send(embed=embed, file=discord.File(file_path))
+            os.remove(file_path)

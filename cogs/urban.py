@@ -1,9 +1,14 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""Module to search on urban dictionary."""
+"""Urban dictionnary cog."""
 
 from urllib.parse import quote_plus
 from utils.tools import get_soup_lxml
+
+import discord
+from discord.ext import commands
+
+urban_logo = "https://images-ext-2.discordapp.net/external/HMmIAukJm0YaGc2BKYGx5MuDJw8LUbwqZM9BW9oey5I/https/i.imgur.com/VFXr0ID.jpg"  # noqa: E501
 
 
 # Class to make request on Urban Dictionary
@@ -45,3 +50,25 @@ class UrbanSearch:
         else:
             example = "No example"
         return title, meaning, example, self.search_url
+
+
+class Urban(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def urban(self, ctx, *, user_input):
+        """Send definition of user input on Urban Dictionary."""
+        # create object urban of class Urban
+        urban = UrbanSearch(user_input)
+        await urban.fetch()
+        if urban.valid:
+            title, meaning, example, search_url = urban.get_top_def()
+            embed = discord.Embed(title=f"Definition of {title[:100]}",
+                                  description=meaning[:2048], color=0x00FFFF,
+                                  url=search_url)
+            embed.add_field(name="Example", value=example[:2048], inline=False)
+            embed.set_thumbnail(url=urban_logo)
+        else:
+            embed = discord.Embed(title=f"Definition of {user_input} doesn't exist")  # noqa: E501
+        await ctx.send(embed=embed)

@@ -4,12 +4,14 @@
 
 
 import unittest
-from utils.google import google_top_link
-from utils.urban import UrbanSearch
-from utils.youtube import youtube_top_link
-from utils.comicsblog import get_comicsblog
+
+from cogs.comicsblog import get_comicsblog
+from cogs.getcomics import getcomics_top_link
+from cogs.google import google_top_link
+from cogs.urban import UrbanSearch
+from cogs.youtube import youtube_top_link
+
 from utils.gif_json import GifJson
-from utils.getcomics import getcomics_top_link
 
 
 class TestDiscordBot(unittest.TestCase):

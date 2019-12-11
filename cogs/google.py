@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
-"""Module to search on Google."""
+"""Google cog."""
 
 # import os
 import aiohttp
 import json
 from urllib.parse import quote_plus
+
+import discord
+from discord.ext import commands
+
 from utils.secret import token_youtube, DEVELOPER_CX
 
 
@@ -60,3 +64,27 @@ async def google_top_link(user_input):
         return result[0]
     except IndexError:
         return None
+
+
+class Google(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def google(self, ctx, *, query):
+        """Send first Google search result."""
+        try:
+            result = await google_top_link(query)
+            await ctx.send(content=f"{result['title']}\n {result['url']}")
+        except TypeError:
+            pass
+
+    @commands.command()
+    async def googlelist(self, ctx, num, *, args):
+        """Send Google search results."""
+        result = await search_google(args, num)
+        embed = discord.Embed(title=f"Les {num} premiers résultats de la recherche",  # noqa: E501
+                              color=0x3b5cbe)
+        for r in result:
+            embed.add_field(name=r['title'], value=r['url'], inline=False)
+        await ctx.send(embed=embed)
