@@ -16,8 +16,6 @@ admin_role = ["XXX"]  # list of str
 staff_role = ["XXX"]
 mods_role = ["XXX"]
 
-nsfw_channel_id = "XXXXXXXXXXXXXXXXX"  # int
-
 reddit_secret = "XXXXXXXXX"
 reddit_client_id = "XXXXXXX"
 reddit_useragent = "XXXXX"
