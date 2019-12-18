@@ -1,0 +1,16 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+# flake8: noqa: F401
+
+from .bonjourmadame import BonjourMadame
+from .comicsblog import Comicsblog
+from .getcomics import Getcomics
+from .google import Google
+from .header import Header
+from .misc import Misc
+from .urban import Urban
+from .team import Team
+from .mod import Mod
+from .admin import Admin
+from .youtube import Youtube

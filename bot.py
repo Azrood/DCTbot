@@ -10,17 +10,7 @@ import random
 import discord
 from discord.ext import commands, tasks
 
-from cogs.bonjourmadame import BonjourMadame
-from cogs.comicsblog import Comicsblog
-from cogs.getcomics import Getcomics
-from cogs.google import Google
-from cogs.header import Header
-from cogs.misc import Misc
-from cogs.urban import Urban
-from cogs.team import Team
-from cogs.mod import Mod
-from cogs.admin import Admin
-from cogs.youtube import Youtube
+import cogs
 
 from utils.logs import CommandLog
 from utils.gif_json import GifJson
@@ -73,17 +63,17 @@ poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
 
 my_giflist = GifJson("gifs.json")
 
-cogs = [Admin,
-        BonjourMadame,
-        Comicsblog,
-        Getcomics,
-        Google,
-        Header,
-        Misc,
-        Mod,
-        Team,
-        Urban,
-        Youtube]
+cogs_list = [cogs.Admin,
+             cogs.BonjourMadame,
+             cogs.Comicsblog,
+             cogs.Getcomics,
+             cogs.Google,
+             cogs.Header,
+             cogs.Misc,
+             cogs.Mod,
+             cogs.Team,
+             cogs.Urban,
+             cogs.Youtube]
 
 
 @bot.event
@@ -103,7 +93,7 @@ async def on_ready():
     bot.nsfw_channel = discord.utils.get(bot.guild.text_channels, name='nsfw')  # noqa:E501
     bot.log = CommandLog("logs.json")
     bot.gifs = my_giflist
-    for cog in cogs:
+    for cog in cogs_list:
         bot.add_cog(cog(bot))
     channel_general = discord.utils.get(bot.guild.text_channels, name='general')
     greeting = random.choice(
