@@ -3,7 +3,6 @@
 """Awesome Discord Bot."""
 
 import asyncio
-import os
 import sys
 import random
 
@@ -59,12 +58,11 @@ help_above = [
     {'name': 'nomorespoil', 'value': 'spam des "..." pour cacher les spoils'}
     ]
 
-poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
-
 my_giflist = GifJson("gifs.json")
 
 cogs_list = [cogs.Admin,
              cogs.BonjourMadame,
+             cogs.Cards,
              cogs.Comicsblog,
              cogs.Getcomics,
              cogs.Google,
@@ -230,24 +228,6 @@ async def on_message(ctx):
 # async def nsfw(ctx):
     # TODO : doctring
     # await ctx.send(content=reddit_nsfw())
-
-
-@bot.command()
-async def poke(ctx, people):
-    """Send card made by Slyrax."""
-    people = people.lower()
-    if people == "help":  # probably needs improvements
-        embed = discord.Embed(title="Liste des cartes \nSyntaxe : !poke <nom>", description=poke_help)  # use this to get by until improvement  # noqa: E501
-        embed.set_footer(text="Merci à Slyrax pour les cartes !")
-        await ctx.send(embed=embed)
-
-    else:
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        card_file = os.path.join(dir_path, f"pictures/cards/{people}.jpg")
-        f = discord.File(fp=card_file, filename=people+".jpg")  # discord.File can't handle f-strings apparently  # noqa: E501,E226
-        embed = discord.Embed()
-        embed.set_image(url="attachment://"+people+".jpg")  # better safe than sorry  # noqa: E501,E226
-        await ctx.send(file=f, embed=embed)
 
 
 @bot.event
