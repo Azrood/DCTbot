@@ -4,6 +4,7 @@
 # flake8: noqa: F401
 
 from .bonjourmadame import BonjourMadame
+from .cards import Cards
 from .comicsblog import Comicsblog
 from .getcomics import Getcomics
 from .google import Google
