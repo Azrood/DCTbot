@@ -3,24 +3,13 @@
 """Awesome Discord Bot."""
 
 import asyncio
-import os
 import sys
 import random
 
 import discord
 from discord.ext import commands, tasks
 
-from cogs.bonjourmadame import BonjourMadame
-from cogs.comicsblog import Comicsblog
-from cogs.getcomics import Getcomics
-from cogs.google import Google
-from cogs.header import Header
-from cogs.misc import Misc
-from cogs.urban import Urban
-from cogs.team import Team
-from cogs.mod import Mod
-from cogs.admin import Admin
-from cogs.youtube import Youtube
+import cogs
 
 from utils.logs import CommandLog
 from utils.gif_json import GifJson
@@ -69,21 +58,20 @@ help_above = [
     {'name': 'nomorespoil', 'value': 'spam des "..." pour cacher les spoils'}
     ]
 
-poke_help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"  # see comment in line 509
-
 my_giflist = GifJson("gifs.json")
 
-cogs = [Admin,
-        BonjourMadame,
-        Comicsblog,
-        Getcomics,
-        Google,
-        Header,
-        Misc,
-        Mod,
-        Team,
-        Urban,
-        Youtube]
+cogs_list = [cogs.Admin,
+             cogs.BonjourMadame,
+             cogs.Cards,
+             cogs.Comicsblog,
+             cogs.Getcomics,
+             cogs.Google,
+             cogs.Header,
+             cogs.Misc,
+             cogs.Mod,
+             cogs.Team,
+             cogs.Urban,
+             cogs.Youtube]
 
 
 @bot.event
@@ -103,7 +91,7 @@ async def on_ready():
     bot.nsfw_channel = discord.utils.get(bot.guild.text_channels, name='nsfw')  # noqa:E501
     bot.log = CommandLog("logs.json")
     bot.gifs = my_giflist
-    for cog in cogs:
+    for cog in cogs_list:
         bot.add_cog(cog(bot))
     channel_general = discord.utils.get(bot.guild.text_channels, name='general')
     greeting = random.choice(
@@ -240,24 +228,6 @@ async def on_message(ctx):
 # async def nsfw(ctx):
     # TODO : doctring
     # await ctx.send(content=reddit_nsfw())
-
-
-@bot.command()
-async def poke(ctx, people):
-    """Send card made by Slyrax."""
-    people = people.lower()
-    if people == "help":  # probably needs improvements
-        embed = discord.Embed(title="Liste des cartes \nSyntaxe : !poke <nom>", description=poke_help)  # use this to get by until improvement  # noqa: E501
-        embed.set_footer(text="Merci à Slyrax pour les cartes !")
-        await ctx.send(embed=embed)
-
-    else:
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        card_file = os.path.join(dir_path, f"pictures/cards/{people}.jpg")
-        f = discord.File(fp=card_file, filename=people+".jpg")  # discord.File can't handle f-strings apparently  # noqa: E501,E226
-        embed = discord.Embed()
-        embed.set_image(url="attachment://"+people+".jpg")  # better safe than sorry  # noqa: E501,E226
-        await ctx.send(file=f, embed=embed)
 
 
 @bot.event

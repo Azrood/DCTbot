@@ -67,7 +67,7 @@ class Misc(commands.Cog):
                                                   "I am inevitable !",
                                                   "Say my name",
                                                   "Bye bitch !",
-                                                  "Omae wa mou shindeiru"
+                                                  "Omae wa mou shindeiru",
                                                   "Boom",
                                                   "Hasta la vista baby !"
                                                   "Ca va péter !",
