@@ -54,7 +54,6 @@ class Gifs(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, ctx):
         """Read all message and check if it's a gif command."""
-        found = False
         channel = ctx.channel
         # Find if custom command exist in dictionary
         embed = discord.Embed()
@@ -62,7 +61,6 @@ class Gifs(commands.Cog):
             # Added simple hardcoded prefix
             command = self.bot.prefix + key
             if ctx.content.lower() == command:
-                found = True
                 try:
                     if (self.bot.gifs.get_gif(key)['public']
                             or ctx.channel.category_id == dcteam_category_id):
@@ -76,6 +74,3 @@ class Gifs(commands.Cog):
                         gif_url = self.bot.gifs.get_gif(key)['url']
                         embed.set_image(url=gif_url)
                         await channel.send(embed=embed)
-        # If not b
-        if not found:
-            await self.bot.process_commands(ctx)
