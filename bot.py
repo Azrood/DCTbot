@@ -15,7 +15,7 @@ from utils.logs import CommandLog
 from utils.gif_json import GifJson
 from utils.reddit import reddit_nsfw
 from utils.secret import (token, dcteam_role_id, dcteam_id, modo_role_id,
-                          dcteam_category_id, react_role_msg_id)
+                          react_role_msg_id)
 
 prefix = '!'
 
@@ -65,6 +65,7 @@ cogs_list = [cogs.Admin,
              cogs.Cards,
              cogs.Comicsblog,
              cogs.Getcomics,
+             cogs.Gifs,
              cogs.Google,
              cogs.Header,
              cogs.Misc,
@@ -88,6 +89,7 @@ async def on_ready():
     except AttributeError:
         bot.role_dcteam = 0
         bot.role_modo = 0
+    bot.prefix = prefix
     bot.nsfw_channel = discord.utils.get(bot.guild.text_channels, name='nsfw')  # noqa:E501
     bot.log = CommandLog("logs.json")
     bot.gifs = my_giflist
@@ -152,75 +154,6 @@ async def help(ctx):
         await reaction.remove(user)
     await msg.delete(delay=60)
     helperloop.start()
-
-
-@bot.command()
-async def gif(ctx, name):
-    """Send gif corresponding to 'name'."""
-    name = name.lower()
-    if name == 'help':
-
-        try:  # if in team category
-            if ctx.channel.category_id == dcteam_category_id:
-                list_names = my_giflist.get_names_string(private=False)
-            else:
-                list_names = my_giflist.get_names_string(private=True)
-        except AttributeError:
-            list_names = my_giflist.get_names_string(private=True)
-            # channel.category_id will fail in DM messages
-            # DMChannel' object has no attribute 'category_id
-
-        embed = discord.Embed(title="liste des gifs",
-                              description=list_names, color=0x000FF)
-        await ctx.send(embed=embed)
-
-    if my_giflist.get_gif(name) is not None:
-        embed = discord.Embed()
-        try:
-            if (my_giflist.get_gif(name)['public']
-                    or ctx.channel.category_id == dcteam_category_id):
-                gif_url = my_giflist.get_gif(name)['url']
-                embed.set_image(url=gif_url)
-                await ctx.send(embed=embed)
-        except AttributeError:
-            # channel.category_id will fail in DM messages
-            # DMChannel' object has no attribute 'category_id
-            if my_giflist.get_gif(name)['public']:
-                gif_url = my_giflist.get_gif(name)['url']
-                embed.set_image(url=gif_url)
-                await ctx.send(embed=embed)
-    else:
-        pass
-
-
-@bot.event
-async def on_message(ctx):
-    """Read all message and check if it's a gif command."""
-    found = False
-    channel = ctx.channel
-    # Find if custom command exist in dictionary
-    embed = discord.Embed()
-    for key in my_giflist.gifs.keys():
-        # Added simple hardcoded prefix
-        command = prefix + key
-        if ctx.content.lower() == command:
-            found = True
-            try:
-                if (my_giflist.get_gif(key)['public']
-                        or ctx.channel.category_id == dcteam_category_id):
-                    gif_url = my_giflist.get_gif(key)['url']
-                    embed.set_image(url=gif_url)
-                    await channel.send(embed=embed)
-            except AttributeError:
-                # channel.category_id will fail in DM messages
-                # DMChannel' object has no attribute 'category_id
-                if my_giflist.get_gif(key)['public']:
-                    gif_url = my_giflist.get_gif(key)['url']
-                    embed.set_image(url=gif_url)
-                    await channel.send(embed=embed)
-    # If not b
-    if not found:
-        await bot.process_commands(ctx)
 
 
 # @bot.command()

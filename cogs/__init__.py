@@ -7,6 +7,7 @@ from .bonjourmadame import BonjourMadame
 from .cards import Cards
 from .comicsblog import Comicsblog
 from .getcomics import Getcomics
+from .gifs import Gifs
 from .google import Google
 from .header import Header
 from .misc import Misc
