@@ -14,8 +14,7 @@ import cogs
 from utils.logs import CommandLog
 from utils.gif_json import GifJson
 from utils.reddit import reddit_nsfw
-from utils.secret import (token, dcteam_role_id, dcteam_id, modo_role_id,
-                          react_role_msg_id)
+from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id
 
 prefix = '!'
 
@@ -69,6 +68,7 @@ cogs_list = [cogs.Admin,
              cogs.Google,
              cogs.Header,
              cogs.Misc,
+             cogs.Notifications,
              cogs.Mod,
              cogs.Team,
              cogs.Urban,
@@ -161,46 +161,5 @@ async def help(ctx):
 # async def nsfw(ctx):
     # TODO : doctring
     # await ctx.send(content=reddit_nsfw())
-
-
-@bot.event
-async def on_raw_reaction_add(payload):
-    """Read all the reactions added (even those not in cache)
-        and filter by messageID to check the message where the reaction was removed
-        and give the user whose reaction was removed a specific role
-    """
-    user = bot.guild.get_member(payload.user_id)
-    if payload.emoji.name == "\U0001f3ae" and payload.message_id == react_role_msg_id:
-        freegame_role = discord.utils.get(bot.guild.roles, name="jeux gratuits")
-        await user.add_roles(freegame_role)
-        await user.send(content="Vous serez notifié lorsqu'un jeu gratuit sera posté !")
-    if payload.emoji.name == "\U0001f514" and payload.message_id == react_role_msg_id:
-        header_role = discord.utils.get(bot.guild.roles, name="header release")
-        await user.add_roles(header_role)
-        await user.send(content="Vous serez notifié lorsqu'une release sera postée !")
-    if payload.emoji.name == "\U0000274C" and payload.message_id == 654272251276820501:
-        roles = user.roles[1:]
-        keupains_role = discord.utils.get(bot.guild.roles, name="Keupains")
-        await user.remove_roles(*roles)
-        await user.add_roles(keupains_role)
-        await user.send(content="Keupains pour toujours et à jamais !")
-
-
-@bot.event
-async def on_raw_reaction_remove(payload):
-    """Read all the reactions removed (even those not in cache)
-        and filter by messageID to check the message where the reaction was removed
-        and give the user whose reaction was removed a specific role
-    """
-    user = bot.guild.get_member(payload.user_id)
-    if payload.emoji.name == "\U0001f3ae" and payload.message_id == react_role_msg_id:
-        freegame_role = discord.utils.get(bot.guild.roles, name="jeux gratuits")
-        await user.remove_roles(freegame_role)
-        await user.send(content="Vous __**ne**__ serez __**plus**__ notifié lorsqu'un jeu gratuit sera posté !")
-    if payload.emoji.name == "\U0001f514" and payload.message_id == react_role_msg_id:
-        header_role = discord.utils.get(bot.guild.roles, name="header release")
-        await user.remove_roles(header_role)
-        await user.send(content="Vous __**ne**__ serez __**plus**__ notifié lorsqu'une release sera postée!")
-
 
 bot.run(token)
