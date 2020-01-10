@@ -11,6 +11,7 @@ from .gifs import Gifs
 from .google import Google
 from .header import Header
 from .misc import Misc
+from .notifications import Notifications
 from .urban import Urban
 from .team import Team
 from .mod import Mod
