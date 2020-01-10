@@ -7,10 +7,11 @@ import sys
 import random
 
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 import cogs
 
+from utils.constants import greeting_list
 from utils.logs import CommandLog
 from utils.gif_json import GifJson
 from utils.reddit import reddit_nsfw
@@ -27,36 +28,6 @@ if len(sys.argv) > 1:
 bot = commands.Bot(command_prefix=prefix, help_command=None,
                    description=None, case_insensitive=True)
 
-
-helps = [
-    {'name': 'help', 'value': 'affiche la liste des commandes'},
-    {'name': 'gif help', 'value': 'affiche la liste des gifs'},
-    {'name': 'poke help', 'value': 'affiche la liste des cartes'},
-    {'name': 'getcomics', 'value': 'recherche dans getcomics les mots-clés entrés'},  # noqa: E501
-    {'name': 'urban', 'value': 'fait une recherche du mot entré sur Urban Dictionary'},  # noqa: E501
-    {'name': 'recrutement', 'value': 'donne le lien des tests de DCTrad'},
-    {'name': 'timer', 'value': 'minuteur qui notifie le user après X secondes\n Syntaxe : !timer [nombre (secondes)] [rappel]\n Exemple: !timer 3600 organiser mes dossiers'},  # noqa: E501
-    {'name': 'youtube', 'value': 'donne le lien du premier résultat de la recherche\n Supprime le lien si l\'utilisateur supprime son message'},  # noqa: E501
-    {'name': 'youtubelist', 'value': 'donne une liste de liens cliquables.\n Syntaxe : !youtubelist [nombre] [recherche]'},  # noqa: E501
-    {'name': 'comicsblog', 'value': 'donne les X derniers articles de comicsblog\n (syntaxe : !comicsblog [numero])'},  # noqa: E501
-    {'name': 'google', 'value': 'donne le premier lien de la recherche google avec les mots-clés saisis'},  # noqa: E501
-    {'name': 'googlelist', 'value': 'donne une liste des X premiers liens de la recherche google\n Syntaxe : !googlelist [numero] [mots-clés] \nExemple : !googlelist 3 the final countdown'},  # noqa: E501
-    {'name': 'roulette', 'value': '1/6 chance de se faire kick, la roulette russe avec le bon Colt !'},  # noqa: E501
-    {'name': 'choose', 'value': "choisit aléatoiremement parmi plusieurs arguments \n Syntaxe : !choose arg1 arg2 \"phrase avec plusieurs mots\" (si vous voulez des choix avec plusieurs mots, mettez vos choix entre \"\" comme par exemple \n !choose \"manger chinois\" \"manger italien \" \" manger quelqu'un \" ) "},  # noqa: E501
-    {"name": "coinflip", 'value': "fais un lancer de pile ou face"},
-    {'name': 'say', 'value': "répète ce qui est entré et supprime le message du user"},  # noqa: E501
-    {'name': 'ping', 'value': "Ping le bot pour voir s'il est en ligne"}
-    ]
-help_team = [
-    {'name': 'team', 'value': 'assigne le rôle DCTeam au(x) membre(s) mentionné(s)'},  # noqa: E501
-    {'name': 'clear', 'value': 'efface le nombre de message entré en argument (!clear [nombre])'}  # noqa: E501
-    ]
-help_above = [
-    {'name': 'kick', 'value': 'kick la(les) personne(s) mentionnée(s)\n (syntaxe : !kick [@membre] (optionel)[@membre2]...'},  # noqa: E501
-    {'name': 'ban', 'value': 'bannit le(s) user(s) mentionné(s)\n Syntaxe : !ban [@membre1][@membre2]....'},  # noqa: E501
-    {'name': 'nomorespoil', 'value': 'spam des "..." pour cacher les spoils'}
-    ]
-
 my_giflist = GifJson("gifs.json")
 
 cogs_list = [cogs.Admin,
@@ -67,6 +38,7 @@ cogs_list = [cogs.Admin,
              cogs.Gifs,
              cogs.Google,
              cogs.Header,
+             cogs.Help,
              cogs.Misc,
              cogs.Notifications,
              cogs.Mod,
@@ -96,65 +68,9 @@ async def on_ready():
     for cog in cogs_list:
         bot.add_cog(cog(bot))
     channel_general = discord.utils.get(bot.guild.text_channels, name='general')
-    greeting = random.choice(
-        ["Bonjour tout le monde !",
-         "Yo tout le monde ! Vous allez bien ?",
-         "Comment allez-vous en cette magnifique journée ?",
-         "Yo les biatches !",
-         "Good morning motherfuckers !",
-         "Yo les gros ! ça roule ?",
-         "Yo les juifs ! ça gaze ?",
-         "Hola amigos ! Bonne journée !",
-         "Roulette pour tout le monde ! TOUT DE SUITE !!",
-         "I'm back bitches !",
-         "Ohayo gozaimasu !",
-         "Je suis de retour pour vous jouer un mauvais tour !",
-         "Wake up ! Grab a brush and put a little makeup !",
-         "Wake me up ! Wake me up inside !"
-         ])
+    greeting = random.choice(greeting_list)
     await asyncio.sleep(delay=36000)  # bot is rebooted every day at 00:00 so we wait 10 hours after logging in
     await channel_general.send(content=greeting)
-
-
-@bot.command()
-async def help(ctx):
-    """Display available commands."""
-    embed = discord.Embed(title="Page 1/2, utilisez les flèches en réaction pour naviguer", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)  # noqa: E501
-    embed_2 = discord.Embed(title="Page 2/2, utilisez les flèches en réaction pour naviguer", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)  # noqa: E501
-    for s in helps:
-        if len(embed.fields) < 10:
-            embed.add_field(name=s['name'], value=s['value'], inline=False)
-        else:
-            embed_2.add_field(name=s['name'], value=s['value'], inline=False)
-    if ctx.author.top_role >= bot.role_dcteam:
-        for h in help_team:
-            embed_2.add_field(name=h['name'], value=h['value'], inline=False)
-    if ctx.author.top_role >= bot.role_modo:
-        for h in help_above:
-            embed_2.add_field(name=h['name'], value=h['value'], inline=False)
-    # if ctx.channel.category_id == dcteam_category_id:
-        # embed.add_field(name='nsfw', value="affiche une image nsfw", inline=False)  # noqa: E501
-    msg = await ctx.send(embed=embed)
-    await msg.add_reaction("\U000025c0")
-    await msg.add_reaction("\U000025b6")
-
-    @tasks.loop(seconds=2)
-    async def helperloop():
-        def check(reaction, user):
-            return (ctx.author == user
-                    and str(reaction.emoji) in ["\U000025b6", "\U000025c0"]
-                    and msg.id == reaction.message.id)
-        reaction, user = await bot.wait_for("reaction_add", check=check, timeout=60)  # noqa: E501
-        if str(reaction.emoji) == "\U000025c0":
-            await msg.edit(embed=embed)
-        elif str(reaction.emoji) == "\U000025b6":
-            await msg.edit(embed=embed_2)
-        else:
-            return None
-        await reaction.remove(user)
-    await msg.delete(delay=60)
-    helperloop.start()
-
 
 # @bot.command()
 # @commands.is_nsfw()
