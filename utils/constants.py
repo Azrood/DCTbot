@@ -42,7 +42,6 @@ greeting_list = [
     "Yo les biatches !",
     "Good morning motherfuckers !",
     "Yo les gros ! ça roule ?",
-    "Yo les juifs ! ça gaze ?",
     "Hola amigos ! Bonne journée !",
     "Roulette pour tout le monde ! TOUT DE SUITE !!",
     "I'm back bitches !",
