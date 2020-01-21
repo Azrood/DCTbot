@@ -21,12 +21,13 @@ async def getcomics_top_link(user_input):
     # BeautifulSoup will transform raw HTML in a tree easy to parse
     soup = await get_soup_html(getcomics_search)
 
-    first = soup.find('h1', class_='post-title')
-
-    title = first.text
-    url = first.a['href']
+    first = soup.select_one('article')  # The whole first post (with cover, title, synopsis, etc...)  # noqa: E501
+    cover = first.select_one("div.post-header-image > a > img")["src"].split('?')[0]  # noqa: E501
+    link = first.select_one("h1 > a")
+    title = link.text
+    url = link["href"]
     url_dl = await getcomics_directlink(url)
-    return title, url_dl
+    return title, url_dl, cover
 
 
 async def getcomics_directlink(comic_url):
@@ -70,8 +71,9 @@ class Getcomics(commands.Cog):
     @commands.command()
     async def getcomics(self, ctx, *, user_input):
         """Send direct download link for getcomics search result."""
-        title, url = await getcomics_top_link(user_input)
+        title, url, cover = await getcomics_top_link(user_input)
         embed = discord.Embed(title=f"{title}",
                             description="cliquez sur le titre pour télécharger votre comic",  # noqa: E501
                             color=0x882640, url=url)
+        embed.set_image(url=cover)
         await ctx.send(embed=embed)
