@@ -8,3 +8,5 @@ gifs.txt
 gifs.json
 example.py
 logs.json
+errors.log
+info.log
