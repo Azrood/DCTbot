@@ -3,6 +3,7 @@
 """Awesome Discord Bot."""
 
 import asyncio
+import logging
 import sys
 import random
 
@@ -11,6 +12,7 @@ from discord.ext import commands
 
 import cogs
 
+from utils.bot_logging import setup_logging
 from utils.constants import greeting_list
 from utils.logs import CommandLog
 from utils.gif_json import GifJson
@@ -78,4 +80,15 @@ async def on_ready():
     # TODO : doctring
     # await ctx.send(content=reddit_nsfw())
 
-bot.run(token)
+setup_logging()
+logger = logging.getLogger(__name__)
+
+logger.info("This is an INFO message on the root logger.")
+# logger.warning("This is a WARNING message of the root logger")
+# logger.error("This is a ERROR message of the root logger")
+# logger.critical("This is a CRITICAL message of the root logger")
+
+try:
+    bot.run(token)
+except Exception:
+    logger.critical("Unexpected critical error", exc_info=True)
