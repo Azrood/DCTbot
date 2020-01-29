@@ -52,7 +52,7 @@
     "loggers": {
       "cogs.mod": {
         "level": "INFO",
-        "handlers": ["modo_file_handler"],
+        "handlers": ["console", "modo_file_handler", "error_file_handler"],
         "propagate": false
       }
     },

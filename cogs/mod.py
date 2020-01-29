@@ -1,7 +1,9 @@
+import asyncio
 import datetime
 import logging
 
-from discord.ext import commands
+import discord
+from discord.ext import commands, tasks
 
 from utils.secret import mods_role
 # from utils.logs import CommandLog
@@ -14,6 +16,7 @@ class Mod(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.log = bot.log
+        self.autoclean_spoil_chan.start()  # pylint: disable=no-member
 
     @commands.command()
     @commands.has_any_role(*mods_role)
@@ -68,3 +71,26 @@ class Mod(commands.Cog):
         # So we test if we're in current cog (self)
         if ctx.command.cog_name == self.qualified_name:
             logger.info(f"Command {str(ctx.command):15} invoked by {str(ctx.author):15} in room {str(ctx.channel):15} with message {ctx.message.content}")  # noqa: E501
+
+    @tasks.loop(hours=24)
+    async def autoclean_spoil_chan(self):
+        try:
+            spoil_chan = discord.utils.get(self.bot.guild.text_channels, name='spoil')  # noqa: E501
+            last_messages = await spoil_chan.history(limit=1).flatten()
+            last_text = last_messages[0].content
+            # Test on the last message text in spoil channel
+            if last_text.endswith("...\n...\n..."):
+                logger.info("#spoil channel is allready clean, passing.")
+                pass
+            else:
+                # Send lines of "..." to get rid of spoilers
+                await spoil_chan.send("\n".join(["..." for i in range(50)]))
+                logger.info("#spoil channel has been cleaned.")
+        except AttributeError:  # spoil_chan is None
+            logger.error("autoclean_spoil task : No spoil chan in this Guild !")  # noqa: E501
+
+    @autoclean_spoil_chan.before_loop
+    async def before_autoclean_spoil_chan(self):
+        """Intiliaze autoclean_spoil_chan loop."""
+        await self.bot.wait_until_ready()
+        await asyncio.sleep(14400)  # Wait 4 houres, to fire at 4AM
