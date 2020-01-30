@@ -4,6 +4,7 @@
 
 
 import asyncio
+import logging
 import random
 
 import discord
@@ -12,6 +13,8 @@ from discord.ext import commands
 dctradlogo = "http://www.dctrad.fr/ext/planetstyles/flightdeck/store/logodctweb.png"  # noqa: E501
 dctrad_recru = "http://www.dctrad.fr/viewforum.php?f=21"
 snap_url = "https://media.tenor.com/images/8d7d2e757f934793bb4154cede8a4afa/tenor.gif"  # noqa: E501
+
+logger = logging.getLogger(__name__)
 
 
 class Misc(commands.Cog):
@@ -58,6 +61,7 @@ class Misc(commands.Cog):
     async def ping(self, ctx):
         """Ping the bot."""
         await ctx.send(content="pong !")
+        logger.info(f"Ping (asked by {ctx.author}) was awaited.")
 
     @commands.command()
     async def roulette(self, ctx):
