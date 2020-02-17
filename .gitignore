@@ -2,7 +2,9 @@ __pycache__/
 .idea/
 .vscode/
 .pytest_*/
+*.py[cod]
 venv/
+.venv/
 secret.py
 gifs.txt
 gifs.json
@@ -11,3 +13,16 @@ logs.json
 errors.log
 info.log
 modo.log
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+cov.xml
+*.cover
+.hypothesis/
+.pytest_cache/

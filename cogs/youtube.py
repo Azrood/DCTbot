@@ -66,7 +66,7 @@ def search_youtube(user_input, number):
             else:
                 type = 'unknown'
                 id = "NoID"
-        except KeyError:
+        except KeyError:  # pragma: no cover
             type = 'unknown'
             id = "NoID"
 
@@ -101,7 +101,7 @@ def get_youtube_url(result):
         url = f"https://www.youtube.com/playlist?list={result['id']}"
     elif result['type'] == 'channel':
         url = f"https://www.youtube.com/channel/{result['id']}"
-    else:
+    else:  # pragma: no cover
         url = None
     return url
 

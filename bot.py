@@ -16,7 +16,7 @@ from utils.bot_logging import setup_logging
 from utils.constants import greeting_list
 from utils.logs import CommandLog
 from utils.gif_json import GifJson
-from utils.reddit import reddit_nsfw
+# from utils.reddit import reddit_nsfw
 from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id
 
 prefix = '!'

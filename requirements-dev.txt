@@ -1,0 +1,6 @@
+-r requirements.txt
+
+asynctest
+git+https://github.com/Sergeileduc/dpytest.git@dev
+coverage
+flake8>=3.7.9

@@ -24,7 +24,7 @@ class Gifs(commands.Cog):
                     list_names = self.bot.gifs.get_names_string(private=False)
                 else:
                     list_names = self.bot.gifs.get_names_string(private=True)
-            except AttributeError:
+            except AttributeError:  # pragma: no cover
                 list_names = self.bot.gifs.get_names_string(private=True)
                 # channel.category_id will fail in DM messages
                 # DMChannel' object has no attribute 'category_id
@@ -41,7 +41,7 @@ class Gifs(commands.Cog):
                     gif_url = self.bot.gifs.get_gif(name)['url']
                     embed.set_image(url=gif_url)
                     await ctx.send(embed=embed)
-            except AttributeError:
+            except AttributeError:  # pragma: no cover
                 # channel.category_id will fail in DM messages
                 # DMChannel' object has no attribute 'category_id
                 if self.bot.gifs.get_gif(name)['public']:
@@ -67,7 +67,7 @@ class Gifs(commands.Cog):
                         gif_url = self.bot.gifs.get_gif(key)['url']
                         embed.set_image(url=gif_url)
                         await channel.send(embed=embed)
-                except AttributeError:
+                except AttributeError:  # pragma: no cover
                     # channel.category_id will fail in DM messages
                     # DMChannel' object has no attribute 'category_id
                     if self.bot.gifs.get_gif(key)['public']:

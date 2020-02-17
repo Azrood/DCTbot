@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from discord.utils import find as disc_find
 
 
-def string_is_int(string):
+def string_is_int(string):  # pragma: no cover
     """Return if 'string' is an int or not (bool)."""
     try:
         int(string)

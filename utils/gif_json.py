@@ -20,7 +20,7 @@ class GifJson:
             f = open(self.file)
             f.close()
         # or not
-        except FileNotFoundError:
+        except FileNotFoundError:  # pragma: no cover
             print('File does not exist. Creating.')
             init = {}
             with open(self.file, 'w') as outfile:

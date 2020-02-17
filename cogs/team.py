@@ -1,9 +1,9 @@
 import datetime
 
-import discord
+# import discord
 from discord.ext import commands
 
-from utils.logs import CommandLog
+# from utils.logs import CommandLog
 from utils.secret import staff_role
 
 
@@ -13,10 +13,9 @@ class Team(commands.Cog):
         self._role_dcteam = bot.role_dcteam
         self.log = bot.log
 
-    
     @commands.command()
     @commands.has_any_role(*staff_role)
-    async def team(self,ctx):
+    async def team(self, ctx):
         """Give 'team' role to user list."""
         member_list = ctx.message.mentions  # une liste d'objets
         counter = 0
@@ -31,15 +30,14 @@ class Team(commands.Cog):
                 return None
             await ctx.send(content="Bienvenue dans la Team !")
 
-
     @team.error
-    async def team_error(self,ctx, error):
+    async def team_error(self, ctx, error):
         """Handle error in command !team (MissingAnyRole)."""
         await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
 
     @commands.command()
     @commands.has_any_role(*staff_role)
-    async def clear(self,ctx, number):
+    async def clear(self, ctx, number):
         """Clear n messages."""
         nbr_msg = int(number)
         messages = await ctx.channel.history(limit=nbr_msg + 1).flatten()
@@ -48,12 +46,11 @@ class Team(commands.Cog):
         today = datetime.date.today().strftime("%d/%m/%Y")
         time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
         self.log.log_write(today, time,
-                    ctx.channel.name.lower(),
-                    ctx.command.name.lower(),
-                    ctx.author.name.lower())
-
+                           ctx.channel.name.lower(),
+                           ctx.command.name.lower(),
+                           ctx.author.name.lower())
 
     @clear.error
-    async def clear_error(self,ctx, error):
+    async def clear_error(self, ctx, error):
         """Handle error in !clear command (MissingAnyRole)."""
         await ctx.send(content=f"Tu n'as pas le pouvoir{ctx.author.mention} !")

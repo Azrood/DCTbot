@@ -44,10 +44,10 @@ class UrbanSearch:
         """Parse the HTML soup to find Top Definition title, meaning, example."""  # noqa:E501
         title = self.soup.select_one('div.def-panel > div.def-header > a.word').text  # noqa:E501
         meaning = self.soup.select_one('div.def-panel > div.meaning').text
-        example_raw = self.soup.select_one('div.def-panel > div.example').text
-        if hasattr(example_raw, 'text'):
+        example_raw = self.soup.select_one('div.def-panel > div.example')
+        if example_raw:
             example = example_raw.text
-        else:
+        else:  # pragma: no cover
             example = "No example"
         return title, meaning, example, self.search_url
 
