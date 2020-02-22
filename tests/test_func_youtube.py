@@ -22,7 +22,7 @@ def datafile(filename):
 
 @pytest.fixture
 def api_discovery_json():
-    return open(datafile("discovery.json")).read()
+    return open(datafile("discovery.json"), encoding='utf-8').read()
 
 
 def test_youtube_top_link(monkeypatch, api_discovery_json):
@@ -30,7 +30,7 @@ def test_youtube_top_link(monkeypatch, api_discovery_json):
 
     #  TODO: maybe use a fixture or a decorator ??
     def mock_build(*args, **kwargs):
-        response = open(datafile("youtube1_resp.json")).read()
+        response = open(datafile("youtube1_resp.json"), encoding='utf-8').read()  # noqa: E501
 
         requestBuilder = RequestMockBuilder({'youtube.search.list': (None, response)})  # noqa: E501
 
