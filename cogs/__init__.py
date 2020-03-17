@@ -18,3 +18,4 @@ from .team import Team
 from .mod import Mod
 from .admin import Admin
 from .youtube import Youtube
+from .dealabs import Dealabs

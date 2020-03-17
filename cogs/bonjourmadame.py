@@ -24,9 +24,9 @@ async def latest_madame():
 class BonjourMadame(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.bonjour_madame.start()
+        self.bonjour_madame.start() # pylint: disable=no-member
 
-    # time=date.time(hour=10)  will use it when v1.3 for discord.py is released
+    # time=date.time(hour=10)  will use it when it is released :D
     @tasks.loop(hours=24)  # will take time as argument when v1.3 is released  # noqa: E501
     async def bonjour_madame(self):
         """Send daily bonjourmadame."""
