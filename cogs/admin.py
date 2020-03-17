@@ -5,7 +5,7 @@ import sys
 import discord
 from discord.ext import commands
 
-from utils.logs import CommandLog
+# from utils.logs import CommandLog
 from utils.tools import args_separator_for_log_function
 from utils.secret import admin_role
 

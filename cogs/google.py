@@ -43,7 +43,7 @@ async def search_google(user_input, number):
 
     try:
         json_data = json.loads(text)["items"]
-    except KeyError:
+    except KeyError:  # pragma: no cover
         json_data = []
 
     return [{'title': j['title'], 'url': j['link']} for j in json_data]
@@ -62,7 +62,7 @@ async def google_top_link(user_input):
     try:
         result = await search_google(user_input, number=1)
         return result[0]
-    except IndexError:
+    except IndexError:  # pragma: no cover
         return None
 
 
@@ -76,7 +76,7 @@ class Google(commands.Cog):
         try:
             result = await google_top_link(query)
             await ctx.send(content=f"{result['title']}\n {result['url']}")
-        except TypeError:
+        except TypeError:  # pragma: no cover
             pass
 
     @commands.command()

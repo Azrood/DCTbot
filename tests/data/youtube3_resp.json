@@ -1,0 +1,39 @@
+{
+  "kind": "youtube#searchListResponse",
+  "etag": "\"Fznwjl6JEQdo1MGvHOGaz_YanRU/xfOu1r3XuLjOvhDFeDN8KSUyjDI\"",
+  "nextPageToken": "CAEQAA",
+  "regionCode": "FR",
+  "pageInfo": {
+    "totalResults": 275899,
+    "resultsPerPage": 1
+  },
+  "items": [
+    {
+      "kind": "youtube#searchResult",
+      "etag": "\"Fznwjl6JEQdo1MGvHOGaz_YanRU/gk1s2cLVnlIFmeOxVh5TvKgsZYU\"",
+      "id": {
+        "kind": "youtube#channel",
+        "channelId": "UC_yP2DpIgs5Y1uWC0T03Chw"
+      },
+      "snippet": {
+        "publishedAt": "2009-09-29T14:07:35.000Z",
+        "channelId": "UC_yP2DpIgs5Y1uWC0T03Chw",
+        "title": "Joueur Du Grenier",
+        "description": "Test de jeux \u00e0 la con !",
+        "thumbnails": {
+          "default": {
+            "url": "https://yt3.ggpht.com/-2eu-eG4PLa8/AAAAAAAAAAI/AAAAAAAAAAA/FZUzswUhAmI/s88-c-k-no-mo-rj-c0xffffff/photo.jpg"
+          },
+          "medium": {
+            "url": "https://yt3.ggpht.com/-2eu-eG4PLa8/AAAAAAAAAAI/AAAAAAAAAAA/FZUzswUhAmI/s240-c-k-no-mo-rj-c0xffffff/photo.jpg"
+          },
+          "high": {
+            "url": "https://yt3.ggpht.com/-2eu-eG4PLa8/AAAAAAAAAAI/AAAAAAAAAAA/FZUzswUhAmI/s800-c-k-no-mo-rj-c0xffffff/photo.jpg"
+          }
+        },
+        "channelTitle": "Joueur Du Grenier",
+        "liveBroadcastContent": "none"
+      }
+    }
+  ]
+}

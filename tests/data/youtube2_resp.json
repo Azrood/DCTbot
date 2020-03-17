@@ -1,0 +1,45 @@
+{
+  "kind": "youtube#searchListResponse",
+  "etag": "\"Fznwjl6JEQdo1MGvHOGaz_YanRU/PkvdEjmDVHZtXMkKE2V8R5MjP9Q\"",
+  "nextPageToken": "CAEQAA",
+  "regionCode": "FR",
+  "pageInfo": {
+    "totalResults": 369818,
+    "resultsPerPage": 1
+  },
+  "items": [
+    {
+      "kind": "youtube#searchResult",
+      "etag": "\"Fznwjl6JEQdo1MGvHOGaz_YanRU/Vm7CaMTY8j81iMJ0u_GC75iQNa4\"",
+      "id": {
+        "kind": "youtube#playlist",
+        "playlistId": "PLsk-HSGFjnaGe7sS_4VpZoEtZF2VoWtoR"
+      },
+      "snippet": {
+        "publishedAt": "2015-01-09T20:37:54.000Z",
+        "channelId": "UCNaPQ5uLX5iIEHUCLmfAgKg",
+        "title": "Learning to Code with Python",
+        "description": "Learning to Code with Python is a video series intended for kids ages 11-14 (or grades 5-8). Younger kids are welcome to give it a try, but be aware there will be ...",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/Rx5TjaVW__8/default.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/Rx5TjaVW__8/mqdefault.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/Rx5TjaVW__8/hqdefault.jpg",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "KidsCanCode",
+        "liveBroadcastContent": "none"
+      }
+    }
+  ]
+}
