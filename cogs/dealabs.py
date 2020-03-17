@@ -53,12 +53,6 @@ class Dealabs(commands.Cog):
         else:
             logger.info("No new games")
 
-
-
-
-        #TODO : check if the last message is in the list retrieved from dealabs and post the rest if there are any 
-        # and notify the free_games role
-
     @auto_free_games.before_loop
     async def before_free_games(self):
         """Intiliaze free_games loop."""
