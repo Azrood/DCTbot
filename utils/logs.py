@@ -23,7 +23,7 @@ class CommandLog:
             f = open(self.file)
             f.close()
         # or not
-        except FileNotFoundError:
+        except FileNotFoundError:  # pragma: no cover
             print('File does not exist. Creating.')
             init = {}
             with open(self.file, 'w') as outfile:
@@ -51,7 +51,7 @@ class CommandLog:
             return [(k, v['user'], v['command'])
                     for k, v in self.logs[date].items()
                     if v['channel'] == channel]
-        except KeyError:
+        except KeyError:  # pragma: no cover
             return None
 
     def _get_command(self, date, command):
@@ -59,28 +59,28 @@ class CommandLog:
             return [(k, v['user'], v['channel'])
                     for k, v in self.logs[date].items()
                     if v['command'] == command]
-        except KeyError:
+        except KeyError:  # pragma: no cover
             return None
 
     def _get_user(self, date, user):
         try:
             return [(k, v["command"], v["channel"])
                     for k, v in self.logs[date].items() if v['user'] == user]
-        except KeyError:
+        except KeyError:  # pragma: no cover
             return None
 
     def _get_log_day(self, date):
         try:
             return [(k, v["user"], v["command"], v["channel"])
                     for k, v in self.logs[date].items()]
-        except KeyError:
+        except KeyError:  # pragma: no cover
             return None
 
     def _get_date_time(self, user, command, channel):
         try:
             return [(k, time) for k, v in self.logs.items() for time in v.keys()  # noqa:E501
                     if v[time] == {'channel': channel, 'user': user, 'command': command}]  # noqa:E501
-        except KeyError:
+        except KeyError:  # pragma: no cover
             return None
 
     def log_write(self, date, time, channel, command, user):

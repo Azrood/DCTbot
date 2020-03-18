@@ -54,11 +54,11 @@ async def getcomics_directlink(comic_url):
     elif res2.status == 302:
         # print("302, Found Comic URL")
         return res2.headers['location']
-    elif res2.status == 404:
+    elif res2.status == 404:  # pragma: no cover
         # print('404, returning post url')
         # in this case, return the getcomics post url
         return comic_url
-    else:
+    else:  # pragma: no cover
         # in this case, return the getcomics post url
         # print("unkwnown response code")
         return comic_url

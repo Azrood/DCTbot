@@ -3,11 +3,10 @@
 import aiohttp  # asynchronous lib for going on internet
 
 from bs4 import BeautifulSoup
-# from discord.utils import get as disc_get
 from discord.utils import find as disc_find
 
 
-def string_is_int(string):
+def string_is_int(string):  # pragma: no cover
     """Return if 'string' is an int or not (bool)."""
     try:
         int(string)
@@ -69,3 +68,20 @@ def args_separator_for_log_function(guild, args):
             command = word.lower()
     # variables not specified in the args are defaulted to None
     return [user, command, channel]
+
+async def get_soup_xml(url):
+    """Return a BeautifulSoup soup from given url, Parser is xml.
+
+    Args:
+        url (str): url
+
+    Returns:
+        BeautifulSoup: soup
+
+    """
+    # get xml with async GET request
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, timeout=3, ssl=False) as resp:
+            text = await resp.text()
+        await session.close()
+    return BeautifulSoup(text, 'xml')

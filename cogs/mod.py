@@ -67,7 +67,7 @@ class Mod(commands.Cog):
     async def on_command(self, ctx):
         # If test if not very fancy
         # (no @decorator of special event on_cog_command for this ??)
-        # But otherwise, on_command() triggers on ALL commands (including ogher cogs)  # noqa: E501
+        # But otherwise, on_command() triggers on ALL commands (including other cogs)  # noqa: E501
         # So we test if we're in current cog (self)
         if ctx.command.cog_name == self.qualified_name:
             logger.info(f"Command {str(ctx.command):15} invoked by {str(ctx.author):15} in room {str(ctx.channel):15} with message {ctx.message.content}")  # noqa: E501

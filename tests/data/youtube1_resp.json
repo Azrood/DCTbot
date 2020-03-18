@@ -1,0 +1,14 @@
+{
+    "kind": "youtube#searchListResponse",
+    "items": [
+        {
+            "kind": "youtube#searchResult",
+            "id": {
+                "kind": "youtube#video",
+                "videoId": "Yut87qR_thM"
+                },
+            "snippet": {
+                "title": "Bohr, l&#39;\u00e9tudiant troll - quickie 08 - e-penser"}
+        }
+        ]
+}

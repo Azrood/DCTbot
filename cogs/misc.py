@@ -42,7 +42,7 @@ class Misc(commands.Cog):
     @commands.command()
     async def choose(self, ctx, *choices):
         """Randomly choose user's choices."""
-        if len(choices) < 1:
+        if len(choices) < 1:  # pragma: no cover
             return None
         await ctx.send(random.choice(choices))
 
