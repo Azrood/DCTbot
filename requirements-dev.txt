@@ -1,6 +1,7 @@
 -r requirements.txt
 
 asynctest
+pytest
 git+https://github.com/Sergeileduc/dpytest.git@dev
 coverage
 flake8>=3.7.9
