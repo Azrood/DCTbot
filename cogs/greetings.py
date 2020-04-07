@@ -10,7 +10,7 @@ class Greetings(commands.Cog):
         self.bot=bot
         self.morning_greeting.start() # pylint: disable=no-member
 
-    @tasks.loop(seconds=24)
+    @tasks.loop(hours=24)
     async def morning_greeting(self):
         """Send greetings in the morning."""
         channel_general = discord.utils.get(self.bot.guild.text_channels, name='general')
@@ -22,4 +22,4 @@ class Greetings(commands.Cog):
     async def before_morning_greeting(self):
         """Intiliaze morning_greeting loop."""
         await self.bot.wait_until_ready()
-        await asyncio.sleep(delay=3) # wait 10 hours after boot
+        await asyncio.sleep(delay=36000) # wait 10 hours after boot
