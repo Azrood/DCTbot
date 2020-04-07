@@ -5,7 +5,6 @@
 import asyncio
 import logging
 import sys
-import random
 
 import discord
 from discord.ext import commands
@@ -40,6 +39,7 @@ cogs_list = [cogs.Admin,
              cogs.Getcomics,
              cogs.Gifs,
              cogs.Google,
+             cogs.Greetings,
              cogs.Header,
              cogs.Help,
              cogs.Misc,
@@ -70,10 +70,8 @@ async def on_ready():
     bot.gifs = my_giflist
     for cog in cogs_list:
         bot.add_cog(cog(bot))
-    channel_general = discord.utils.get(bot.guild.text_channels, name='general')
-    greeting = random.choice(greeting_list)
-    await asyncio.sleep(delay=36000)  # bot is rebooted every day at 00:00 so we wait 10 hours after logging in
-    await channel_general.send(content=greeting)
+
+    
 
 # @bot.command()
 # @commands.is_nsfw()
