@@ -2,6 +2,6 @@
 
 asynctest
 pytest
-git+https://github.com/Sergeileduc/dpytest.git@dev
+dpytest>=0.0.16
 coverage
 flake8>=3.7.9
