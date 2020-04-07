@@ -5,7 +5,6 @@
 import asyncio
 import logging
 import sys
-import random
 
 import discord
 from discord.ext import commands
@@ -17,7 +16,7 @@ from utils.constants import greeting_list
 from utils.logs import CommandLog
 from utils.gif_json import GifJson
 # from utils.reddit import reddit_nsfw
-from utils.secret import token, dcteam_role_id, dcteam_id, modo_role_id
+from utils.secret import token, dcteam_role_id, main_guild_id, modo_role_id
 
 prefix = '!'
 
@@ -40,6 +39,7 @@ cogs_list = [cogs.Admin,
              cogs.Getcomics,
              cogs.Gifs,
              cogs.Google,
+             cogs.Greetings,
              cogs.Header,
              cogs.Help,
              cogs.Misc,
@@ -57,7 +57,7 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-    bot.guild = bot.get_guild(dcteam_id)  # se lier au serveur à partir de l'ID
+    bot.guild = bot.get_guild(main_guild_id)  # se lier au serveur à partir de l'ID
     try:
         bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
         bot.role_modo = bot.guild.get_role(modo_role_id)
@@ -70,10 +70,8 @@ async def on_ready():
     bot.gifs = my_giflist
     for cog in cogs_list:
         bot.add_cog(cog(bot))
-    channel_general = discord.utils.get(bot.guild.text_channels, name='general')
-    greeting = random.choice(greeting_list)
-    await asyncio.sleep(delay=36000)  # bot is rebooted every day at 00:00 so we wait 10 hours after logging in
-    await channel_general.send(content=greeting)
+
+    
 
 # @bot.command()
 # @commands.is_nsfw()
