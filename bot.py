@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """Awesome Discord Bot."""
 
-import asyncio
 import logging
 import sys
 
@@ -12,10 +11,8 @@ from discord.ext import commands
 import cogs
 
 from utils.bot_logging import setup_logging
-from utils.constants import greeting_list
 from utils.logs import CommandLog
 from utils.gif_json import GifJson
-# from utils.reddit import reddit_nsfw
 from utils.secret import token, dcteam_role_id, main_guild_id, modo_role_id
 
 prefix = '!'
@@ -71,13 +68,6 @@ async def on_ready():
     for cog in cogs_list:
         bot.add_cog(cog(bot))
 
-    
-
-# @bot.command()
-# @commands.is_nsfw()
-# async def nsfw(ctx):
-    # TODO : doctring
-    # await ctx.send(content=reddit_nsfw())
 
 setup_logging()
 logger = logging.getLogger(__name__)
