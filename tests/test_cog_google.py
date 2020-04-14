@@ -1,11 +1,14 @@
 import pytest
 # from unittest import mock
-# import discord
-from discord.ext import commands
+import discord
 import discord.ext.test as dpytest
 
 from cogs import google
 
+
+#########################
+# Fixtures
+#########################
 
 @pytest.fixture
 def search_result():
@@ -24,25 +27,36 @@ def mock_response(monkeypatch, search_result):
     monkeypatch.setattr(google, "search_google", mock_resp)
 
 
-@pytest.mark.asyncio
-async def test_command_google():
-    bot = commands.Bot(command_prefix='!')
+@pytest.fixture
+def expected_embed(search_result):
+    embed = discord.Embed(title=f"Les 2 premiers résultats de la recherche",  # noqa: E501
+                                   color=0x3b5cbe)
+    for r in search_result:
+        embed.add_field(name=r['title'], value=r['url'], inline=False)
+
+    return embed
+
+# fixture for bot with Google cog loaded will be used in all tests of the file.
+@pytest.fixture(autouse=True)
+def bot_google(bot):
     bot.add_cog(google.Google(bot))
     dpytest.configure(bot)
+    return bot
+
+
+#########################
+# Tests
+#########################
+
+@pytest.mark.asyncio
+async def test_command_google():
 
     await dpytest.message('!google python doc')
     dpytest.verify_message("Python Docs\n https://docs.python.org/")
 
 
 @pytest.mark.asyncio
-async def test_command_google_list(search_result):
-    bot = commands.Bot(command_prefix='!')
-    bot.add_cog(google.Google(bot))
-    dpytest.configure(bot)
+async def test_command_google_list(expected_embed):
+
     await dpytest.message('!googlelist 2 python doc')
-    res = dpytest.runner.sent_queue.get_nowait().embeds[0]
-    assert res.fields[0].name == search_result[0]['title']
-    assert res.fields[0].value == search_result[0]['url']
-    assert res.fields[1].name == search_result[1]['title']
-    assert res.fields[1].value == search_result[1]['url']
-    assert len(res.fields) == len(search_result)
+    dpytest.verify_embed(expected_embed)

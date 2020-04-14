@@ -17,6 +17,10 @@ def datafile(filename):
     return os.path.join(DATA_DIR, filename)
 
 
+#########################
+# Fixtures
+#########################
+
 @pytest.fixture(autouse=True)
 def mock_response(monkeypatch):
 
@@ -45,6 +49,10 @@ def expected_embed(expected_values):
         embed.add_field(name=l[0], value=l[1], inline=False)
     return embed
 
+
+#########################
+# Tests
+#########################
 
 @pytest.mark.asyncio
 async def test_get_comicsblog(expected_values):

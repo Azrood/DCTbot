@@ -1,11 +1,14 @@
 import pytest
 # from unittest import mock
 import discord
-from discord.ext import commands
 import discord.ext.test as dpytest
 
 from cogs import Urban
 
+
+#########################
+# Fixtures
+#########################
 
 @pytest.fixture()
 def expected_embed():
@@ -18,23 +21,29 @@ def expected_embed():
     return embed
 
 
-@pytest.mark.asyncio
-async def test_urban_cog(expected_embed):
-    bot = commands.Bot(command_prefix='!')
+# fixture for bot with Urban cog loaded will be used in all tests of the file.
+@pytest.fixture(autouse=True)
+def bot_urban(bot):
     bot.add_cog(Urban(bot))
     dpytest.configure(bot)
+    return bot
+
+
+#########################
+# Tests
+#########################
+
+@pytest.mark.asyncio
+async def test_urban_cog(expected_embed):
+
     await dpytest.message('!urban distro hop')
     dpytest.verify_embed(expected_embed)
 
 
 @pytest.mark.asyncio
 async def test_urban_cog_fails():
-    bot = commands.Bot(command_prefix='!')
-    bot.add_cog(Urban(bot))
-    dpytest.configure(bot)
 
     user_input = "mlksjdfmlkjsdfmlkjsdf"
-
     embed = discord.Embed(title=f"Definition of {user_input} doesn't exist")  # noqa: E501
 
     await dpytest.message(f'!urban {user_input}')
