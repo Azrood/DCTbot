@@ -13,9 +13,7 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def help(self, ctx):
-        """Display available commands."""
+    def generate_help_embeds(self, ctx):
         embed = discord.Embed(title="Page 1/2, utilisez les flèches en réaction pour naviguer", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)  # noqa: E501
         embed_2 = discord.Embed(title="Page 2/2, utilisez les flèches en réaction pour naviguer", description="Liste des commandes(toutes les commandes doivent être précédées du prefix \"!\") :", color=0x0000FF)  # noqa: E501
         for s in helps:
@@ -31,6 +29,14 @@ class Help(commands.Cog):
                 embed_2.add_field(name=h['name'], value=h['value'], inline=False)
         # if ctx.channel.category_id == dcteam_category_id:
             # embed.add_field(name='nsfw', value="affiche une image nsfw", inline=False)  # noqa: E501
+        return embed, embed_2
+
+    @commands.command()
+    async def help(self, ctx):
+        """Display available commands."""
+
+        embed, embed_2 = self.generate_help_embeds(ctx)
+
         msg = await ctx.send(embed=embed)
         await msg.add_reaction(left_triangle)
         await msg.add_reaction(right_triangle)

@@ -18,14 +18,13 @@ async def get_free_games():
     items = (await get_soup_xml(free_games)).select('item')
 
     # take everything from the rss feed
-    res = [ i.find_all(['category', 'title', 'link']) for i in items ]  
+    res = [i.find_all(['category', 'title', 'link']) for i in items]
 
     # construct a list of tuple [(title,url)] with games from the result set
     title_link = [
-                    (r[1].text, "<"+r[2].text+">")  # the < > are for preventing the embed in discord
-                    for r in res
-                    if "jeu" in r[0].text
-                ]
+        (r[1].text, "<" + r[2].text + ">")  # the < > are for preventing the embed in discord
+        for r in res if "jeu" in r[0].text
+        ]
 
     return title_link
 
@@ -41,28 +40,28 @@ class Dealabs(commands.Cog):
         free_game_list = await get_free_games()
         free_game_channel_history = await discord.utils.get(self.bot.guild.text_channels, name="jeux-video-gratuits").history(limit=50).flatten()
         free_game_role = discord.utils.get(
-                                            self.bot.guild.roles,
-                                            name="jeux gratuits"
-                                        )
+            self.bot.guild.roles,
+            name="jeux gratuits"
+            )
         # get games posted by bot in the free games channel
         last_posted_free_games = [
-                                    message.content
-                                    for message in free_game_channel_history
-                                    if message.author == self.bot.user
-                                ]
+            message.content
+            for message in free_game_channel_history
+            if message.author == self.bot.user
+            ]
 
         # filter the free game list retrieved by dealabs from games already posted
         games_not_posted = [
-                            "\n".join(couple)+"\n"
-                            for couple in free_game_list
-                            if couple[0] not in "".join(last_posted_free_games)
-                        ]
+            "\n".join(couple) + "\n"
+            for couple in free_game_list
+            if couple[0] not in "".join(last_posted_free_games)
+            ]
 
         if games_not_posted:
             await discord.utils.get(
-                                    self.bot.guild.text_channels,
-                                    name="jeux-video-gratuits"
-                                    ).send(content=f"{free_game_role.mention} {' '.join(games_not_posted)}")
+                self.bot.guild.text_channels,
+                name="jeux-video-gratuits"
+                ).send(content=f"{free_game_role.mention} {' '.join(games_not_posted)}")
             logger.info("Posted games")
         else:
             logger.info("No new games")

@@ -79,7 +79,6 @@ class Admin(commands.Cog):
             log 05/06/2019 faq: list all moderaiton commands in #faq on 05/06/2019
 
         """
-        embed = discord.Embed(title="logs", colour=0xe7191f)
 
         # arg_lists is always ["user", "command", "channel"]
         args_list = args_separator_for_log_function(self.bot.guild, args)
@@ -87,55 +86,13 @@ class Admin(commands.Cog):
         if date == "today":
             date = datetime.date.today().strftime("%d/%m/%Y")
 
-        bin_array = [int(i is not None) for i in args_list]  # convert ["foo", None, None] to [1, 0, 0]  # noqa:E501
-        n = int("".join(str(x) for x in bin_array), 2)  # binary array to int
-
-        user, command, channel = args_list
-
         if self.log.log_read(date, *args_list) is not None:  # if it is None, there are no logs on the given date  # noqa:E501
 
             # we get a list of tuple in this format [(time,user,command,channel)]
             list_log = self.log.log_read(date, *args_list)  # to avoid multiple calling
 
-            # if entries are not specified, then they are None
-            if n == 0:  # [None, None, None]
-                for v in list_log:
-                    embed.add_field(name=v[0], value=f"{v[1]} used {v[2]} in {v[3]}", inline=False)  # nice embed  # noqa:E501
-
-            elif n == 1:  # [None, None, channel]
-                embed.set_footer(text=channel)
-                for v in list_log:
-                    embed.add_field(name=v[0], value=f"{v[1]} used {v[2]}", inline=False)  # noqa:E501
-
-            elif n == 2:  # [None, command, None]
-                embed.set_footer(text=f"users of {command}")
-                for v in list_log:
-                    embed.add_field(name=v[0], value=f"{v[1]} in {v[2]}", inline=False)  # noqa:E501
-
-            elif n == 3:  # [None, command, channel]
-                embed.set_footer(text=f"users of {command} in {channel}")
-                for v in list_log:
-                    embed.add_field(name=v[0], value=f"{v[1]}", inline=False)
-
-            elif n == 4:  # [user, None, None]
-                embed.set_footer(text=user)
-                for v in list_log:
-                    embed.add_field(name=v[0], value=f"used {v[1]} in {v[2]}", inline=False)  # noqa:E501
-
-            elif n == 5:  # [user, None, channel]
-                embed.set_footer(text=f"{user} commands in {channel}")
-                for v in list_log:
-                    embed.add_field(name=v[0], value=f"used {v[2]}", inline=False)
-
-            elif n == 6:  # [user, command, None]
-                embed.set_footer(text=f"{user} used {command}")
-                for v in list_log:
-                    embed.add_field(name=v[0], value=f"used in {v[2]}", inline=False)  # noqa:E501
-
-            else:  # [user, command, channel]
-                embed.set_footer(text=f"{user} used {command} in {channel}")
-                for v in list_log:
-                    embed.add_field(name=v[0], value=f"{v[1]}", inline=False)
+            generator = LogsEmbedGenerator(args_list, list_log)
+            embed = generator.generate_logs_embed()
 
             await ctx.author.send(embed=embed)
         else:  # no logs in the given date
@@ -156,3 +113,72 @@ class Admin(commands.Cog):
     async def kill(self, ctx):
         """Kill the bot."""
         await self.bot.logout()
+
+
+class LogsEmbedGenerator():
+    """Class to handle generation of logs embed, given arg_list and logs.
+
+    Used in !logs command.
+
+    arg_lists is always ['user', 'command', 'channel']
+    """
+    def __init__(self, args_list, logs):
+        self.user, self.command, self.channel = args_list
+        self.logs = logs
+        self.n = self._compute_log_case(args_list)  # decimal representation of args array like ["foo", None, None] -> 100 -> 4  # noqa: E501
+        self.embed = discord.Embed(title="logs", colour=0xe7191f)
+
+    def _compute_log_case(self, args_list):
+        bin_array = [int(i is not None) for i in args_list]  # convert ["foo", None, None] to [1, 0, 0]  # noqa:E501
+        return int("".join(str(x) for x in bin_array), 2)  # binary array to int
+
+    def generate_logs_embed(self):
+        """Switch/case implementation. Use the right embed generator."""
+        return getattr(self, '_gen_' + str(self.n))()
+
+    def _gen_0(self):  # [None, None, None]
+        for v in self.logs:
+            self.embed.add_field(name=v[0], value=f"{v[1]} used {v[2]} in {v[3]}", inline=False)  # noqa:E501
+        return self.embed
+
+    def _gen_1(self):  # [None, None, channel]
+        self.embed.set_footer(text=self.channel)
+        for v in self.logs:
+            self.embed.add_field(name=v[0], value=f"{v[1]} used {v[2]}", inline=False)  # noqa:E501
+        return self.embed
+
+    def _gen_2(self):  # [None, command, None]
+        self.embed.set_footer(text=f"users of {self.command}")
+        for v in self.logs:
+            self.embed.add_field(name=v[0], value=f"{v[1]} in {v[2]}", inline=False)  # noqa:E501
+        return self.embed
+
+    def _gen_3(self):  # [None, command, channel]
+        self.embed.set_footer(text=f"users of {self.command} in {self.channel}")
+        for v in self.logs:
+            self.embed.add_field(name=v[0], value=f"{v[1]}", inline=False)
+        return self.embed
+
+    def _gen_4(self):  # [user, None, None]
+        self.embed.set_footer(text=self.user)
+        for v in self.logs:
+            self.embed.add_field(name=v[0], value=f"used {v[1]} in {v[2]}", inline=False)  # noqa:E501
+        return self.embed
+
+    def _gen_5(self):  # [user, None, channel]
+        self.embed.set_footer(text=f"{self.user} commands in {self.channel}")
+        for v in self.logs:
+            self.embed.add_field(name=v[0], value=f"used {v[2]}", inline=False)
+        return self.embed
+
+    def _gen_6(self):  # [user, command, None]
+        self.embed.set_footer(text=f"{self.user} used {self.command}")
+        for v in self.logs:
+            self.embed.add_field(name=v[0], value=f"used in {v[2]}", inline=False)  # noqa:E501
+        return self.embed
+
+    def _gen_7(self):  # [user, command, channel]
+        self.embed.set_footer(text=f"{self.user} used {self.command} in {self.channel}")
+        for v in self.logs:
+            self.embed.add_field(name=v[0], value=f"{v[1]}", inline=False)
+        return self.embed
