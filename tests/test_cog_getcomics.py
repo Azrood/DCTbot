@@ -7,6 +7,10 @@ import discord.ext.test as dpytest
 from cogs import getcomics
 
 
+#########################
+# Fixtures
+#########################
+
 @pytest.fixture()
 def expected_embed():
     embed = discord.Embed(title="Batman #80 (2019)", color=0x882640,
@@ -27,6 +31,10 @@ def mock_response(monkeypatch):
 
     monkeypatch.setattr(getcomics, "getcomics_top_link", mocked_values)
 
+
+#########################
+# Tests
+#########################
 
 @pytest.mark.asyncio
 async def test_getcomics(expected_embed):

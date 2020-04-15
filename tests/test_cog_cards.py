@@ -3,18 +3,29 @@ import pytest
 # from unittest import mock
 
 import discord
-from discord.ext import commands
 import discord.ext.test as dpytest
 
 from cogs import Cards
 
 
-@pytest.mark.asyncio
-async def test_card():
-    bot = commands.Bot(command_prefix='!')
+#########################
+# Fixtures
+#########################
+
+# fixture for bot with Cards cog loaded will be used in all tests of the file.
+@pytest.fixture(autouse=True)
+def bot_cards(bot):
     bot.add_cog(Cards(bot))
     dpytest.configure(bot)
+    return bot
 
+
+#########################
+# Tests
+#########################
+
+@pytest.mark.asyncio
+async def test_card():
     expected = discord.Embed()
     expected.set_image(url="attachment://sergei.jpg")
 
@@ -24,10 +35,6 @@ async def test_card():
 
 @pytest.mark.asyncio
 async def test_card_help():
-    bot = commands.Bot(command_prefix='!')
-    bot.add_cog(Cards(bot))
-    dpytest.configure(bot)
-
     expected = discord.Embed(title="Liste des cartes \nSyntaxe : !poke <nom>",
                              description="azrod\nbane\nrun\nsergei\nxanatos\nphoe")  # noqa: E501
     expected.set_footer(text="Merci à Slyrax pour les cartes !")
