@@ -41,7 +41,7 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 
 lint: ## check style with flake8
-	flake8 utils cogs tests bot.py
+	flake8
 	
 
 test: ## run tests quickly with the default Python
