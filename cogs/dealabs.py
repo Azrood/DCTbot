@@ -21,12 +21,15 @@ async def get_free_games():
     res = [i.find_all(['category', 'title', 'link']) for i in items]
 
     # construct a list of tuple [(title,url)] with games from the result set
-    title_link = [
-        (r[1].text, "<" + r[2].text + ">")  # the < > are for preventing the embed in discord
-        for r in res if "jeu" in r[0].text
-        ]
-
-    return title_link
+    try:
+        title_link = [
+            (r[1].text, f"<{r[2].text}>")  # the < > are for preventing the embed in discord
+            for r in res if "jeu" in r[0].text
+            ]
+        return title_link
+    except IndexError:
+        return []
+    
 
 
 class Dealabs(commands.Cog):
