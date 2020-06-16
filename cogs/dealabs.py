@@ -29,7 +29,6 @@ async def get_free_games():
         return title_link
     except IndexError:
         return []
-    
 
 
 class Dealabs(commands.Cog):
