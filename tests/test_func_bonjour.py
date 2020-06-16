@@ -8,7 +8,7 @@ from cogs import bonjourmadame
 
 @pytest.mark.asyncio
 async def test_latest_madame():
-    """Test getcomics_top_link (title only)."""
+    """Test latest_madame() (this test makes a real online request)."""
     res = await bonjourmadame.latest_madame()
     assert re.match(r"https://i\d\.wp\.com/bonjourmadame\.fr/"
-                    r"wp-content/uploads/\d{4}/.*?\.(jpg|png)", res)
+                    r"wp-content/uploads/\d{4}/.*?\.(jpg|jpeg|png)", res)

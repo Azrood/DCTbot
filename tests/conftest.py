@@ -1,6 +1,36 @@
+import asyncio
 import os
 import glob
-# import pytest
+
+import pytest
+import discord
+import discord.ext.commands as commands
+import discord.ext.test as dpytest
+
+
+@pytest.fixture
+def client(event_loop):
+    c = discord.Client(loop=event_loop)
+    dpytest.configure(c)
+    return c
+
+
+@pytest.fixture
+def bot(request, event_loop):
+    b = commands.Bot("!", loop=event_loop)
+
+    dpytest.configure(b)
+    return b
+
+
+@pytest.fixture
+def mock_sleep(monkeypatch):
+    """asyncio.sleep() mocked to return immediately."""
+
+    async def return_now(*args, **kwargs):
+        return
+
+    monkeypatch.setattr(asyncio, "sleep", return_now)
 
 
 def pytest_sessionfinish(session, exitstatus):

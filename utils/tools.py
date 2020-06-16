@@ -69,6 +69,7 @@ def args_separator_for_log_function(guild, args):
     # variables not specified in the args are defaulted to None
     return [user, command, channel]
 
+
 async def get_soup_xml(url):
     """Return a BeautifulSoup soup from given url, Parser is xml.
 
