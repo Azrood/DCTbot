@@ -16,9 +16,18 @@ async def latest_madame():
     madames = "http://feeds2.feedburner.com/BonjourMadame"
     soup = await get_soup_lxml(madames)
     item = soup.find('item')
-    url = item.find('img')['src']
 
-    return url.split('?')[0]
+    try:
+        url = item.find('img')['src']
+        return url.split('?')[0]
+    except TypeError as e:
+        print(e, "Madame is not an image")
+
+    try:
+        url = item.find("video").find("source")['src']
+        return url.split('?')[0]
+    except TypeError as e:  # pragma: no cover
+        print(e, "Madame is not a video")
 
 
 class BonjourMadame(commands.Cog):
