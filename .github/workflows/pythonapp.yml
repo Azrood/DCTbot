@@ -1,0 +1,46 @@
+name: Python application
+
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the master branch
+  push:
+    branches:
+      - master
+      - dev-me
+  pull_request:
+    branches:
+      - master
+      - dev-me
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Lint with flake8
+      run: |
+        pip install flake8
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Test with pytest
+      env: # Or as an environment variable
+        GOOGLE_DEVELOPER_CX: ${{ secrets.GOOGLE_DEVELOPER_CX }}
+        YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
+        MAIN_GUILD_ID: ${{ secrets.MAIN_GUILD_ID }}
+      run: |
+        pip install -r requirements-dev.txt
+        pytest
