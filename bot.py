@@ -33,6 +33,7 @@ cogs_list = [cogs.Admin,
              cogs.Cards,
              cogs.Comicsblog,
              cogs.Dealabs,
+             cogs.ErrorLogs,
              cogs.Getcomics,
              cogs.Gifs,
              cogs.Google,
@@ -44,7 +45,8 @@ cogs_list = [cogs.Admin,
              cogs.Mod,
              cogs.Team,
              cogs.Urban,
-             cogs.Youtube]
+             cogs.Youtube
+             ]
 
 
 @bot.event

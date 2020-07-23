@@ -24,3 +24,5 @@ staff_role = ["DCT-TEAM", "Modérateurs", "Coordinateur", "Administrateur", "Die
 mods_role = ["Modérateurs", "Coordinateur", "Administrateur", "Dieu du Discord", "Dominatrix Imperiosa"]  # noqa: E501
 
 react_role_msg_id = 647194400329302019
+
+logging_webhook_url = os.getenv("LOGS_WEBHOOK")

@@ -20,3 +20,4 @@ from .admin import Admin
 from .youtube import Youtube
 from .dealabs import Dealabs
 from .greetings import Greetings
+from .errorlogs import ErrorLogs
