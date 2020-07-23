@@ -16,9 +16,18 @@ async def latest_madame():
     madames = "http://feeds2.feedburner.com/BonjourMadame"
     soup = await get_soup_lxml(madames)
     item = soup.find('item')
-    url = item.find('img')['src']
 
-    return url.split('?')[0]
+    try:
+        url = item.find('img')['src']
+        return url.split('?')[0]
+    except TypeError as e:
+        print(e, "Madame is not an image")
+
+    try:
+        url = item.find("video").find("source")['src']
+        return url.split('?')[0]
+    except TypeError as e:  # pragma: no cover
+        print(e, "Madame is not a video")
 
 
 class BonjourMadame(commands.Cog):
@@ -31,10 +40,14 @@ class BonjourMadame(commands.Cog):
     async def bonjour_madame(self):
         """Send daily bonjourmadame."""
         if 0 <= datetime.date.today().weekday() <= 4:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
-            embed = discord.Embed()
-            embed.set_image(url=await latest_madame())
-            embed.set_footer(text="Bonjour Madame")
-            await self.bot.nsfw_channel.send(embed=embed)  # noqa:E501
+            url_madame = await latest_madame()
+            if url_madame.endswith(".mp4"):  # no video in embed
+                await self.bot.nsfw_channel.send(url_madame)
+            else:                           # image, ok for embed
+                embed = discord.Embed()
+                embed.set_image(url=url_madame)
+                embed.set_footer(text="Bonjour Madame")
+                await self.bot.nsfw_channel.send(embed=embed)
 
     @bonjour_madame.before_loop
     async def before_bonjour_madame(self):
