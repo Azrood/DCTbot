@@ -19,3 +19,5 @@ mods_role = ["XXX"]
 reddit_secret = "XXXXXXXXX"
 reddit_client_id = "XXXXXXX"
 reddit_useragent = "XXXXX"
+
+logging_webhook_url = "https://discordapp.com/api/webhooks/XXXXXXXXXXXXXXXXXX"
