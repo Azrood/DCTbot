@@ -78,6 +78,8 @@ logger.info("This is an INFO message on the root logger.")
 # logger.critical("This is a CRITICAL message of the root logger")
 
 try:
+    logger.info(f"New bot ran with discord.py version : {discord.__version__}")
     bot.run(token)
 except Exception:
+    logger.critical(f"bot crashed with discord.py version : {discord.__version__}")
     logger.critical("Unexpected critical error", exc_info=True)
