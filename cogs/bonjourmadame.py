@@ -19,16 +19,16 @@ async def latest_madame():
 
     try:
         url = item.find('img')['src']
-        return {"type": "image", "url": url.split('?')[0]}
+        return url.split('?')[0]
     except TypeError as e:
         print(e, "Madame is not an image")
 
     try:
         url = item.find("video").find("source")['src']
-        return {"type": "video", "url": url.split('?')[0]}
+        return url.split('?')[0]
     except TypeError as e:  # pragma: no cover
         print(e, "Madame is not a video")
-        return {"type": "erreur", "url": None}
+        return None
 
 
 class BonjourMadame(commands.Cog):
@@ -41,14 +41,9 @@ class BonjourMadame(commands.Cog):
     async def bonjour_madame(self):
         """Send daily bonjourmadame."""
         if 0 <= datetime.date.today().weekday() <= 4:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
-            madame_dict = await latest_madame()
-            if madame_dict["type"] == "video":  # no video in embed
-                await self.bot.nsfw_channel.send(madame_dict["url"])
-            elif madame_dict["type"] == "image":                           # image, ok for embed
-                embed = discord.Embed()
-                embed.set_image(url=madame_dict["url"])
-                embed.set_footer(text="Bonjour Madame")
-                await self.bot.nsfw_channel.send(embed=embed)
+            url = await latest_madame()
+            if url:
+                await self.bot.nsfw_channel.send(url)
 
     @bonjour_madame.before_loop
     async def before_bonjour_madame(self):
