@@ -48,7 +48,7 @@ test: ## run tests quickly with the default Python
 	pytest
 
 coverage: ## check code coverage quickly with the default Python
-	coverage run --source cogs,utils --omit utils/pornhub/*,utils/bot_logging.py,utils/reddit.py -m pytest
+	coverage run --source cogs,utils --omit utils/bot_logging.py,utils/reddit.py -m pytest
 	coverage report -m
 	coverage html
 	coverage xml -o cov.xml
