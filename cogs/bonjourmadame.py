@@ -43,7 +43,8 @@ class BonjourMadame(commands.Cog):
         if 0 <= datetime.date.today().weekday() <= 4:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
             url, title = await latest_madame()
             if url:
-                await self.bot.nsfw_channel.send(f"{title}\n{url}")
+                await self.bot.nsfw_channel.send(title)
+                await self.bot.nsfw_channel.send(url)
 
     @bonjour_madame.before_loop
     async def before_bonjour_madame(self):
