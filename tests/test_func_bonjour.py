@@ -12,4 +12,4 @@ async def test_latest_madame():
     res = await bonjourmadame.latest_madame()
     assert re.match(r"https?://(?:i\d\.wp\.com/)?bonjourmadame\.fr/"
                     r"wp-content/uploads/\d{4}/.*?\.(?:jpg|jpeg|png|mp4|webm)",
-                    res)
+                    res[0])
