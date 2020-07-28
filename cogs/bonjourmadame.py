@@ -41,9 +41,9 @@ class BonjourMadame(commands.Cog):
     async def bonjour_madame(self):
         """Send daily bonjourmadame."""
         if 0 <= datetime.date.today().weekday() <= 4:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
-            url = await latest_madame()
+            url, title = await latest_madame()
             if url:
-                await self.bot.nsfw_channel.send(url)
+                await self.bot.nsfw_channel.send(f"{title}\n{url}")
 
     @bonjour_madame.before_loop
     async def before_bonjour_madame(self):
