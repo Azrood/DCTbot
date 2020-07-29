@@ -11,7 +11,7 @@ gifs.json
 example.py
 logs.json
 errors.log
-info.log
+info.log*
 modo.log
 
 # Unit test / coverage reports
