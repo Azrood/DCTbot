@@ -42,6 +42,7 @@ cogs_list = [cogs.Admin,
              cogs.Misc,
              cogs.Notifications,
              cogs.Mod,
+             cogs.Register,
              cogs.Team,
              cogs.Urban,
              cogs.Youtube]
