@@ -93,6 +93,6 @@ class Register(commands.Cog):
 
         await dmchannel.send("Malheureusement, je n'ai pas pu vérifier ton "
                              "compte.\nPour recommencer, réessayer la "
-                             "commande register dans un salon.")
+                             "commande register.")
         logger.warning("%20s FAILS to verified his forum account %19s", ctx.author, user_to_validate)  # noqa: E501
         return False
