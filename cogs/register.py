@@ -77,7 +77,7 @@ class Register(commands.Cog):
                                  "pseudonyme.\n"
                                  "Arrêt de la procédure de validation."
                                  "Pour recommencer, réessayer la commande "
-                                 "register dans un salon.")
+                                 "register.")
             logger.warning("Can't send a Forum PM to %20s, asked by %15s", user_to_validate, ctx.author)  # noqa: E501
             return
 
