@@ -33,12 +33,11 @@ class Admin(commands.Cog):
 
     @commands.command()
     @commands.is_owner()
-    async def gifadd(self, ctx, name, url, bool):
+    async def gifadd(self, ctx, name, url, scope: bool):
         """Add gif in gif dictionary and gif json file."""
         name = name.lower()
 
-        bool = bool.lower()
-        self.giflist.gif_add(name, url, bool)
+        self.giflist.gif_add(name, url, scope)
         await ctx.send(content=f"gif {name} ajouté !", delete_after=2)
 
     @commands.command()
