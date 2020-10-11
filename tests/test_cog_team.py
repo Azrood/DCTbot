@@ -1,4 +1,4 @@
-# import asyncio
+import asyncio
 import pytest
 # from unittest import mock
 
@@ -12,23 +12,21 @@ from utils.secret import staff_role
 
 
 @pytest.mark.asyncio
-async def test_team_fail():
+async def test_team_fail(bot):
     team_role_name = staff_role[0]  # DCT-team
-
-    bot = commands.Bot(command_prefix='!')
-    dpytest.configure(bot, num_members=2)
-
-    bot.log = CommandLog("test_log.json")
 
     guild = bot.guilds[0]  # Guild object
     team_role = await guild.create_role(name=team_role_name)  # Role object
     bot.role_dcteam = team_role
     # member1 = guild.members[0]  # Member
+    
+    bot.log = CommandLog("test_log.json")
+
+    bot.add_cog(Team(bot))
+    
     member2 = guild.members[1]  # Member
 
     m2_mention = member2.mention
-
-    bot.add_cog(Team(bot))
 
     with pytest.raises(commands.MissingAnyRole):
         await dpytest.message(f'!team {m2_mention}')  # m1 gives m2 a new role
@@ -39,10 +37,9 @@ async def test_team_fail():
 
 
 @pytest.mark.asyncio
-async def test_team_success():
+async def test_team_success(bot):
     team_role_name = staff_role[0]  # DCT-team
 
-    bot = commands.Bot(command_prefix='!')
     dpytest.configure(bot, num_members=2)
 
     bot.log = CommandLog("test_log.json")
@@ -62,10 +59,6 @@ async def test_team_success():
 
     await member1.add_roles(team_role)  # m1 has the role Team
 
-    # test empty mentions -> nothing happens
-    await dpytest.message('!team')
-    dpytest.verify_message(assert_nothing=True)
-
     await dpytest.message(f'!team {m2_mention}')  # m1 gives m2 a new role
 
     # After
@@ -74,11 +67,10 @@ async def test_team_success():
 
 
 @pytest.mark.asyncio
-async def test_team_empty_mentions():
+async def test_team_empty_mentions(bot):
     """Test "team!" command with no mentions."""
     team_role_name = staff_role[0]  # DCT-team
 
-    bot = commands.Bot(command_prefix='!')
     dpytest.configure(bot, num_members=2)
 
     bot.log = CommandLog("test_log.json")
@@ -102,11 +94,10 @@ async def test_team_empty_mentions():
 
 
 @pytest.mark.asyncio
-async def test_team_member_allready_in_team():
+async def test_team_member_allready_in_team(bot):
     """Test !team with one member allready in team."""
     team_role_name = staff_role[0]  # DCT-team
 
-    bot = commands.Bot(command_prefix='!')
     dpytest.configure(bot, num_members=3)
 
     bot.log = CommandLog("test_log.json")
@@ -141,10 +132,9 @@ async def test_team_member_allready_in_team():
 
 
 @pytest.mark.asyncio
-async def test_clear_fail():
+async def test_clear_fail(bot):
     team_role_name = staff_role[0]  # DCT-team
 
-    bot = commands.Bot(command_prefix='!')
     dpytest.configure(bot)
 
     bot.log = CommandLog("test_log.json")
@@ -168,3 +158,4 @@ async def test_clear_fail():
     with pytest.raises(commands.MissingAnyRole):
         await dpytest.message(f'!clear 2')
     dpytest.verify_message(f"Tu n'as pas le pouvoir{member_mention} !")
+    await dpytest.empty_queue()
