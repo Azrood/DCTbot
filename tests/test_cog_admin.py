@@ -2,7 +2,7 @@
 import pytest
 from unittest import mock
 
-# import discord
+import discord
 from discord.ext import commands
 import discord.ext.test as dpytest
 
@@ -11,7 +11,9 @@ from cogs import Admin
 
 @pytest.mark.asyncio
 async def test_restart_fail():
-    bot = commands.Bot(command_prefix='!')
+    intents = discord.Intents.default()
+    intents.members = True
+    bot = commands.Bot(command_prefix='!',  intents=intents)
     bot.gifs = []
     bot.log = mock.Mock()
     bot.add_cog(Admin(bot))
@@ -21,3 +23,4 @@ async def test_restart_fail():
     with pytest.raises(commands.MissingAnyRole):
         await dpytest.message('!restart')
     dpytest.verify_message("Nope.")  # empty the queue
+    await dpytest.empty_queue()

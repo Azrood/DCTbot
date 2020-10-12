@@ -7,15 +7,14 @@ from utils.tools import args_separator_for_log_function
 
 
 @pytest.mark.asyncio
-async def test_args_separator():
-    bot = commands.Bot(command_prefix='!')
+async def test_args_separator(bot):
 
-    user = "TestUser"
+    user = "TestUser0"
     command = "ban"
     channel = "Channel_0"
 
     dpytest.configure(bot)
-    print("toto")
+
     guild = bot.guilds[0]
     a, b, c = args_separator_for_log_function(guild, [channel, command, user])
 
