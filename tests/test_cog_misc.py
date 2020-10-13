@@ -29,7 +29,7 @@ async def test_ping():
 
 
 @pytest.mark.asyncio
-async def test_say(bot):
+async def test_say():
     await dpytest.message('!say Unit testing the say command')
     dpytest.verify_message("Unit testing the say command")
 
@@ -107,7 +107,7 @@ async def test_timer(bot, mock_sleep):
 
     test_time = 15
     test_message = "wake up"
-    mention = bot.users[0].mention
+    mention = bot.users[0].mention.replace("@", "@!")
 
     await dpytest.message(f'!timer {test_time} {test_message}')
 
