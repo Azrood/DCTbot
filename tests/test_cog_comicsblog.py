@@ -70,8 +70,7 @@ async def test_get_comicsblog(expected_values):
 
 
 @pytest.mark.asyncio
-async def test_comicsblog_command(expected_embed):
-    bot = commands.Bot(command_prefix='!')
+async def test_comicsblog_command(bot, expected_embed):
     bot.add_cog(comicsblog.Comicsblog(bot))
     dpytest.configure(bot)
 
