@@ -23,7 +23,6 @@ def bot_header(bot):
 # Tests
 #########################
 
-@pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.asyncio
 @pytest.mark.parametrize("editor", ["rebirth", "horsrebirth", "indé", "marvel"])
 async def test_command_header(bot, editor):
