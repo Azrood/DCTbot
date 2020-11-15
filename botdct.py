@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """Awesome Discord Bot."""
 
-import argparse
 import logging
 import sys
 
@@ -18,16 +17,11 @@ from utils.secret import token, dcteam_role_id, main_guild_id, modo_role_id
 
 prefix = '!'
 
-# --debug option
-parser = argparse.ArgumentParser()
-parser.add_argument("-d", "--debug",
-                    help="change prefix to '?'", action="store_true")
-args = parser.parse_args()
-if args.debug:
-    print("You are in debug mode.")
-    print("Prefix is now '?'")
-    prefix = '?'
-# done with parsing options with argparser
+if len(sys.argv) > 1:
+    if sys.argv[1] == "--debug":
+        print("You are in debug mode.")
+        print("Prefix is now '?'")
+        prefix = '?'
 
 bot = commands.Bot(command_prefix=prefix, help_command=None,
                    description=None, case_insensitive=True)
