@@ -20,4 +20,4 @@ from .admin import Admin
 from .youtube import Youtube
 from .dealabs import Dealabs
 from .greetings import Greetings
-from .register import Register
+from .forum.register import Register
