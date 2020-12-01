@@ -18,9 +18,9 @@ pip install -r requirements.txt
 ```
 
 # Launch
-Launch the bot from the project root. If you have several version of Python, you must use `python3.6`
+Launch the bot from the project root. If you have several version of Python, you must use `python3` or `python3.X`
 ```
-python3.6 /path/to/dctbot/bot.py
+python /path/to/dctbot/bot.py
 ```
 
 ![example](https://raw.githubusercontent.com/Azrood/DCTbot/master/pictures/example.JPG)

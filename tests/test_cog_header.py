@@ -25,10 +25,7 @@ def bot_header(bot):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("editor", ["rebirth", "horsrebirth", "indé", "marvel"])
-async def test_command_header(editor):
-    bot = commands.Bot(command_prefix='!')
-    bot.add_cog(Header(bot))
-    dpytest.configure(bot)
+async def test_command_header(bot, editor):
 
     await dpytest.message(f'!header {editor}')
     response = dpytest.runner.sent_queue.get_nowait()
