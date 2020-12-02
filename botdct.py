@@ -4,6 +4,7 @@
 
 import argparse
 import logging
+from pathlib import Path
 
 import discord
 from discord.ext import commands
@@ -79,7 +80,7 @@ async def on_ready():
         bot.add_cog(cog(bot))
 
 
-setup_logging()
+setup_logging(Path(__file__).resolve().parent / 'logging.json')
 logger = logging.getLogger(__name__)
 
 logger.info("This is an INFO message on the root logger.")
