@@ -4,7 +4,7 @@
 
 import argparse
 import logging
-import sys
+from pathlib import Path
 
 import discord
 from discord.ext import commands
@@ -29,8 +29,12 @@ if args.debug:
     prefix = '?'
 # done with parsing options with argparser
 
+intents = discord.Intents.default()
+intents.members = True
+
 bot = commands.Bot(command_prefix=prefix, help_command=None,
-                   description=None, case_insensitive=True)
+                   description=None, case_insensitive=True,
+                   intents=intents)
 
 my_giflist = GifJson("gifs.json")
 
@@ -76,7 +80,7 @@ async def on_ready():
         bot.add_cog(cog(bot))
 
 
-setup_logging()
+setup_logging(Path(__file__).resolve().parent / 'logging.json')
 logger = logging.getLogger(__name__)
 
 logger.info("This is an INFO message on the root logger.")
