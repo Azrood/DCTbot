@@ -4,3 +4,5 @@ google-api-python-client
 lxml
 praw
 pillow
+git+https://github.com/Sergeileduc/pyphpbb-sl.git@v0.11.1
+sqlite-utils==3.*

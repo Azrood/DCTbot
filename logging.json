@@ -54,6 +54,11 @@
         "level": "INFO",
         "handlers": ["console", "modo_file_handler", "error_file_handler"],
         "propagate": false
+      },
+      "cogs.register.register": {
+        "level": "INFO",
+        "handlers": ["console", "modo_file_handler", "error_file_handler"],
+        "propagate": false
       }
     },
   

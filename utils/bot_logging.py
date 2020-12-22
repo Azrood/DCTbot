@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 """Logging configuration."""
 
-import os
 import json
 import logging
 import logging.config
+from pathlib import Path
 
 
 def setup_logging(
-    default_path='logging.json',
+    default_path=Path('logging.json'),
     default_level=logging.INFO,
     env_key='LOG_CFG'
 ):
@@ -17,7 +17,7 @@ def setup_logging(
 
     """
     path = default_path
-    if os.path.exists(path):
+    if path.exists():
         with open(path, 'rt') as f:
             config = json.load(f)
         logging.config.dictConfig(config)
