@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """Register cog."""
 
+import asyncio
 from collections import namedtuple
 import json
 import logging
@@ -115,7 +116,10 @@ class Register(commands.Cog):
         def check(m):
             return m.author == ctx.author and m.channel == dmchannel
 
-        msg = await self.bot.wait_for('message', check=check, timeout=60)
+        try:
+            msg = await self.bot.wait_for('message', check=check, timeout=60)
+        except asyncio.TimeoutError:
+            logger.warning("%20s tries to register, but timeout in sending his name", ctx.author)  # noqa: E501
 
         user_to_validate = msg.content
 
@@ -151,7 +155,10 @@ class Register(commands.Cog):
             return False
 
         # Phase 4 : receiving and checking token ##############################
-        msg2 = await self.bot.wait_for('message', check=check, timeout=300)
+        try:
+            msg2 = await self.bot.wait_for('message', check=check, timeout=300)
+        except asyncio.TimeoutError:
+            logger.warning("%20s tries to register, but timeout in sending his token", ctx.author)  # noqa: E501
 
         if token in msg2.content:
             await dmchannel.send("YATTA ! tu as envoyé le bon token.\n"
