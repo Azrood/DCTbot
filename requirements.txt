@@ -1,4 +1,4 @@
-discord.py==1.6.0
+discord.py==1.7.1
 bs4
 google-api-python-client
 lxml
