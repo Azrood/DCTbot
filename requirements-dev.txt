@@ -7,3 +7,4 @@ dpytest==0.0.23
 coverage
 flake8>=3.7.9
 pylint
+invoke
