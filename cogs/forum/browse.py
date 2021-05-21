@@ -73,7 +73,8 @@ class Browse(commands.Cog):
         """Browse de forum.
         """
         phpbb = PhpBB(forum_host)
-        is_logged = await phpbb.login(forum_user_name, forum_password)
+        async with ctx.channel.typing():
+            is_logged = await phpbb.login(forum_user_name, forum_password)
         if not is_logged:
             logger.error("Not logged in forum.")
             return
@@ -84,7 +85,8 @@ class Browse(commands.Cog):
         while True:  # Infinite loop for user inputs
             url = urljoin(forum_host, current_url)
             try:
-                html = await phpbb.browser.get_html(url)
+                async with ctx.channel.typing():
+                    html = await phpbb.browser.get_html(url)
             except aiohttp.client_exceptions.ServerDisconnectedError:
                 continue
             # List forums and topics, and send them in embed
@@ -132,6 +134,7 @@ class Browse(commands.Cog):
                     send4 = await ctx.send(embed=embed4)
                     msg = await self.bot.wait_for("message", check=check, timeout=20)
                     choice = msg.content
+                    # TODO
                     await msg.delete(delay=1)
                     await send3.delete(delay=1)
                     await send4.delete(delay=1)
