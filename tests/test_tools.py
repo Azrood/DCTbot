@@ -1,6 +1,5 @@
 import pytest
 
-from discord.ext import commands
 import discord.ext.test as dpytest
 
 from utils.tools import args_separator_for_log_function

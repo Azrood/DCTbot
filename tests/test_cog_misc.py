@@ -25,13 +25,13 @@ def bot_misc(bot):
 @pytest.mark.asyncio
 async def test_ping():
     await dpytest.message('!ping')
-    dpytest.verify_message("pong !")
+    assert dpytest.verify().message().content("pong !")
 
 
 @pytest.mark.asyncio
 async def test_say():
     await dpytest.message('!say Unit testing the say command')
-    dpytest.verify_message("Unit testing the say command")
+    assert dpytest.verify().message().content("Unit testing the say command")
 
 
 @pytest.mark.asyncio
@@ -43,7 +43,7 @@ async def test_recrutement():
                                    color=0x0000FF,
                                    url="http://www.dctrad.fr/viewforum.php?f=21")  # noqa: E501
 
-    dpytest.verify_embed(expected_embed)
+    assert dpytest.verify().message().embed(expected_embed)
 
 
 @pytest.mark.asyncio
@@ -53,7 +53,7 @@ async def test_choose(monkeypatch):
     monkeypatch.setattr("random.choice", lambda *args: "toto")
 
     await dpytest.message('!choose toto tat tutu TITI')
-    dpytest.verify_message("toto")
+    assert dpytest.verify().message().content("toto")
 
 
 @pytest.mark.asyncio
@@ -62,7 +62,7 @@ async def test_coinflip(monkeypatch):
     monkeypatch.setattr("random.choice", lambda *args: "pile")
 
     await dpytest.message('!coinflip')
-    dpytest.verify_message("pile")
+    assert dpytest.verify().message().content("pile")
 
 
 @pytest.mark.asyncio
@@ -79,7 +79,7 @@ async def test_roulette_lives(monkeypatch):
     monkeypatch.setattr("random.choice", lambda *args: alive_mess)
 
     await dpytest.message('!roulette')
-    dpytest.verify_message(alive_mess)
+    assert dpytest.verify().message().content(alive_mess)
 
 
 @pytest.mark.asyncio
@@ -97,8 +97,8 @@ async def test_roulette_dies(monkeypatch, mock_sleep):
     monkeypatch.setattr("random.choice", lambda *args: dead_mess)
 
     await dpytest.message('!roulette')
-    dpytest.verify_message(dead_mess)
-    dpytest.verify_message(dead_gif)
+    assert dpytest.verify().message().content(dead_mess)
+    assert dpytest.verify().message().content(dead_gif)
 
 
 # In this test, we use a fixture to monkeypatch asyncio.sleep
@@ -111,5 +111,5 @@ async def test_timer(bot, mock_sleep):
 
     await dpytest.message(f'!timer {test_time} {test_message}')
 
-    dpytest.verify_message(f"{mention} : timer enregistré !")
-    dpytest.verify_message(f"temps écoulé ! : {mention} {test_message}")
+    assert dpytest.verify().message().content(f"{mention} : timer enregistré !")
+    assert dpytest.verify().message().content(f"temps écoulé ! : {mention} {test_message}")

@@ -1,7 +1,6 @@
 import pytest
 import re
-# # import discord
-from discord.ext import commands
+
 import discord.ext.test as dpytest
 
 from cogs import Header

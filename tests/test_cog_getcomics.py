@@ -1,7 +1,6 @@
 import pytest
 # from unittest import mock
 import discord
-from discord.ext import commands
 import discord.ext.test as dpytest
 
 from cogs import getcomics
@@ -41,4 +40,4 @@ async def test_getcomics(bot, expected_embed):
     bot.add_cog(getcomics.Getcomics(bot))
     dpytest.configure(bot)
     await dpytest.message('!getcomics batman #80')
-    dpytest.verify_embed(expected_embed)
+    assert dpytest.verify().message().embed(expected_embed)

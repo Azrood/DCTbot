@@ -29,7 +29,7 @@ def mock_response(monkeypatch, search_result):
 
 @pytest.fixture
 def expected_embed(search_result):
-    embed = discord.Embed(title=f"Les 2 premiers résultats de la recherche",  # noqa: E501
+    embed = discord.Embed(title="Les 2 premiers résultats de la recherche",
                           color=0x3b5cbe)
     for r in search_result:
         embed.add_field(name=r['title'], value=r['url'], inline=False)
@@ -53,11 +53,11 @@ def bot_google(bot):
 async def test_command_google():
 
     await dpytest.message('!google python doc')
-    dpytest.verify_message("Python Docs\n https://docs.python.org/")
+    assert dpytest.verify().message().content("Python Docs\n https://docs.python.org/")
 
 
 @pytest.mark.asyncio
 async def test_command_google_list(expected_embed):
 
     await dpytest.message('!googlelist 2 python doc')
-    dpytest.verify_embed(expected_embed)
+    assert dpytest.verify().message().embed(expected_embed)
