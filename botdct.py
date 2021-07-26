@@ -40,6 +40,7 @@ my_giflist = GifJson("gifs.json")
 
 cogs_list = [cogs.Admin,
              cogs.BonjourMadame,
+             cogs.Browse,
              cogs.Cards,
              cogs.Comicsblog,
              cogs.Dealabs,
