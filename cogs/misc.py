@@ -58,6 +58,13 @@ class Misc(commands.Cog):
         await ctx.send(content=args)
 
     @commands.command()
+    async def edit(self, ctx, id, *, args):
+        """Bot can edit is own message."""
+        msg = await ctx.fetch_message(id)
+        await msg.edit(content=args)
+        await ctx.message.delete()
+
+    @commands.command()
     async def ping(self, ctx):
         """Ping the bot."""
         await ctx.send(content="pong !")
