@@ -10,6 +10,10 @@ freegame_on = "Vous serez notifié lorsqu'un jeu gratuit sera posté !"
 freegame_off = "Vous __**ne**__ serez __**plus**__ notifié lorsqu'un jeu gratuit sera posté !"  # noqa:E501
 newrelease_on = "Vous serez notifié lorsqu'une release sera postée !"
 newrelease_off = "Vous __**ne**__ serez __**plus**__ notifié lorsqu'une release sera postée!"  # noqa:E501
+rpg_on = "Vous avez le rôle Jeu de rôle"
+rpg_off = "Vous n'avez plus le rôle Jeu de rôle"
+magic_on = "Vous avez le rôle Les Magiciens"
+magic_off = "Vous n'avez plus le rôle Les Magiciens"
 
 
 class Notifications(commands.Cog):
@@ -51,6 +55,22 @@ class Notifications(commands.Cog):
             await user.add_roles(keupains_role)
             await user.send(content="Keupains pour toujours et à jamais !")
 
+        # elf -> jeu de role
+        if (payload.emoji.name == "\U0001F9DD"
+                and payload.message_id == react_role_msg_id):
+            new_role = discord.utils.get(self.bot.guild.roles,
+                                         name="jeuderole")
+            await user.add_roles(new_role)
+            await user.send(content=rpg_on)
+
+        # man_mage -> Magic
+        if (payload.emoji.name == "\U0001F9D9"
+                and payload.message_id == react_role_msg_id):
+            new_role = discord.utils.get(self.bot.guild.roles,
+                                         name="Les Magiciens")
+            await user.add_roles(new_role)
+            await user.send(content=magic_on)
+
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload):
         """Read all the reactions removed (even those not in cache)
@@ -75,3 +95,19 @@ class Notifications(commands.Cog):
                                             name="header release")
             await user.remove_roles(header_role)
             await user.send(content=newrelease_off)
+
+        # elf emoji -> no more jeuderole
+        if (payload.emoji.name == "\U0001F9DD"
+                and payload.message_id == react_role_msg_id):
+            old_role = discord.utils.get(self.bot.guild.roles,
+                                         name="jeuderole")
+            await user.remove_roles(old_role)
+            await user.send(content=rpg_off)
+
+        # man_mage emoji -> no more Les Magiciens
+        if (payload.emoji.name == "\U0001F9D9"
+                and payload.message_id == react_role_msg_id):
+            old_role = discord.utils.get(self.bot.guild.roles,
+                                         name="Les Magiciens")
+            await user.remove_roles(old_role)
+            await user.send(content=magic_off)
