@@ -13,7 +13,7 @@ from cogs import Admin
 async def test_restart_fail():
     intents = discord.Intents.default()
     intents.members = True
-    bot = commands.Bot(command_prefix='!',  intents=intents)
+    bot = commands.Bot(command_prefix='!', intents=intents)
     bot.gifs = []
     bot.log = mock.Mock()
     bot.add_cog(Admin(bot))
