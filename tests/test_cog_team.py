@@ -19,11 +19,11 @@ async def test_team_fail(bot):
     team_role = await guild.create_role(name=team_role_name)  # Role object
     bot.role_dcteam = team_role
     # member1 = guild.members[0]  # Member
-    
+
     bot.log = CommandLog("test_log.json")
 
     bot.add_cog(Team(bot))
-    
+
     member2 = guild.members[1]  # Member
 
     m2_mention = member2.mention

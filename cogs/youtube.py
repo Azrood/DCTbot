@@ -51,18 +51,18 @@ def search_youtube(user_input, number):
 
     out = []
 
-    for l in list:
-        title = html.unescape(l['snippet']['title'])
+    for li in list:
+        title = html.unescape(li['snippet']['title'])
         try:
-            if l['id']['kind'] == "youtube#channel":
+            if li['id']['kind'] == "youtube#channel":
                 type = 'channel'
-                id = l['id']['channelId']
-            elif l['id']['kind'] == "youtube#playlist":
+                id = li['id']['channelId']
+            elif li['id']['kind'] == "youtube#playlist":
                 type = 'playlist'
-                id = l['id']['playlistId']
-            elif l['id']['kind'] == "youtube#video":
+                id = li['id']['playlistId']
+            elif li['id']['kind'] == "youtube#video":
                 type = 'video'
-                id = l['id']['videoId']
+                id = li['id']['videoId']
             else:
                 type = 'unknown'
                 id = "NoID"

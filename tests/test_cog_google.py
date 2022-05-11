@@ -30,11 +30,12 @@ def mock_response(monkeypatch, search_result):
 @pytest.fixture
 def expected_embed(search_result):
     embed = discord.Embed(title=f"Les 2 premiers résultats de la recherche",  # noqa: E501
-                                   color=0x3b5cbe)
+                          color=0x3b5cbe)
     for r in search_result:
         embed.add_field(name=r['title'], value=r['url'], inline=False)
 
     return embed
+
 
 # fixture for bot with Google cog loaded will be used in all tests of the file.
 @pytest.fixture(autouse=True)

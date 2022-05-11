@@ -25,8 +25,8 @@ class Misc(commands.Cog):
     async def recrutement(self, ctx):
         """Send 'recrutement' topic url."""
         embed = discord.Embed(title="Rejoins la team DCTrad !",
-                            description="allez n'aie pas peur de cliquer et deviens un héros !",  # noqa: E501
-                            color=0x0000FF, url=dctrad_recru)
+                              description="allez n'aie pas peur de cliquer et deviens un héros !",  # noqa: E501
+                              color=0x0000FF, url=dctrad_recru)
         embed.set_thumbnail(url=dctradlogo)
         await ctx.send(embed=embed)
 

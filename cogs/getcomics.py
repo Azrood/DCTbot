@@ -73,7 +73,7 @@ class Getcomics(commands.Cog):
         """Send direct download link for getcomics search result."""
         title, url, cover = await getcomics_top_link(user_input)
         embed = discord.Embed(title=f"{title}",
-                            description="cliquez sur le titre pour télécharger votre comic",  # noqa: E501
-                            color=0x882640, url=url)
+                              description="cliquez sur le titre pour télécharger votre comic",  # noqa: E501
+                              color=0x882640, url=url)
         embed.set_image(url=cover)
         await ctx.send(embed=embed)
