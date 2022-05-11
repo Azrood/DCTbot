@@ -67,7 +67,7 @@ class Notifications(commands.Cog):
         if (payload.emoji.name == "\U0001F9D9"
                 and payload.message_id == react_role_msg_id):
             new_role = discord.utils.get(self.bot.guild.roles,
-                                         name="Les Magiciens")
+                                         name="magiciens")
             await user.add_roles(new_role)
             await user.send(content=magic_on)
 
@@ -108,6 +108,6 @@ class Notifications(commands.Cog):
         if (payload.emoji.name == "\U0001F9D9"
                 and payload.message_id == react_role_msg_id):
             old_role = discord.utils.get(self.bot.guild.roles,
-                                         name="Les Magiciens")
+                                         name="magiciens")
             await user.remove_roles(old_role)
             await user.send(content=magic_off)
