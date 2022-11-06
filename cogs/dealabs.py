@@ -24,7 +24,7 @@ async def get_free_games():
     try:
         title_link = [
             (r[1].text, f"<{r[2].text}>")  # the < > are for preventing the embed in discord
-            for r in res if "jeu" in r[0].text
+            for r in res if "jeu" in r[0].text.lower()
             ]
         return title_link
     except IndexError:

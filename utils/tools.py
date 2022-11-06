@@ -1,9 +1,13 @@
 """File for some tools."""
 
 import aiohttp  # asynchronous lib for going on internet
+from requests_html import AsyncHTMLSession
 
 from bs4 import BeautifulSoup
 from discord.utils import find as disc_find
+
+
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}  # noqa:E501
 
 
 def string_is_int(string):  # pragma: no cover
@@ -80,9 +84,7 @@ async def get_soup_xml(url):
         BeautifulSoup: soup
 
     """
-    # get xml with async GET request
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, timeout=3, ssl=False) as resp:
-            text = await resp.text()
-        await session.close()
-    return BeautifulSoup(text, 'xml')
+    asession = AsyncHTMLSession()
+    r = await asession.get(url, headers=headers, timeout=3)
+    await asession.close()
+    return BeautifulSoup(r.text, 'xml')
