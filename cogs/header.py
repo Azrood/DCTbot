@@ -17,8 +17,8 @@ from discord.ext import commands
 
 from utils.tools import get_soup_html
 
-dctrad_base = "http://www.dctrad.fr"
-dctrad_url = "http://www.dctrad.fr/index.php"
+dctrad_base = "https://www.dctrad.fr"
+dctrad_url = f"{dctrad_base}/index.php"
 
 
 def _get_header_img(soup, n):
@@ -26,7 +26,8 @@ def _get_header_img(soup, n):
 
     n is 1, 2, 3 or 4 for different headers.
     """
-    return soup.select(f'#dog{n+1} > center > span.btn-cover a')
+    res = soup.select(f'#dog{n+1} > div > span.btn-cover img')
+    return res
 
 
 async def _download_img(h_list, path):
@@ -37,14 +38,13 @@ async def _download_img(h_list, path):
     session = aiohttp.ClientSession()
     for h in h_list[:9]:
         index = h_list.index(h)
-        img_url = urljoin(dctrad_base, h.img['src'])
+        img_url = urljoin(dctrad_base, h['src'])
         resp = await session.get(url=img_url)
         buffer = io.BytesIO(await resp.read())  # buffer is a file-like object
         file_ = os.path.join(path, f"img{index}.jpg")
         with open(file_, 'wb') as out_file:
             shutil.copyfileobj(buffer, out_file)
     await session.close()
-    del resp
 
 
 def _make_header(n, path):
@@ -75,6 +75,10 @@ def _make_header(n, path):
 
     new_im.save(file_)
 
+    # clean - delete the covers
+    for jpg in jpg_list:
+        os.remove(jpg)
+
     return file_
 
 
@@ -82,7 +86,7 @@ async def get_monthly_url():
     """Get 'Comics du mois' topic url."""
     year = datetime.date.today().year
     month = datetime.date.today().month
-    monthly_url = f"http://www.dctrad.fr/app.php/releases/{year}/{month}"
+    monthly_url = f"{dctrad_base}/app.php/releases/{year}/{month}"
     return monthly_url
 
 
@@ -94,7 +98,7 @@ async def get_header(n):
     """
     # Compute path (ie : ./../ressoures/)
     dirname = os.path.dirname(__file__)  # -> ./
-    ress_path = os.path.join(dirname, os.pardir, "ressources/")  # -> ./../ressources  # noqa:E501
+    ress_path = os.path.join(dirname, os.pardir, "ressources")  # -> ./../ressources  # noqa:E501
 
     soup = await get_soup_html(dctrad_url)
     h_list = _get_header_img(soup, n)
