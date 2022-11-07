@@ -15,8 +15,10 @@ def expected_embed():
     embed = discord.Embed(title="Definition of Distro Hop",
                           description='The act of switching from one linux distro to another.'[:2048],  # noqa: E501
                           color=0x00FFFF,
-                          url='https://www.urbandictionary.com/define.php?term=distro+hop')  # noqa: E501
-    embed.add_field(name="Example", value='No example'[:2048], inline=False)
+                          url='https://www.urbandictionary.com/define.php?term=distro%20hop')  # noqa: E501
+    embed.add_field(name="Example",
+                    value='I just Distro Hopped from Arch KDE to Gentoo i3'[:2048],
+                    inline=False)
     # embed.set_thumbnail(url=urban_logo)
     return embed
 
