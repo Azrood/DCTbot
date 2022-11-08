@@ -22,5 +22,4 @@ async def test_restart_fail():
     # Test will pass if error "MissingAnyRole" is launched
     with pytest.raises(commands.MissingAnyRole):
         await dpytest.message('!restart')
-    dpytest.verify_message("Nope.")  # empty the queue
-    await dpytest.empty_queue()
+    assert dpytest.verify().message().content("Nope.")

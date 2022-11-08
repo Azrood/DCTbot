@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Urban dictionnary cog."""
 
-from urllib.parse import quote_plus
+from urllib.parse import quote
 from utils.tools import get_soup_lxml
 
 import discord
@@ -19,11 +19,12 @@ class UrbanSearch:
 
     def __init__(self, user_input):
         """Init object with user input, search, and get lxml soup."""
-        formated_input = quote_plus(user_input.lower())
+        formated_input = quote(user_input.lower())
 
         # Make search url: www.urbandictionary.com/define.php?term=distro+hop
         self.search_url = self.urban_url + formated_input
         self.soup = None
+        self.definition_soup = None
         self.valid = False
 
     def _isokay(self):
@@ -31,20 +32,21 @@ class UrbanSearch:
         # Test if I can find the div for :
         # Sorry, we couldn't find XXX
         # If not, search is valid
-        if self.soup.select_one('div.term.space'):
-            self.valid = False
-        else:
+        if self.definition_soup:
             self.valid = True
+        else:
+            self.valid = False
 
     async def fetch(self):
         self.soup = await get_soup_lxml(self.search_url)
+        self.definition_soup = self.soup.select_one('div.definition')
         self._isokay()
 
     def get_top_def(self):
         """Parse the HTML soup to find Top Definition title, meaning, example."""  # noqa:E501
-        title = self.soup.select_one('div.def-panel > div.def-header > a.word').text  # noqa:E501
-        meaning = self.soup.select_one('div.def-panel > div.meaning').text
-        example_raw = self.soup.select_one('div.def-panel > div.example')
+        title = self.definition_soup.select_one('h1 > a.word').text
+        meaning = self.definition_soup.select_one('div.meaning').text
+        example_raw = self.soup.select_one('div.example')
         if example_raw:
             example = example_raw.text
         else:  # pragma: no cover

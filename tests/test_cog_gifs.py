@@ -51,7 +51,7 @@ def bot_gifs(bot, gifs_json):
 async def test_command_gif(expected_foo_embed):
 
     await dpytest.message('!gif foo')
-    dpytest.verify_embed(expected_foo_embed)
+    assert dpytest.verify().message().embed(expected_foo_embed)
 
 
 @pytest.mark.asyncio
@@ -59,7 +59,7 @@ async def test_command_gif_in_public():
     """Test call to a private gif in a public channel."""
 
     await dpytest.message('!gif foobar')
-    dpytest.verify_embed(assert_nothing=True)
+    assert dpytest.verify().message().nothing()
 
 
 @pytest.mark.asyncio
@@ -70,8 +70,7 @@ async def test_on_message_gif(expected_foo_embed):
     except commands.errors.CommandNotFound:
         pass
     finally:
-        dpytest.verify_embed(expected_foo_embed)
-        await dpytest.empty_queue()
+        assert dpytest.verify().message().embed(expected_foo_embed)
 
 
 @pytest.mark.asyncio
@@ -82,4 +81,4 @@ async def test_command_gif_help():
                                    color=0x000FF)
 
     await dpytest.message('!gif help')
-    dpytest.verify_embed(expected_embed)
+    assert dpytest.verify().message().embed(expected_embed)

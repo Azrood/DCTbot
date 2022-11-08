@@ -25,6 +25,12 @@ def bot(request, event_loop):
     return b
 
 
+@pytest.fixture(autouse=True)
+async def cleanup():
+    yield
+    await dpytest.empty_queue()
+
+
 @pytest.fixture
 def mock_sleep(monkeypatch):
     """asyncio.sleep() mocked to return immediately."""
