@@ -1,5 +1,5 @@
 import pytest
-# from unittest import mock
+
 import discord
 import discord.ext.test as dpytest
 
@@ -35,16 +35,14 @@ def bot_urban(bot):
 
 @pytest.mark.asyncio
 async def test_urban_cog(expected_embed):
-
     await dpytest.message('!urban distro hop')
-    dpytest.verify_embed(expected_embed)
+    assert dpytest.verify().message().embed(expected_embed)
 
 
 @pytest.mark.asyncio
 async def test_urban_cog_fails():
-
     user_input = "mlksjdfmlkjsdfmlkjsdf"
     embed = discord.Embed(title=f"Definition of {user_input} doesn't exist")  # noqa: E501
 
     await dpytest.message(f'!urban {user_input}')
-    dpytest.verify_embed(embed)
+    assert dpytest.verify().message().embed(embed)

@@ -109,8 +109,8 @@ async def test_command_youtube(monkeypatch, mock_wait_for, one_result):
     monkeypatch.setattr(youtube, "search_youtube", lambda *args, **kwargs: one_result)
 
     await dpytest.message('!youtube never gonna give you up')
-    dpytest.verify_message(f"{one_result[0]['title']}\n"
-                           f"https://www.youtube.com/watch?v={one_result[0]['id']}")  # noqa: E501
+    assert dpytest.verify().message().content(f"{one_result[0]['title']}\n"
+                                              f"https://www.youtube.com/watch?v={one_result[0]['id']}")  # noqa: E501
 
 
 @pytest.mark.asyncio
@@ -120,11 +120,11 @@ async def test_command_youtubelist_cancel(monkeypatch, mock_cancel,
     monkeypatch.setattr(youtube, "search_youtube", lambda *args, **kwargs: two_results)  # noqa: E501
 
     await dpytest.message('!youtubelist 2 pastime paradise')
-    dpytest.verify_embed(embed_two_results)
+    assert dpytest.verify().message().embed(embed_two_results)
 
     # mock_cancel fixture monkeypath wait_for, and 'cancel' message is sent.
 
-    dpytest.verify_message("Annulé !")
+    assert dpytest.verify().message().content("Annulé !")
 
 
 @pytest.mark.asyncio
@@ -134,8 +134,8 @@ async def test_command_youtubelist_not_cancel(monkeypatch, mock_message_1,
     monkeypatch.setattr(youtube, "search_youtube", lambda *args, **kwargs: two_results)  # noqa: E501
 
     await dpytest.message('!youtubelist 2 pastime paradise')
-    dpytest.verify_embed(embed_two_results)
+    assert dpytest.verify().message().embed(embed_two_results)
 
     # mock_message_1 fixture monkeypath wait_for, and '1' message is sent.
 
-    dpytest.verify_message("https://www.youtube.com/watch?v=_H3Sv2zad6s")
+    assert dpytest.verify().message().content("https://www.youtube.com/watch?v=_H3Sv2zad6s")  # noqa: 501

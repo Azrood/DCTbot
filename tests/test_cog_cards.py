@@ -30,7 +30,7 @@ async def test_card():
     expected.set_image(url="attachment://sergei.jpg")
 
     await dpytest.message('!poke sergei')
-    dpytest.verify_embed(expected)
+    assert dpytest.verify().message().embed(expected)
 
 
 @pytest.mark.asyncio
@@ -40,4 +40,4 @@ async def test_card_help():
     expected.set_footer(text="Merci à Slyrax pour les cartes !")
 
     await dpytest.message('!poke help')
-    dpytest.verify_embed(expected)
+    assert dpytest.verify().message().embed(expected)

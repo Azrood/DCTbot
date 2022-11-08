@@ -1,8 +1,5 @@
-import asyncio
 import pytest
-# from unittest import mock
 
-# import discord
 from discord.ext import commands
 import discord.ext.test as dpytest
 
@@ -33,7 +30,7 @@ async def test_team_fail(bot):
 
     # After
     assert team_role not in member2.roles  # m2 has NOT the role
-    dpytest.verify_message("Bien tenté mais tu n'as pas de pouvoir ici !")
+    assert dpytest.verify().message().content("Bien tenté mais tu n'as pas de pouvoir ici !")  # noqa: E501
 
 
 @pytest.mark.asyncio
@@ -63,7 +60,7 @@ async def test_team_success(bot):
 
     # After
     assert team_role in member2.roles  # m2 has the role
-    dpytest.verify_message("Bienvenue dans la Team !")
+    assert dpytest.verify().message().content("Bienvenue dans la Team !")
 
 
 @pytest.mark.asyncio
@@ -90,7 +87,7 @@ async def test_team_empty_mentions(bot):
 
     # test empty mentions -> nothing happens
     await dpytest.message('!team')
-    dpytest.verify_message(assert_nothing=True)
+    assert dpytest.verify().message().nothing()
 
 
 @pytest.mark.asyncio
@@ -122,13 +119,13 @@ async def test_team_member_allready_in_team(bot):
 
     # test empty mentions -> nothing happens
     await dpytest.message('!team')
-    dpytest.verify_message(assert_nothing=True)
+    assert dpytest.verify().message().nothing()
 
     await dpytest.message(f'!team {m2_mention} {m3_mention}')  # m1 gives m2 a new role
 
     # After
     assert team_role in member3.roles  # m3 has the role
-    dpytest.verify_message("Bienvenue dans la Team !")
+    assert dpytest.verify().message().content("Bienvenue dans la Team !")
 
 
 @pytest.mark.asyncio
@@ -156,6 +153,5 @@ async def test_clear_fail(bot):
     bot.add_cog(Team(bot))
 
     with pytest.raises(commands.MissingAnyRole):
-        await dpytest.message(f'!clear 2')
-    dpytest.verify_message(f"Tu n'as pas le pouvoir{member_mention} !")
-    await dpytest.empty_queue()
+        await dpytest.message("!clear 2")
+    assert dpytest.verify().message().content(f"Tu n'as pas le pouvoir{member_mention} !")  # noqa: 501

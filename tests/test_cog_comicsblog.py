@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 import pytest
 # from unittest import mock
 import discord
-from discord.ext import commands
 import discord.ext.test as dpytest
 
 from cogs import comicsblog
@@ -43,10 +42,10 @@ def expected_values():
 
 @pytest.fixture()
 def expected_embed(expected_values):
-    embed = discord.Embed(title=f"les 2 derniers articles de comicsblog",
+    embed = discord.Embed(title="les 2 derniers articles de comicsblog",
                           color=0xe3951a)
-    for l in expected_values:
-        embed.add_field(name=l[0], value=l[1], inline=False)
+    for i in expected_values:
+        embed.add_field(name=i[0], value=i[1], inline=False)
     return embed
 
 
@@ -76,4 +75,4 @@ async def test_comicsblog_command(bot, expected_embed):
 
     await dpytest.message('!comicsblog 2')
 
-    dpytest.verify_embed(expected_embed)
+    assert dpytest.verify().message().embed(expected_embed)

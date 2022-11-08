@@ -29,8 +29,7 @@ async def test_kick_fail(bot):
     with pytest.raises(commands.MissingAnyRole):
         await dpytest.message(f'!kick {m2_mention}')
 
-    dpytest.verify_message(f"Tu n'as pas de pouvoirs{m1_mention} !")
-    await dpytest.empty_queue()
+    assert dpytest.verify().message().content(f"Tu n'as pas de pouvoirs{m1_mention} !")  # noqa: E501
 
 
 @pytest.mark.asyncio
@@ -54,5 +53,5 @@ async def test_kick_success(bot):
 
     await dpytest.message(f'!kick {m2_mention}')
 
-    dpytest.verify_message("Adios muchachos !")
+    assert dpytest.verify().message().content("Adios muchachos !")
     assert len(guild.members) == 2  # member1 and the bot
