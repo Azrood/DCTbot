@@ -23,7 +23,7 @@ def bot_header(bot):
 #########################
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("editor", ["rebirth", "horsrebirth", "indé", "marvel"])
+@pytest.mark.parametrize("editor", ["rebirth", "horsrebirth", "inde", "marvel"])
 async def test_command_header(bot, editor):
 
     await dpytest.message(f'!header {editor}')
