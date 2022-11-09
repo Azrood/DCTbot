@@ -58,11 +58,14 @@ class Urban(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def urban(self, ctx, *, user_input):
-        """Send definition of user input on Urban Dictionary."""
-        # create object urban of class Urban
-        urban = UrbanSearch(user_input)
+    @commands.hybrid_command()
+    async def urban(self, ctx, *, query: str):
+        """Send definition of user input on Urban Dictionary.
+
+        Args:
+            query (str): search on Urban Dictionnary.
+        """
+        urban = UrbanSearch(query)
         await urban.fetch()
         if urban.valid:
             title, meaning, example, search_url = urban.get_top_def()
@@ -72,5 +75,5 @@ class Urban(commands.Cog):
             embed.add_field(name="Example", value=example[:2048], inline=False)
             embed.set_thumbnail(url=urban_logo)
         else:
-            embed = discord.Embed(title=f"Definition of {user_input} doesn't exist")  # noqa: E501
+            embed = discord.Embed(title=f"Definition of {query} doesn't exist")  # noqa: E501
         await ctx.send(embed=embed)
