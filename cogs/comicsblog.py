@@ -29,18 +29,18 @@ class Comicsblog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def comicsblog(self, ctx, num):
+    @commands.hybrid_command()
+    async def comicsblog(self, ctx, num: int):
         """Send latest comicsblog news.
 
         Args:
             num (int): number of results to send
 
         """
-        list = await get_comicsblog(num)
+        articles = await get_comicsblog(num)
         embed = discord.Embed(title=f"les {num} derniers articles de comicsblog",  # noqa:E501
                               color=0xe3951a)
-        for l in list:
-            embed.add_field(name=l.find('title').text, value=l.find('guid').text,  # noqa:E501
+        for art in articles:
+            embed.add_field(name=art.find('title').text, value=art.find('guid').text,  # noqa:E501
                             inline=False)
         await ctx.send(embed=embed)
