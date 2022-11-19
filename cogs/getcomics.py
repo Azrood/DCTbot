@@ -68,9 +68,14 @@ class Getcomics(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def getcomics(self, ctx, *, user_input):
-        """Send direct download link for getcomics search result."""
+    @commands.hybrid_command()
+    async def getcomics(self, ctx, *, user_input: str):
+        """Send direct download link for getcomics search result.
+
+        Args:
+            ctx (_type_): _description_
+            user_input (str): comics you looking for
+        """
         title, url, cover = await getcomics_top_link(user_input)
         embed = discord.Embed(title=f"{title}",
                               description="cliquez sur le titre pour télécharger votre comic",  # noqa: E501

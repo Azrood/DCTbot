@@ -40,7 +40,7 @@ class Dealabs(commands.Cog):
     async def auto_free_games(self):
         """"Sends links of free games from Dealabs"""
         free_game_list = await get_free_games()
-        free_game_channel_history = await discord.utils.get(self.bot.guild.text_channels, name="jeux-video-gratuits").history(limit=50).flatten()
+        free_game_channel_history = [message async for message in discord.utils.get(self.bot.guild.text_channels, name="jeux-video-gratuits").history(limit=50)]  # noqa: E501
         free_game_role = discord.utils.get(
             self.bot.guild.roles,
             name="jeux gratuits"

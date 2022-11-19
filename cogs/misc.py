@@ -21,7 +21,7 @@ class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     async def recrutement(self, ctx):
         """Send 'recrutement' topic url."""
         embed = discord.Embed(title="Rejoins la team DCTrad !",
@@ -30,10 +30,14 @@ class Misc(commands.Cog):
         embed.set_thumbnail(url=dctradlogo)
         await ctx.send(embed=embed)
 
-    @commands.command()
-    async def timer(self, ctx, numb, *, args):
-        """Program a timer."""
-        num = int(numb)
+    @commands.hybrid_command()
+    async def timer(self, ctx, num: int, *, args: str):
+        """Program a timer.
+
+        Args:
+            num (int): duration in seconds
+            args (str): what to remind
+        """
         await ctx.send(content=f"{ctx.author.mention} : timer enregistré !",
                        delete_after=10)
         await asyncio.sleep(num, result=None, loop=None)
@@ -46,7 +50,7 @@ class Misc(commands.Cog):
             return None
         await ctx.send(random.choice(choices))
 
-    @commands.command()
+    @commands.hybrid_command()
     async def coinflip(self, ctx):
         """Launch a coinflip and print 'pile' or 'face'."""
         await ctx.send(random.choice(["pile", "face"]))
@@ -58,19 +62,19 @@ class Misc(commands.Cog):
         await ctx.send(content=args)
 
     @commands.command()
-    async def edit(self, ctx, id, *, args):
+    async def edit(self, ctx, id: int, *, args: str):
         """Bot can edit is own message."""
         msg = await ctx.fetch_message(id)
         await msg.edit(content=args)
         await ctx.message.delete()
 
-    @commands.command()
+    @commands.hybrid_command()
     async def ping(self, ctx):
         """Ping the bot."""
         await ctx.send(content="pong !")
         logger.info(f"Ping (asked by {ctx.author}) was awaited.")
 
-    @commands.command()
+    @commands.hybrid_command()
     async def roulette(self, ctx):
         """Plays russian roulette and kick user if shot."""
         if random.randrange(6) == 3:

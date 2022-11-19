@@ -70,18 +70,27 @@ class Google(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def google(self, ctx, *, query):
-        """Send first Google search result."""
+    @commands.hybrid_command()
+    async def google(self, ctx, *, query: str):
+        """Send first Google search result.
+
+        Args:
+            query (str): Search on google.
+        """
         try:
             result = await google_top_link(query)
             await ctx.send(content=f"{result['title']}\n {result['url']}")
         except TypeError:  # pragma: no cover
             pass
 
-    @commands.command()
-    async def googlelist(self, ctx, num, *, args):
-        """Send Google search results."""
+    @commands.hybrid_command()
+    async def googlelist(self, ctx, num: int, *, args: str):
+        """Send Google search results.
+
+        Args:
+            num (int): number of results desired.
+            args (str): Search on google.
+        """
         result = await search_google(args, num)
         embed = discord.Embed(title=f"Les {num} premiers résultats de la recherche",  # noqa: E501
                               color=0x3b5cbe)

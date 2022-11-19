@@ -31,6 +31,8 @@ if args.debug:
 
 intents = discord.Intents.default()
 intents.members = True
+intents.message_content = True
+
 
 bot = commands.Bot(command_prefix=prefix, help_command=None,
                    description=None, case_insensitive=True,
@@ -78,7 +80,8 @@ async def on_ready():
     bot.log = CommandLog("logs.json")
     bot.gifs = my_giflist
     for cog in cogs_list:
-        bot.add_cog(cog(bot))
+        await bot.add_cog(cog(bot))
+    await bot.tree.sync()
 
 
 setup_logging(Path(__file__).resolve().parent / 'logging.json')
