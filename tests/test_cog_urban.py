@@ -1,4 +1,5 @@
 import pytest
+import pytest_asyncio
 
 import discord
 import discord.ext.test as dpytest
@@ -24,9 +25,9 @@ def expected_embed():
 
 
 # fixture for bot with Urban cog loaded will be used in all tests of the file.
-@pytest.fixture(autouse=True)
-def bot_urban(bot):
-    bot.add_cog(Urban(bot))
+@pytest_asyncio.fixture(autouse=True)
+async def bot_urban(bot):
+    await bot.add_cog(Urban(bot))
     dpytest.configure(bot)
     return bot
 

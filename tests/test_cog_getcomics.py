@@ -37,7 +37,7 @@ def mock_response(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_getcomics(bot, expected_embed):
-    bot.add_cog(getcomics.Getcomics(bot))
+    await bot.add_cog(getcomics.Getcomics(bot))
     dpytest.configure(bot)
     await dpytest.message('!getcomics batman #80')
     assert dpytest.verify().message().embed(expected_embed)

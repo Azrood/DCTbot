@@ -30,8 +30,10 @@ def expected_embed():
 async def test_help(expected_embed):
     team_role_name = staff_role[0]  # DCT-team
     modo_role_name = mods_role[0]  # Moderator
-
-    bot = commands.Bot(command_prefix='!')
+    intents = discord.Intents.default()
+    intents.members = True
+    intents.message_content = True
+    bot = commands.Bot(command_prefix='!', intents=intents)
     dpytest.configure(bot)
 
     guild = bot.guilds[0]  # Guild object

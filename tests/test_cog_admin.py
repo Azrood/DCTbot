@@ -1,23 +1,33 @@
 # import asyncio
 import pytest
+import pytest_asyncio
 from unittest import mock
 
-import discord
 from discord.ext import commands
 import discord.ext.test as dpytest
 
 from cogs import Admin
 
 
-@pytest.mark.asyncio
-async def test_restart_fail():
-    intents = discord.Intents.default()
-    intents.members = True
-    bot = commands.Bot(command_prefix='!', intents=intents)
+#########################
+# Fixtures
+#########################
+
+@pytest_asyncio.fixture(autouse=True)
+async def bot_misc(bot):
     bot.gifs = []
     bot.log = mock.Mock()
-    bot.add_cog(Admin(bot))
+    await bot.add_cog(Admin(bot))
     dpytest.configure(bot)
+    return bot
+
+
+#########################
+# Tests
+#########################
+
+@pytest.mark.asyncio
+async def test_restart_fail():
     # MissingAnyRole is expected.
     # Test will pass if error "MissingAnyRole" is launched
     with pytest.raises(commands.MissingAnyRole):

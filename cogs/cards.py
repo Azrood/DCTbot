@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Cards cog."""
 
-import os
+from pathlib import Path
 
 import discord
 from discord.ext import commands
@@ -23,9 +23,6 @@ class Cards(commands.Cog):
             await ctx.send(embed=embed)
 
         else:
-            dir_path = os.path.dirname(os.path.realpath(__file__))
-            card_file = os.path.join(dir_path, os.pardir, f"pictures/cards/{people}.jpg")  # TODO : change it for Pathlib # noqa: E501
+            card_file = Path(__file__).resolve().parents[1] / "pictures" / "cards" / f"{people}.jpg"  # noqa: E501
             f = discord.File(fp=card_file, filename=people+".jpg")  # discord.File can't handle f-strings apparently  # noqa: E501,E226
-            embed = discord.Embed()
-            embed.set_image(url="attachment://"+people+".jpg")  # better safe than sorry  # noqa: E501,E226
-            await ctx.send(file=f, embed=embed)
+            await ctx.send(file=f)
