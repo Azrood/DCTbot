@@ -5,7 +5,7 @@ Discord Bot with multiple features for a community server related to comicbooks.
 
 | Stack        | Version  |
 |--------------|----------|
-| Python       | 3.6+     |
+| Python       | 3.8+     |
 
 If you don't have `pip`, you have to install it with this command line (on Linux):
 ```

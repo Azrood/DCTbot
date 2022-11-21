@@ -6,7 +6,6 @@
 # https://developers.google.com/explorer-help/guides/code_samples#python
 
 import asyncio
-# import os
 import html
 
 import discord
@@ -110,10 +109,14 @@ class Youtube(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def youtube(self, ctx, *, user_input):
-        """Send first Youtube search result."""
-        title, url = youtube_top_link(user_input.lower())
+    @commands.hybrid_command()
+    async def youtube(self, ctx, *, query: str):
+        """Send first Youtube search result.
+
+        Args:
+            query (str): Search on youtube
+        """
+        title, url = youtube_top_link(query.lower())
         link = await ctx.send(content=f"{title}\n{url}")
 
         def check(message):
@@ -121,13 +124,16 @@ class Youtube(commands.Cog):
         await self.bot.wait_for("message_delete", check=check, timeout=1200)
         await link.delete(delay=None)
 
-    @commands.command()
-    async def youtubelist(self, ctx, num, *, query):
-        """Send n Youtube search results."""
-        number = int(num)
-        if number > 10:
-            number = 10
-        result = search_youtube(user_input=query, number=number)
+    @commands.hybrid_command()
+    async def youtubelist(self, ctx, num: int, *, query: str):
+        """Send <n> Youtube search results.
+
+        Args:
+            num (int): amount of desired results.
+            query (str): search on youtube.
+        """
+        num = num if num <= 10 else 10
+        result = search_youtube(user_input=query, number=num)
         embed = discord.Embed(color=0xFF0000)
         embed.set_footer(text="Tapez un nombre pour faire votre choix "
                               "ou dites \"cancel\" pour annuler")

@@ -14,6 +14,8 @@ from urllib.parse import urljoin
 
 import discord
 from discord.ext import commands
+from discord import app_commands
+from discord.app_commands import Choice
 
 from utils.tools import get_soup_html
 
@@ -120,16 +122,35 @@ class Header(commands.Cog):
         if arg == "rebirth" or arg == "dcrebirth":
             file_path = await get_header(1)
             await ctx.send(embed=embed, file=discord.File(file_path))
-            os.remove(file_path)
         elif arg == "hors" or arg == "horsrebirth":
             file_path = await get_header(2)
             await ctx.send(embed=embed, file=discord.File(file_path))
-            os.remove(file_path)
         elif arg in ["indé", "indés", "inde", "indé"]:
             file_path = await get_header(3)
             await ctx.send(embed=embed, file=discord.File(file_path))
-            os.remove(file_path)
         elif arg == "marvel":
             file_path = await get_header(4)
             await ctx.send(embed=embed, file=discord.File(file_path))
+        try:
             os.remove(file_path)
+        except OSError:
+            pass
+
+    # TODO : it seems we can't make a hybrid command, with the slash-command havint the  choice
+    @app_commands.command()
+    @app_commands.describe(editor='Choose an editor')
+    @app_commands.choices(editor=[
+        Choice(name='DC Rebirth', value=1),
+        Choice(name='DC Hors Rebirth', value=2),
+        Choice(name='Indé / Vertigo', value=3),
+        Choice(name='Marvel', value=4),
+    ])
+    async def headerdct(self, interaction: discord.Interaction, editor: Choice[int]):
+        monthly = await get_monthly_url()
+        embed = discord.Embed(title="Comics du mois", url=monthly)
+        file_path = await get_header(editor.value)
+        await interaction.response.send_message(embed=embed, file=discord.File(file_path))
+        try:
+            os.remove(file_path)
+        except OSError:
+            pass
