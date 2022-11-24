@@ -74,10 +74,9 @@ class Mod(commands.Cog):
 
     @tasks.loop(hours=24)
     async def autoclean_spoil_chan(self):
-        try:
-            spoil_chan = discord.utils.get(self.bot.guild.text_channels, name='spoil')  # noqa: E501
-            last_messages = await spoil_chan.history(limit=1).flatten()
-            last_text = last_messages[0].content
+        if spoil_chan := discord.utils.get(self.bot.guild.text_channels, name='spoil'):
+            last_message = await spoil_chan.fetch_message(spoil_chan.last_message_id)
+            last_text = last_message.content
             # Test on the last message text in spoil channel
             if last_text.endswith("...\n...\n..."):
                 logger.info("#spoil channel is allready clean, passing.")
@@ -86,8 +85,8 @@ class Mod(commands.Cog):
                 # Send lines of "..." to get rid of spoilers
                 await spoil_chan.send("\n".join(["..." for i in range(50)]))
                 logger.info("#spoil channel has been cleaned.")
-        except AttributeError:  # spoil_chan is None
-            logger.error("autoclean_spoil task : No spoil chan in this Guild !")  # noqa: E501
+        else:
+            logger.error("No spoil channel")
 
     @autoclean_spoil_chan.before_loop
     async def before_autoclean_spoil_chan(self):
