@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import logging
+from typing import Union
 
 import discord
 from discord.ext import commands, tasks
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class Mod(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.log = bot.log
         self.autoclean_spoil_chan.start()  # pylint: disable=no-member
@@ -94,3 +95,46 @@ class Mod(commands.Cog):
         """Intiliaze autoclean_spoil_chan loop."""
         await self.bot.wait_until_ready()
         await asyncio.sleep(14400)  # Wait 4 houres, to fire at 4AM
+
+    @commands.command()
+    @commands.has_any_role(*mods_role)
+    async def addreaction(self, ctx: commands.Context,
+                          channel: Union[discord.abc.GuildChannel, discord.Thread, discord.abc.PrivateChannel],  # noqa: E501
+                          id: int,
+                          emoji: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]):
+        """Add reaction to message.
+
+        Examples:
+            !addreaction roles 616546546464651651651 :smile:
+
+        Args:
+            channel (Union[discord.abc.GuildChannel, discord.Thread, discord.abc.PrivateChannel]): channel (can be his name),
+            id (int): message ID
+            emoji (Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]): emoji
+        """
+        try:
+            msg = await channel.fetch_message(id)
+        except discord.errors.NotFound:
+            logger.error("message not found in addreactionin")
+        else:
+            await msg.add_reaction(emoji)
+
+    @commands.command()
+    @commands.has_any_role(*mods_role)
+    async def removereaction(self, ctx: commands.Context,
+                             channel: Union[discord.abc.GuildChannel, discord.Thread, discord.abc.PrivateChannel],  # noqa: E501
+                             id: int,
+                             emoji: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]):
+        """Remove reaction to message ID.
+
+        Args:
+            channel (Union[discord.abc.GuildChannel, discord.Thread, discord.abc.PrivateChannel]): channel
+            id (int): message ID
+            emoji (Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]): emoji
+        """
+        try:
+            msg = await channel.fetch_message(id)
+        except discord.errors.NotFound:
+            logger.error("message not found in addreactionin")
+        else:
+            await msg.remove_reaction(emoji, self.bot.guild.me)
