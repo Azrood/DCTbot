@@ -35,14 +35,13 @@ class Team(commands.Cog):
         """Handle error in command !team (MissingAnyRole)."""
         await ctx.send(content="Bien tenté mais tu n'as pas de pouvoir ici !")
 
-    @commands.command()
+    @commands.command(aliases=['clean'])
     @commands.has_any_role(*staff_role)
-    async def clear(self, ctx, number):
+    async def clear(self, ctx, nbr_msg: int):
         """Clear n messages."""
-        nbr_msg = int(number)
-        messages = await ctx.channel.history(limit=nbr_msg + 1).flatten()
+        messages = [message async for message in ctx.channel.history(limit=nbr_msg + 1)]
         await ctx.channel.delete_messages(messages)
-        await ctx.send(content=f"J'ai supprimé {nbr_msg} messages", delete_after=5)
+        await ctx.send(content=f"J'ai supprimé {nbr_msg} messages", delete_after=2)
         today = datetime.date.today().strftime("%d/%m/%Y")
         time = datetime.datetime.now().strftime("%Hh%Mm%Ss")
         self.log.log_write(today, time,
