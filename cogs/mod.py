@@ -72,7 +72,8 @@ class Mod(commands.Cog):
         if ctx.command.cog_name == self.qualified_name:
             logger.info(f"Command {str(ctx.command):15} invoked by {str(ctx.author):15} in room {str(ctx.channel):15} with message {ctx.message.content}")  # noqa: E501
 
-    @tasks.loop(hours=24)
+    # @tasks.loop(hours=24)
+    @tasks.loop(time=datetime.time(hour=3))  # THIS WORKS, but with an offset (3h00 actually triggers at 4h00 in winter)
     async def autoclean_spoil_chan(self):
         if spoil_chan := discord.utils.get(self.bot.guild.text_channels, name='spoil'):
             last_message = await spoil_chan.fetch_message(spoil_chan.last_message_id)
@@ -92,4 +93,4 @@ class Mod(commands.Cog):
     async def before_autoclean_spoil_chan(self):
         """Intiliaze autoclean_spoil_chan loop."""
         await self.bot.wait_until_ready()
-        await asyncio.sleep(14400)  # Wait 4 houres, to fire at 4AM
+        # await asyncio.sleep(14400)  # Wait 4 houres, to fire at 4AM
