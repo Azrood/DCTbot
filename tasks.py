@@ -63,18 +63,18 @@ def lint(c):
 def cleantest(c):
     """Clean artifacts like *.pyc, __pycache__, .pytest_cache, etc..."""
     # Find .pyc or .pyo files and delete them
-    exclude = ('venv', '.venv')
+    # exclude = ('venv', '.venv')
     p = Path('.')
-    genpyc = (i for i in p.glob('**/*.pyc') if not str(i.parent).startswith(exclude))
-    genpyo = (i for i in p.glob('**/*.pyo') if not str(i.parent).startswith(exclude))
+    genpyc = (i for i in p.glob('**/*.pyc'))
+    genpyo = (i for i in p.glob('**/*.pyo'))
     artifacts = chain(genpyc, genpyo)
     for art in artifacts:
         os.remove(art)
 
     # Delete caches folders
-    cache1 = (i for i in p.glob('**/__pycache__') if not str(i.parent).startswith(exclude))
-    cache2 = (i for i in p.glob('**/.pytest_cache') if not str(i.parent).startswith(exclude))
-    cache3 = (i for i in p.glob('**/.mypy_cache') if not str(i.parent).startswith(exclude))
+    cache1 = (i for i in p.glob('**/__pycache__'))
+    cache2 = (i for i in p.glob('**/.pytest_cache'))
+    cache3 = (i for i in p.glob('**/.mypy_cache'))
     caches = chain(cache1, cache2, cache3)
     for cache in caches:
         shutil.rmtree(cache)

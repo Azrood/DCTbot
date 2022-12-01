@@ -1,4 +1,5 @@
 import pytest
+import pytest_asyncio
 
 import discord
 from discord.ext import commands
@@ -34,9 +35,9 @@ def expected_foo_embed(gifs):
 
 
 # fixture for bot with Gifs cog loaded will be used in all tests of the file.
-@pytest.fixture(autouse=True)
-def bot_gifs(bot, gifs_json):
-    bot.add_cog(Gifs(bot))
+@pytest_asyncio.fixture(autouse=True)
+async def bot_gifs(bot, gifs_json):
+    await bot.add_cog(Gifs(bot))
     bot.gifs = gifs_json
     bot.prefix = '!'
     dpytest.configure(bot)

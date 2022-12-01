@@ -1,6 +1,7 @@
 # import asyncio
 import asynctest
 import pytest
+import pytest_asyncio
 # from unittest.mock import MagicMock
 import discord
 import discord.ext.test as dpytest
@@ -13,9 +14,9 @@ from cogs import youtube
 #########################
 
 # fixture for bot with Youtube cog loaded will be used in all tests of the file.
-@pytest.fixture(autouse=True)
-def bot_youtube(bot, monkeypatch):
-    bot.add_cog(youtube.Youtube(bot))
+@pytest_asyncio.fixture(autouse=True)
+async def bot_youtube(bot, monkeypatch):
+    await bot.add_cog(youtube.Youtube(bot))
     dpytest.configure(bot)
 
     return bot
