@@ -1,8 +1,6 @@
-# import asyncio
 import pytest
 # from unittest import mock
 
-# import discord
 from discord.ext import commands
 import discord.ext.test as dpytest
 
@@ -13,18 +11,17 @@ from utils.secret import mods_role
 
 @pytest.mark.asyncio
 async def test_kick_fail(bot):
+    dpytest.configure(bot, num_members=2)
+    bot.log = CommandLog("test_log.json")
+    await bot.add_cog(Mod(bot))
     modo_role_name = mods_role[0]  # Moderator
     guild = bot.guilds[0]  # Guild object
     modo_role = await guild.create_role(name=modo_role_name)  # Role object
     bot.role_modo = modo_role
     member1 = guild.members[0]  # Member
     member2 = guild.members[1]  # Member
-
     m1_mention = member1.mention
     m2_mention = member2.mention
-
-    bot.log = CommandLog("test_log.json")
-    bot.add_cog(Mod(bot))
 
     with pytest.raises(commands.MissingAnyRole):
         await dpytest.message(f'!kick {m2_mention}')
@@ -34,6 +31,10 @@ async def test_kick_fail(bot):
 
 @pytest.mark.asyncio
 async def test_kick_success(bot):
+    dpytest.configure(bot, num_members=2)
+    bot.log = CommandLog("test_log.json")
+    await bot.add_cog(Mod(bot))
+
     modo_role_name = mods_role[0]  # Moderator
     guild = bot.guilds[0]  # Guild object
     modo_role = await guild.create_role(name=modo_role_name)  # Role object
@@ -41,11 +42,7 @@ async def test_kick_success(bot):
     member1 = guild.members[0]  # Member
     member2 = guild.members[1]  # Member
 
-    # m1_mention = member1.mention
     m2_mention = member2.mention
-
-    bot.log = CommandLog("test_log.json")
-    bot.add_cog(Mod(bot))
 
     await member1.add_roles(modo_role)  # m1 has the role Moderator
 

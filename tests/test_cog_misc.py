@@ -1,5 +1,5 @@
 import pytest
-
+import pytest_asyncio
 import discord
 import discord.ext.test as dpytest
 
@@ -11,9 +11,9 @@ from cogs import Misc
 #########################
 
 # fixture for bot with Misc cog loaded will be used in all tests of the file.
-@pytest.fixture(autouse=True)
-def bot_misc(bot):
-    bot.add_cog(Misc(bot))
+@pytest_asyncio.fixture(autouse=True)
+async def bot_misc(bot):
+    await bot.add_cog(Misc(bot))
     dpytest.configure(bot)
     return bot
 
@@ -107,7 +107,7 @@ async def test_timer(bot, mock_sleep):
 
     test_time = 15
     test_message = "wake up"
-    mention = bot.users[0].mention.replace("@", "@!")
+    mention = bot.users[0].mention
 
     await dpytest.message(f'!timer {test_time} {test_message}')
 

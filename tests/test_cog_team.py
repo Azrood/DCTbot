@@ -19,7 +19,7 @@ async def test_team_fail(bot):
 
     bot.log = CommandLog("test_log.json")
 
-    bot.add_cog(Team(bot))
+    await bot.add_cog(Team(bot))
 
     member2 = guild.members[1]  # Member
 
@@ -49,7 +49,7 @@ async def test_team_success(bot):
 
     m2_mention = member2.mention
 
-    bot.add_cog(Team(bot))
+    await bot.add_cog(Team(bot))
 
     # Before command
     assert team_role not in member2.roles  # m2 doesn't have the role
@@ -78,7 +78,7 @@ async def test_team_empty_mentions(bot):
     member1 = guild.members[0]  # Member
     member2 = guild.members[1]  # Member
 
-    bot.add_cog(Team(bot))
+    await bot.add_cog(Team(bot))
 
     # Before command
     assert team_role not in member2.roles  # m2 doesn't have the role
@@ -109,7 +109,7 @@ async def test_team_member_allready_in_team(bot):
     m2_mention = member2.mention
     m3_mention = member3.mention
 
-    bot.add_cog(Team(bot))
+    await bot.add_cog(Team(bot))
 
     await member1.add_roles(team_role)  # m1 has the role Team
     await member2.add_roles(team_role)  # m2 has the role Team
@@ -150,7 +150,7 @@ async def test_clear_fail(bot):
 
     member_mention = guild.members[0].mention  # Member
 
-    bot.add_cog(Team(bot))
+    await bot.add_cog(Team(bot))
 
     with pytest.raises(commands.MissingAnyRole):
         await dpytest.message("!clear 2")
