@@ -5,6 +5,7 @@
 import datetime
 # from pytz import timezone
 import logging
+from pathlib import Path
 
 from discord.ext import commands, tasks
 
@@ -52,8 +53,18 @@ class BonjourMadame(commands.Cog):
                 await self.bot.nsfw_channel.send(url)
                 logger.info("madame sent")
             if book:
-                await self.bot.nsfw_channel.send(book)
-                logger.info("madame had a book, sent.")
+                try:
+                    p = Path(__file__).parent / "bonjour_exclude.txt"
+                    with open(p, mode='r', encoding='utf-8') as f:
+                        excludes = f.read().splitlines()
+                except FileNotFoundError:
+                    logger.error("cogs/bonjour_excludes.txt is missing")
+                    excludes = []
+                if any(excl in book for excl in excludes):
+                    logger.info("bonjourmadame book was found, but excluded")
+                else:
+                    await self.bot.nsfw_channel.send(book)
+                    logger.info("madame had a book, sent.")
 
     @bonjour_madame.before_loop
     async def before_bonjour_madame(self):
