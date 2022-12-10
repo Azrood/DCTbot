@@ -3,29 +3,29 @@ import os
 import glob
 
 import pytest
+import pytest_asyncio
 import discord
 import discord.ext.commands as commands
 import discord.ext.test as dpytest
+from discord.client import _LoopSentinel
 
 
-@pytest.fixture
-def client(event_loop):
-    c = discord.Client(loop=event_loop)
-    dpytest.configure(c)
-    return c
-
-
-@pytest.fixture
-def bot(request, event_loop):
+@pytest_asyncio.fixture
+async def bot(request, event_loop):
     intents = discord.Intents.default()
     intents.members = True
-    b = commands.Bot("!", loop=event_loop, intents=intents)
+    intents.message_content = True
+    b = commands.Bot(command_prefix="!",
+                     intents=intents)
+    # set up the loop
+    if isinstance(b.loop, _LoopSentinel):
+        await b._async_setup_hook()
 
-    dpytest.configure(b, num_members=2)
+    dpytest.configure(b)
     return b
 
 
-@pytest.fixture(autouse=True)
+@pytest_asyncio.fixture(autouse=True)
 async def cleanup():
     yield
     await dpytest.empty_queue()

@@ -1,6 +1,8 @@
 # import asyncio
 import pytest
+import pytest_asyncio
 # from unittest import mock
+from pathlib import Path
 
 import discord
 import discord.ext.test as dpytest
@@ -13,9 +15,9 @@ from cogs import Cards
 #########################
 
 # fixture for bot with Cards cog loaded will be used in all tests of the file.
-@pytest.fixture(autouse=True)
-def bot_cards(bot):
-    bot.add_cog(Cards(bot))
+@pytest_asyncio.fixture(autouse=True)
+async def bot_cards(bot):
+    await bot.add_cog(Cards(bot))
     dpytest.configure(bot)
     return bot
 
@@ -26,11 +28,10 @@ def bot_cards(bot):
 
 @pytest.mark.asyncio
 async def test_card():
-    expected = discord.Embed()
-    expected.set_image(url="attachment://sergei.jpg")
+    path_ = Path(__file__).resolve().parents[1] / "pictures" / "cards" / "sergei.jpg"  # noqa: E501
 
     await dpytest.message('!poke sergei')
-    assert dpytest.verify().message().embed(expected)
+    assert dpytest.verify().message().attachment(path_)
 
 
 @pytest.mark.asyncio

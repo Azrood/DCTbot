@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import logging
+from typing import Union
 
 import discord
 from discord.ext import commands, tasks
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class Mod(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.log = bot.log
         self.autoclean_spoil_chan.start()  # pylint: disable=no-member
@@ -72,12 +73,12 @@ class Mod(commands.Cog):
         if ctx.command.cog_name == self.qualified_name:
             logger.info(f"Command {str(ctx.command):15} invoked by {str(ctx.author):15} in room {str(ctx.channel):15} with message {ctx.message.content}")  # noqa: E501
 
-    @tasks.loop(hours=24)
+    # @tasks.loop(hours=24)
+    @tasks.loop(time=datetime.time(hour=3))  # THIS WORKS, but with an offset (3h00 actually triggers at 4h00 in winter)
     async def autoclean_spoil_chan(self):
-        try:
-            spoil_chan = discord.utils.get(self.bot.guild.text_channels, name='spoil')  # noqa: E501
-            last_messages = await spoil_chan.history(limit=1).flatten()
-            last_text = last_messages[0].content
+        if spoil_chan := discord.utils.get(self.bot.guild.text_channels, name='spoil'):
+            last_message = await spoil_chan.fetch_message(spoil_chan.last_message_id)
+            last_text = last_message.content
             # Test on the last message text in spoil channel
             if last_text.endswith("...\n...\n..."):
                 logger.info("#spoil channel is allready clean, passing.")
@@ -86,11 +87,55 @@ class Mod(commands.Cog):
                 # Send lines of "..." to get rid of spoilers
                 await spoil_chan.send("\n".join(["..." for i in range(50)]))
                 logger.info("#spoil channel has been cleaned.")
-        except AttributeError:  # spoil_chan is None
-            logger.error("autoclean_spoil task : No spoil chan in this Guild !")  # noqa: E501
+        else:
+            logger.error("No spoil channel")
 
     @autoclean_spoil_chan.before_loop
     async def before_autoclean_spoil_chan(self):
         """Intiliaze autoclean_spoil_chan loop."""
         await self.bot.wait_until_ready()
         await asyncio.sleep(14400)  # Wait 4 houres, to fire at 4AM
+
+    @commands.command()
+    @commands.has_any_role(*mods_role)
+    async def addreaction(self, ctx: commands.Context,
+                          channel: Union[discord.abc.GuildChannel, discord.Thread, discord.abc.PrivateChannel],  # noqa: E501
+                          id: int,
+                          emoji: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]):
+        """Add reaction to message.
+
+        Examples:
+            !addreaction roles 616546546464651651651 :smile:
+
+        Args:
+            channel (Union[discord.abc.GuildChannel, discord.Thread, discord.abc.PrivateChannel]): channel (can be his name),
+            id (int): message ID
+            emoji (Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]): emoji
+        """
+        try:
+            msg = await channel.fetch_message(id)
+        except discord.errors.NotFound:
+            logger.error("message not found in addreactionin")
+        else:
+            await msg.add_reaction(emoji)
+
+    @commands.command()
+    @commands.has_any_role(*mods_role)
+    async def removereaction(self, ctx: commands.Context,
+                             channel: Union[discord.abc.GuildChannel, discord.Thread, discord.abc.PrivateChannel],  # noqa: E501
+                             id: int,
+                             emoji: Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]):
+        """Remove reaction to message ID.
+
+        Args:
+            channel (Union[discord.abc.GuildChannel, discord.Thread, discord.abc.PrivateChannel]): channel
+            id (int): message ID
+            emoji (Union[discord.Emoji, discord.Reaction, discord.PartialEmoji, str]): emoji
+        """
+        try:
+            msg = await channel.fetch_message(id)
+        except discord.errors.NotFound:
+            logger.error("message not found in addreactionin")
+        else:
+            await msg.remove_reaction(emoji, self.bot.guild.me)
+

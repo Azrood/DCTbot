@@ -2,8 +2,8 @@
 
 asynctest
 pytest
-dpytest==0.5.3
-# git+https://github.com/bravosierra99/dpytest.git
+pytest_asyncio
+dpytest==0.6.*
 coverage
 flake8>=3.7.9
 pylint

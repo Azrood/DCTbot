@@ -1,4 +1,5 @@
 import pytest
+import pytest_asyncio
 # from unittest import mock
 import discord
 import discord.ext.test as dpytest
@@ -38,9 +39,9 @@ def expected_embed(search_result):
 
 
 # fixture for bot with Google cog loaded will be used in all tests of the file.
-@pytest.fixture(autouse=True)
-def bot_google(bot):
-    bot.add_cog(google.Google(bot))
+@pytest_asyncio.fixture(autouse=True)
+async def bot_google(bot):
+    await bot.add_cog(google.Google(bot))
     dpytest.configure(bot)
     return bot
 
