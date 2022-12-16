@@ -23,3 +23,8 @@ reddit_useragent = "XXXXX"
 forum_host = "XXXXXXXXX"
 forum_user_name = "XXXXXXXXX"
 forum_password = "XXXXXXXXX"
+
+# Reddit
+reddit_client_id = "XXXXX"
+reddit_client_secret = "XXXXX"
+reddit_user_agent = "testscript by u/MySuperBot"
