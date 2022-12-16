@@ -7,3 +7,5 @@ pillow
 git+https://github.com/Sergeileduc/pyphpbb-sl.git@v0.11.1
 requests-html
 sqlite-utils==3.*
+
+asyncpraw

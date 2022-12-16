@@ -1,0 +1,61 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+"""Cog to get daily on bonjourmadame picture."""
+
+import logging
+
+import asyncpraw  # pip install asyncpraw
+import discord
+from discord.ext import commands, tasks
+
+from utils.secret import reddit_client_id, reddit_client_secret, reddit_user_agent  # noqa: E501
+
+logger = logging.getLogger(__name__)
+
+
+class RedditBabes(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        self.babes.start()  # pylint: disable=no-member
+
+    @tasks.loop(hours=1)  # checks the babes subreddit every hour
+    async def babes(self):
+        """Send babes from reddit."""
+        # allready posted babes list
+        nsfw_channel_history: list = [mess async for mess in discord.utils.get(self.bot.guild.text_channels, name='nsfw').history(limit=50)]  # noqa: E501
+        last_bot_messages = [
+            message.content
+            for message in nsfw_channel_history
+            if message.author == self.bot.user
+            ]
+
+        # Reddit client
+        reddit = asyncpraw.Reddit(
+            client_id=reddit_client_id,
+            client_secret=reddit_client_secret,
+            user_agent=reddit_user_agent)
+
+        # TODO: maybe we can make a list of subreddits, and iterate on it.
+        subreddit = await reddit.subreddit("Bellissima", fetch=True)
+
+        async for submission in subreddit.hot(limit=10):
+            if submission.title == "r/Bellissima Lounge":  # forget the pinned submission # noqa: E501
+                continue
+            url = submission.url
+            if url not in last_bot_messages:
+                # TODO: I let some codes, if we want to change, with only sends
+                # or with a full embed (with the set_image thing)
+                # we can decide later.
+                # await self.bot.nsfw_channel.send(submission.title)
+                # await self.bot.nsfw_channel.send(url)
+                embed = discord.Embed(title=submission.title,
+                                      url="https://www.reddit.com" + submission.permalink)  # noqa: E501
+                # embed.set_image(url=url)
+                await self.bot.nsfw_channel.send(embed=embed)
+                await self.bot.nsfw_channel.send(url)
+        await reddit.close()
+
+    @babes.before_loop
+    async def before_babes(self):
+        """Intiliaze babes loop."""
+        await self.bot.wait_until_ready()
