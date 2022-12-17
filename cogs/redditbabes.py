@@ -3,6 +3,7 @@
 """Cog to get daily on bonjourmadame picture."""
 
 import logging
+from pathlib import Path
 
 import asyncpraw  # pip install asyncpraw
 import discord
@@ -22,7 +23,7 @@ class RedditBabes(commands.Cog):
     async def babes(self):
         """Send babes from reddit."""
         # allready posted babes list
-        nsfw_channel_history: list = [mess async for mess in discord.utils.get(self.bot.guild.text_channels, name='nsfw').history(limit=50)]  # noqa: E501
+        nsfw_channel_history: list = [mess async for mess in discord.utils.get(self.bot.guild.text_channels, name='nsfw').history(limit=200)]  # noqa: E501
         last_bot_messages = [
             message.content
             for message in nsfw_channel_history
@@ -35,24 +36,35 @@ class RedditBabes(commands.Cog):
             client_secret=reddit_client_secret,
             user_agent=reddit_user_agent)
 
-        # TODO: maybe we can make a list of subreddits, and iterate on it.
-        subreddit = await reddit.subreddit("Bellissima", fetch=True)
+        # List of subreddits
+        try:
+            p = Path(__file__).parent / "redditbabes.txt"
+            with open(p, mode='r', encoding='utf-8') as f:
+                subreddits = f.read().splitlines()
+        except FileNotFoundError:
+            logger.error("cogs/redditbabes.txt is missing")
+            subreddits = []
 
-        async for submission in subreddit.hot(limit=10):
-            if submission.title == "r/Bellissima Lounge":  # forget the pinned submission # noqa: E501
-                continue
-            url = submission.url
-            if url not in last_bot_messages:
-                # TODO: I let some codes, if we want to change, with only sends
-                # or with a full embed (with the set_image thing)
-                # we can decide later.
-                # await self.bot.nsfw_channel.send(submission.title)
-                # await self.bot.nsfw_channel.send(url)
-                embed = discord.Embed(title=submission.title,
-                                      url="https://www.reddit.com" + submission.permalink)  # noqa: E501
-                # embed.set_image(url=url)
-                await self.bot.nsfw_channel.send(embed=embed)
-                await self.bot.nsfw_channel.send(url)
+        # Iterate on our subreddits
+        for sub in subreddits:
+            subreddit = await reddit.subreddit(sub, fetch=True)
+
+            # Iterate on each submission
+            async for submission in subreddit.hot(limit=10):
+                if submission.stickied:
+                    continue
+                url = submission.url
+                if url not in last_bot_messages:
+                    # TODO: I let some codes, if we want to change, with only sends
+                    # or with a full embed (with the set_image thing)
+                    # we can decide later.
+                    # await self.bot.nsfw_channel.send(submission.title)
+                    # await self.bot.nsfw_channel.send(url)
+                    embed = discord.Embed(title=submission.title,
+                                          url="https://www.reddit.com" + submission.permalink)  # noqa: E501
+                    # embed.set_image(url=url)
+                    await self.bot.nsfw_channel.send(embed=embed)
+                    await self.bot.nsfw_channel.send(url)
         await reddit.close()
 
     @babes.before_loop
