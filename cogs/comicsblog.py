@@ -5,7 +5,7 @@ from discord.ext import commands
 from utils.tools import get_soup_html
 
 
-async def get_comicsblog(numb):
+async def get_comicsblog(numb: int):
     """Get latest news on comicsblog.fr.
 
     Args:

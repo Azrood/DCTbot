@@ -12,7 +12,7 @@ from discord.ext import commands
 from utils.secret import token_youtube, DEVELOPER_CX
 
 
-async def search_google(user_input, number):
+async def search_google(user_input: str, number: int):
     """Search on Google.
 
     Args:
@@ -49,7 +49,7 @@ async def search_google(user_input, number):
     return [{'title': j['title'], 'url': j['link']} for j in json_data]
 
 
-async def google_top_link(user_input):
+async def google_top_link(user_input: str):
     """Get first result of Google search.
 
     Args:
