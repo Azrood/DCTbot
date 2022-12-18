@@ -23,18 +23,21 @@ class RedditBabes(commands.Cog):
     async def babes(self):
         """Send babes from reddit."""
         # allready posted babes list
+        logger.info("Entering hourly task.")
         nsfw_channel_history: list = [mess async for mess in discord.utils.get(self.bot.guild.text_channels, name='nsfw').history(limit=200)]  # noqa: E501
         last_bot_messages = [
             message.content
             for message in nsfw_channel_history
             if message.author == self.bot.user
             ]
-
+        logger.info("Messages fetched.")
         # Reddit client
         reddit = asyncpraw.Reddit(
             client_id=reddit_client_id,
             client_secret=reddit_client_secret,
             user_agent=reddit_user_agent)
+
+        logger.info("Reddit ok.")
 
         # List of subreddits
         try:
@@ -48,7 +51,7 @@ class RedditBabes(commands.Cog):
         # Iterate on our subreddits
         for sub in subreddits:
             subreddit = await reddit.subreddit(sub, fetch=True)
-
+            logger.info("fetching %s", sub)
             # Iterate on each submission
             async for submission in subreddit.hot(limit=10):
                 if submission.stickied:
@@ -66,6 +69,7 @@ class RedditBabes(commands.Cog):
                     await self.bot.nsfw_channel.send(embed=embed)
                     await self.bot.nsfw_channel.send(url)
         await reddit.close()
+        logger.info("Exiting hourly task.")
 
     @babes.before_loop
     async def before_babes(self):
