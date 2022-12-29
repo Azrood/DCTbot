@@ -65,7 +65,7 @@ class GifJson:
         except KeyError:
             return None
 
-    def get_names_string(self, private=True):
+    def get_names_string(self, private=True) -> str:
         """Get multiline string of gifs names.
 
         If private is true, only public gifs are returned.

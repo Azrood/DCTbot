@@ -11,7 +11,7 @@ import urllib.parse
 from utils.tools import get_soup_html
 
 
-async def getcomics_top_link(user_input):
+async def getcomics_top_link(user_input: str):
     """Search getcomics and return first result."""
     formated_search = urllib.parse.quote_plus(user_input.lower(),
                                               safe='', encoding=None,
@@ -30,7 +30,7 @@ async def getcomics_top_link(user_input):
     return title, url_dl, cover
 
 
-async def getcomics_directlink(comic_url):
+async def getcomics_directlink(comic_url: str) -> str:
     """Get download links in a getcomics post."""
     # BeautifulSoup will transform raw HTML in a tree easy to parse
     soup = await get_soup_html(comic_url)

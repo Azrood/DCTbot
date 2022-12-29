@@ -23,7 +23,7 @@ dctrad_base = "https://www.dctrad.fr"
 dctrad_url = f"{dctrad_base}/index.php"
 
 
-def _get_header_img(soup, n):
+def _get_header_img(soup, n: int):
     """Return list of img url.
 
     n is 1, 2, 3 or 4 for different headers.
@@ -32,7 +32,7 @@ def _get_header_img(soup, n):
     return res
 
 
-async def _download_img(h_list, path):
+async def _download_img(h_list: list, path: os.PathLike):
     """Download list of images.
 
     n is 1, 2, 3 or 4 for different headers.
@@ -49,7 +49,7 @@ async def _download_img(h_list, path):
     await session.close()
 
 
-def _make_header(n, path):
+def _make_header(n: int, path: os.PathLike) -> str:
     """Create header img.
 
     n is 1, 2, 3 or 4 for different headers.
@@ -84,7 +84,7 @@ def _make_header(n, path):
     return file_
 
 
-async def get_monthly_url():
+async def get_monthly_url() -> str:
     """Get 'Comics du mois' topic url."""
     year = datetime.date.today().year
     month = datetime.date.today().month
@@ -92,7 +92,7 @@ async def get_monthly_url():
     return monthly_url
 
 
-async def get_header(n):
+async def get_header(n: int) -> str:
 
     """Get header.
 
@@ -114,7 +114,7 @@ class Header(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def header(self, ctx, arg):
+    async def header(self, ctx, arg: str):
         """Send header image."""
         arg = arg.lower()
         monthly = await get_monthly_url()

@@ -13,7 +13,7 @@ class Gifs(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def gif(self, ctx, name):
+    async def gif(self, ctx, name: str):
         """Send gif corresponding to 'name'."""
         name = name.lower()
 
