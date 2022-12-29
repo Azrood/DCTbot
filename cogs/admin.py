@@ -42,7 +42,7 @@ class Admin(commands.Cog):
 
     @commands.command()
     @commands.is_owner()
-    async def gifdelete(self, ctx, name):
+    async def gifdelete(self, ctx, name: str):
         """Delete gif in gif dictionary and gif json file."""
         name = name.lower()
         self.giflist.gif_delete(name)

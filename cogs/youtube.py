@@ -16,7 +16,7 @@ from utils.secret import token_youtube
 from utils.tools import string_is_int
 
 
-def search_youtube(user_input, number):
+def search_youtube(user_input: str, number: int) -> list:
     """Search on Youtube.
 
     Args:
@@ -74,7 +74,7 @@ def search_youtube(user_input, number):
     return out
 
 
-def youtube_top_link(user_input):
+def youtube_top_link(user_input: str) -> tuple:
     """Return title and url of 1st Youtube search.
 
     Args:
@@ -92,7 +92,7 @@ def youtube_top_link(user_input):
         pass
 
 
-def get_youtube_url(result):
+def get_youtube_url(result) -> str:
     """Make youtube url of 'result' (video, playlist, or channel)."""
     if result['type'] == 'video':
         url = f"https://www.youtube.com/watch?v={result['id']}"

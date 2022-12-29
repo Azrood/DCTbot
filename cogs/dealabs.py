@@ -10,7 +10,7 @@ from discord.ext import commands, tasks
 logger = logging.getLogger(__name__)
 
 
-async def get_free_games():
+async def get_free_games() -> list[tuple]:
     """returns list of tuple of free games from Dealabs.
         `[(title,link),(title,link)]`
     """

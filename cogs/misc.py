@@ -56,7 +56,7 @@ class Misc(commands.Cog):
         await ctx.send(random.choice(["pile", "face"]))
 
     @commands.command()
-    async def say(self, ctx, *, args):
+    async def say(self, ctx, *, args: str):
         """Bot writes user message content, and delete original user message."""  # noqa:E501
         await ctx.message.delete()
         await ctx.send(content=args)

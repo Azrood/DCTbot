@@ -138,4 +138,3 @@ class Mod(commands.Cog):
             logger.error("message not found in addreactionin")
         else:
             await msg.remove_reaction(emoji, self.bot.guild.me)
-

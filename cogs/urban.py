@@ -17,7 +17,7 @@ class UrbanSearch:
 
     urban_url = "https://www.urbandictionary.com/define.php?term="
 
-    def __init__(self, user_input):
+    def __init__(self, user_input: str):
         """Init object with user input, search, and get lxml soup."""
         formated_input = quote(user_input.lower())
 

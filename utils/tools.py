@@ -38,7 +38,7 @@ async def get_soup_lxml(url):
     return BeautifulSoup(text, 'lxml')
 
 
-async def get_soup_html(url):
+async def get_soup_html(url) -> BeautifulSoup:
     """Return a BeautifulSoup soup from given url, Parser is html.parser.
 
     Args:
