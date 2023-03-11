@@ -1,6 +1,11 @@
 """Module to handle !gif command (gifs are stored in json file)."""
+
+import contextlib
 import json
-import os
+import logging
+from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 class GifJson:
@@ -12,30 +17,25 @@ class GifJson:
 
         Read (or create) json file.
         """
-        dir_path = os.path.dirname(os.path.realpath(__file__))
+        self.file = Path(__file__).parent / filename
+        self.gifs = {}
 
-        self.file = os.path.join(dir_path, filename)
-        # if file exists
-        try:
-            f = open(self.file)
-            f.close()
-        # or not
-        except FileNotFoundError:  # pragma: no cover
-            print('File does not exist. Creating.')
-            init = {}
+        # create file if doesn't exist
+        if not self.file.is_file():
+            logger.warning('File does not exist. Creating.')
             with open(self.file, 'w') as outfile:
-                json.dump(init, outfile)
+                json.dump({}, outfile)
 
         # read
         self._file_read()
 
-    def _file_read(self):
+    def _file_read(self) -> dict:
         with open(self.file) as json_file:
             data = json.load(json_file)
-        self.gifs = data
+        self.gifs: dict = data
         return data
 
-    def _file_write(self, data):
+    def _file_write(self, data: dict):
         with open(self.file, 'w') as outfile:
             json.dump(data, outfile, sort_keys=True, indent=4)
 
@@ -45,11 +45,9 @@ class GifJson:
 
     def gif_delete(self, name):
         """Delete gif entry and update file."""
-        try:
+        with contextlib.suppress(KeyError):
             self.gifs.pop(name)
             self._update_file()
-        except KeyError:
-            pass
 
     def gif_add(self, name, url, public=True):
         """Add gif entry and update file."""
@@ -58,12 +56,9 @@ class GifJson:
         self.gifs.update(new_gif)
         self._file_write(self.gifs)
 
-    def get_gif(self, name):
+    def get_gif(self, name: str):
         """Get gif corresponding to 'name'."""
-        try:
-            return self.gifs[name]
-        except KeyError:
-            return None
+        return self.gifs.get(name)
 
     def get_names_string(self, private=True) -> str:
         """Get multiline string of gifs names.
