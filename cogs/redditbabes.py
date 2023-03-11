@@ -64,7 +64,8 @@ class RedditBabes(commands.Cog):
                     # await self.bot.nsfw_channel.send(submission.title)
                     # await self.bot.nsfw_channel.send(url)
                     embed = discord.Embed(title=submission.title,
-                                          url="https://www.reddit.com" + submission.permalink)  # noqa: E501
+                                          url=f"https://www.reddit.com{submission.permalink}",
+                                          )
                     # embed.set_image(url=url)
                     await self.bot.nsfw_channel.send(embed=embed)
                     await self.bot.nsfw_channel.send(url)

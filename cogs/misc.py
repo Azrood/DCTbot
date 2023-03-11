@@ -46,9 +46,8 @@ class Misc(commands.Cog):
     @commands.command()
     async def choose(self, ctx, *choices):
         """Randomly choose user's choices."""
-        if len(choices) < 1:  # pragma: no cover
-            return None
-        await ctx.send(random.choice(choices))
+        if choices:
+            await ctx.send(random.choice(choices))
 
     @commands.hybrid_command()
     async def coinflip(self, ctx):
@@ -75,7 +74,7 @@ class Misc(commands.Cog):
         logger.info(f"Ping (asked by {ctx.author}) was awaited.")
 
     @commands.hybrid_command()
-    async def roulette(self, ctx):
+    async def roulette(self, ctx: commands.Context):
         """Plays russian roulette and kick user if shot."""
         if random.randrange(6) == 3:
             await ctx.send(content=random.choice(["Pan !",

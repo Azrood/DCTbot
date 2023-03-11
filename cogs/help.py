@@ -32,7 +32,7 @@ class Help(commands.Cog):
         return embed, embed_2
 
     @commands.command()
-    async def help(self, ctx):
+    async def help(self, ctx: commands.Context):
         """Display available commands."""
 
         embed, embed_2 = self.generate_help_embeds(ctx)
@@ -43,7 +43,7 @@ class Help(commands.Cog):
 
         @tasks.loop(seconds=2)
         async def helperloop():
-            def check(reaction, user):
+            def check(reaction: discord.Reaction, user):
                 return (ctx.author == user
                         and str(reaction.emoji) in [right_triangle, left_triangle]
                         and msg.id == reaction.message.id)

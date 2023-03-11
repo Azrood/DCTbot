@@ -43,13 +43,13 @@ class GifJson:
         with open(self.file, 'w') as outfile:
             json.dump(self.gifs, outfile, sort_keys=True, indent=4)
 
-    def gif_delete(self, name):
+    def gif_delete(self, name: str):
         """Delete gif entry and update file."""
         with contextlib.suppress(KeyError):
             self.gifs.pop(name)
             self._update_file()
 
-    def gif_add(self, name, url, public=True):
+    def gif_add(self, name: str, url: str, public=True):
         """Add gif entry and update file."""
         new_gif = {name.lower(): {'url': url, 'public': public}}
         self._file_read()

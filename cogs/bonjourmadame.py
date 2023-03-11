@@ -27,9 +27,9 @@ async def latest_madame():
     if title:  # TITLE
         title_txt = title.text
     if a := content.find('a', href=True):  # book is the link to the private book of the model
-        book = a['href']
+        book: str = a['href']
     if image := content.find('img', src=True):  # image URL
-        image_url = image['src'].split('?')[0]
+        image_url: str = image['src'].split('?')[0]
     return image_url, title_txt, book
 
 
@@ -40,31 +40,29 @@ class BonjourMadame(commands.Cog):
 
     # @tasks.loop(hours=24)
     @tasks.loop(time=datetime.time(hour=9, minute=30))  # THIS WORKS, but with an offset (9h30 actually triggers at 10h30 in winter)
-    # @tasks.loop(time=datetime.time(hour=8, minute=31, tzinfo=timezone("Europe/Paris")))  # this doesn't work on the time specified
-    # @tasks.loop(time=datetime.time(hour=7, minute=38, tzinfo=timezone("Europe/Paris")))  # this doesn't work, even with 1h offset
-    # @tasks.loop(time=datetime.time(hour=6, minute=41, tzinfo=timezone("Europe/Paris")))  # this doesn't work, even with 2h offset
     async def bonjour_madame(self):
         """Send daily bonjourmadame."""
-        if 0 <= datetime.date.today().weekday() <= 4:  # check the current day, days are given as numbers where Monday=0 and Sunday=6  # noqa: E501
-            url, title, book = await latest_madame()
-            logger.info("try to post madame with %s / %s / %s", url, title, book)
-            if url:
-                await self.bot.nsfw_channel.send(title)
-                await self.bot.nsfw_channel.send(url)
-                logger.info("madame sent")
-            if book:
-                try:
-                    p = Path(__file__).parent / "bonjour_exclude.txt"
-                    with open(p, mode='r', encoding='utf-8') as f:
-                        excludes = f.read().splitlines()
-                except FileNotFoundError:
-                    logger.error("cogs/bonjour_excludes.txt is missing")
-                    excludes = []
-                if any(excl in book for excl in excludes):
-                    logger.info("bonjourmadame book was found, but excluded")
-                else:
-                    await self.bot.nsfw_channel.send(book)
-                    logger.info("madame had a book, sent.")
+        if not 0 <= datetime.date.today().weekday() <= 4:
+            return
+        url, title, book = await latest_madame()
+        logger.info("try to post madame with %s / %s / %s", url, title, book)
+        if url:
+            await self.bot.nsfw_channel.send(title)
+            await self.bot.nsfw_channel.send(url)
+            logger.info("madame sent")
+        if book:
+            try:
+                p = Path(__file__).parent / "bonjour_exclude.txt"
+                with open(p, mode='r', encoding='utf-8') as f:
+                    excludes = f.read().splitlines()
+            except FileNotFoundError:
+                logger.error("cogs/bonjour_excludes.txt is missing")
+                excludes = []
+            if any(excl in book for excl in excludes):
+                logger.info("bonjourmadame book was found, but excluded")
+            else:
+                await self.bot.nsfw_channel.send(book)
+                logger.info("madame had a book, sent.")
 
     @bonjour_madame.before_loop
     async def before_bonjour_madame(self):

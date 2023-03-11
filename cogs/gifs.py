@@ -48,8 +48,8 @@ class Gifs(commands.Cog):
             except AttributeError:  # pragma: no cover
                 # channel.category_id will fail in DM messages
                 # DMChannel' object has no attribute 'category_id
-                if self.bot.gifs.get_gif(name)['public']:
-                    gif_url = self.bot.gifs.get_gif(name)['url']
+                if self.bot.gifs.get_gif(name).get('public'):
+                    gif_url = self.bot.gifs.get_gif(name).get('url')
                     embed.set_image(url=gif_url)
                     await ctx.send(embed=embed)
 

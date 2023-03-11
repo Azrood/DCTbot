@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """Urban dictionnary cog."""
 
+from typing import Tuple
 from urllib.parse import quote
 from utils.tools import get_soup_lxml
 
@@ -32,24 +33,20 @@ class UrbanSearch:
         # Test if I can find the div for :
         # Sorry, we couldn't find XXX
         # If not, search is valid
-        if self.definition_soup:
-            self.valid = True
-        else:
-            self.valid = False
+        self.valid = bool(self.definition_soup)
 
     async def fetch(self):
         self.soup = await get_soup_lxml(self.search_url)
         self.definition_soup = self.soup.select_one('div.definition')
         self._isokay()
 
-    def get_top_def(self):
+    def get_top_def(self) -> Tuple[str, str, str, str]:
         """Parse the HTML soup to find Top Definition title, meaning, example."""  # noqa:E501
         title = self.definition_soup.select_one('h1 > a.word').text
         meaning = self.definition_soup.select_one('div.meaning').text
-        example_raw = self.soup.select_one('div.example')
-        if example_raw:
+        if example_raw := self.soup.select_one('div.example'):
             example = example_raw.text
-        else:  # pragma: no cover
+        else:
             example = "No example"
         return title, meaning, example, self.search_url
 

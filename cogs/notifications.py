@@ -18,7 +18,7 @@ magic_off = "Vous n'avez plus le rôle Les Magiciens"
 
 class Notifications(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: commands.Bot = bot
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):

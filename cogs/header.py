@@ -3,13 +3,13 @@
 
 """Download header images."""
 
-import os
 import shutil
 import time
 import datetime
 from PIL import Image
 import io  # will use it to convert the bytes read with aiohttp to file-like object  # noqa:E501
 import aiohttp
+from pathlib import Path
 from urllib.parse import urljoin
 
 import discord
@@ -21,6 +21,8 @@ from utils.tools import get_soup_html
 
 dctrad_base = "https://www.dctrad.fr"
 dctrad_url = f"{dctrad_base}/index.php"
+# Compute path (ie : ./../ressoures/)
+ress_path = Path(__file__).parents[1] / "ressources"
 
 
 def _get_header_img(soup, n: int):
@@ -28,11 +30,10 @@ def _get_header_img(soup, n: int):
 
     n is 1, 2, 3 or 4 for different headers.
     """
-    res = soup.select(f'#dog{n+1} > div > span.btn-cover img')
-    return res
+    return soup.select(f'#dog{n+1} > div > span.btn-cover img')
 
 
-async def _download_img(h_list: list, path: os.PathLike):
+async def _download_img(h_list: list, path: Path):
     """Download list of images.
 
     n is 1, 2, 3 or 4 for different headers.
@@ -43,18 +44,25 @@ async def _download_img(h_list: list, path: os.PathLike):
         img_url = urljoin(dctrad_base, h['src'])
         resp = await session.get(url=img_url)
         buffer = io.BytesIO(await resp.read())  # buffer is a file-like object
-        file_ = os.path.join(path, f"img{index}.jpg")
+        file_ = path / f"img{index}.jpg"
         with open(file_, 'wb') as out_file:
             shutil.copyfileobj(buffer, out_file)
     await session.close()
 
 
-def _make_header(n: int, path: os.PathLike) -> str:
+def _make_header(n: int, dirpath: Path) -> Path:
     """Create header img.
 
     n is 1, 2, 3 or 4 for different headers.
+
+    Args:
+        n (int): index of the image (0 to 8)
+        dirpath (Path): Path to the folder of ressources
+
+    Returns:
+        Path: Path of the 3x3 out image
     """
-    jpg_list = [os.path.join(path, f"img{i}.jpg") for i in range(9)]
+    jpg_list = [dirpath / f"img{i}.jpg" for i in range(9)]
 
     images = [Image.open(i) for i in jpg_list]
 
@@ -67,7 +75,7 @@ def _make_header(n: int, path: os.PathLike) -> str:
 
     new_im = Image.new('RGB', (total_width, total_height))
 
-    file_ = os.path.join(path, f'header{n}-{time.strftime("%Y%m%d-%H%M%S")}.jpg')  # noqa: E501
+    file_ = dirpath / f'header{n}-{time.strftime("%Y%m%d-%H%M%S")}.jpg'
 
     for index, image in enumerate(images):
         i, j = divmod(index, 3)
@@ -79,7 +87,7 @@ def _make_header(n: int, path: os.PathLike) -> str:
 
     # clean - delete the covers
     for jpg in jpg_list:
-        os.remove(jpg)
+        jpg.unlink()
 
     return file_
 
@@ -88,25 +96,18 @@ async def get_monthly_url() -> str:
     """Get 'Comics du mois' topic url."""
     year = datetime.date.today().year
     month = datetime.date.today().month
-    monthly_url = f"{dctrad_base}/app.php/releases/{year}/{month}"
-    return monthly_url
+    return f"{dctrad_base}/app.php/releases/{year}/{month}"
 
 
-async def get_header(n: int) -> str:
-
+async def get_header(n: int) -> Path:
     """Get header.
 
     n is 1, 2, 3 or 4 for different headers.
     """
-    # Compute path (ie : ./../ressoures/)
-    dirname = os.path.dirname(__file__)  # -> ./
-    ress_path = os.path.join(dirname, os.pardir, "ressources")  # -> ./../ressources  # noqa:E501
-
     soup = await get_soup_html(dctrad_url)
     h_list = _get_header_img(soup, n)
     await _download_img(h_list, ress_path)
-    file_path = _make_header(n, ress_path)
-    return file_path
+    return _make_header(n, ress_path)
 
 
 class Header(commands.Cog):
@@ -119,22 +120,21 @@ class Header(commands.Cog):
         arg = arg.lower()
         monthly = await get_monthly_url()
         embed = discord.Embed(title="Comics du mois", url=monthly)
-        if arg == "rebirth" or arg == "dcrebirth":
+        if arg in {"rebirth", "dcrebirth"}:
             file_path = await get_header(1)
             await ctx.send(embed=embed, file=discord.File(file_path))
-        elif arg == "hors" or arg == "horsrebirth":
+        elif arg in {"hors", "horsrebirth"}:
             file_path = await get_header(2)
             await ctx.send(embed=embed, file=discord.File(file_path))
-        elif arg in ["indé", "indés", "inde", "indé"]:
+        elif arg in {"indés", "inde", "indé"}:
             file_path = await get_header(3)
             await ctx.send(embed=embed, file=discord.File(file_path))
         elif arg == "marvel":
             file_path = await get_header(4)
             await ctx.send(embed=embed, file=discord.File(file_path))
-        try:
-            os.remove(file_path)
-        except OSError:
-            pass
+
+        # Delete file
+        file_path.unlink(missing_ok=True)
 
     # TODO : it seems we can't make a hybrid command, with the slash-command havint the  choice
     @app_commands.command()
@@ -146,11 +146,11 @@ class Header(commands.Cog):
         Choice(name='Marvel', value=4),
     ])
     async def headerdct(self, interaction: discord.Interaction, editor: Choice[int]):
+        await interaction.response.defer(ephemeral=False)
+
         monthly = await get_monthly_url()
         embed = discord.Embed(title="Comics du mois", url=monthly)
         file_path = await get_header(editor.value)
-        await interaction.response.send_message(embed=embed, file=discord.File(file_path))
-        try:
-            os.remove(file_path)
-        except OSError:
-            pass
+        # here we use followup, because 'response' can only be accessed once.
+        await interaction.followup.send(embed=embed, file=discord.File(file_path))
+        file_path.unlink(missing_ok=True)

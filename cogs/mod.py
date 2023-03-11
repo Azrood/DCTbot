@@ -62,7 +62,7 @@ class Mod(commands.Cog):
     @commands.has_any_role(*mods_role)
     async def nomorespoil(self, ctx):
         """Spam dots to clear potential spoils."""
-        await ctx.send("\n".join(["..." for i in range(50)]))
+        await ctx.send("\n".join(["..." for _ in range(50)]))
 
     @commands.Cog.listener()
     async def on_command(self, ctx):
@@ -82,10 +82,9 @@ class Mod(commands.Cog):
             # Test on the last message text in spoil channel
             if last_text.endswith("...\n...\n..."):
                 logger.info("#spoil channel is allready clean, passing.")
-                pass
             else:
                 # Send lines of "..." to get rid of spoilers
-                await spoil_chan.send("\n".join(["..." for i in range(50)]))
+                await spoil_chan.send("\n".join(["..." for _ in range(50)]))
                 logger.info("#spoil channel has been cleaned.")
         else:
             logger.error("No spoil channel")
