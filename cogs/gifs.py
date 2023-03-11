@@ -2,18 +2,22 @@
 # -*- coding: utf-8 -*-
 """Gifs cog."""
 
+import logging
+
 import discord
 from discord.ext import commands
 
 from utils.secret import dcteam_category_id
 
+logger = logging.getLogger(__name__)
+
 
 class Gifs(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.command()
-    async def gif(self, ctx, name: str):
+    async def gif(self, ctx: commands.Context, name: str):
         """Send gif corresponding to 'name'."""
         name = name.lower()
 
@@ -33,7 +37,7 @@ class Gifs(commands.Cog):
                                   description=list_names, color=0x000FF)
             await ctx.send(embed=embed)
 
-        if self.bot.gifs.get_gif(name) is not None:
+        if self.bot.gifs.get_gif(name):
             embed = discord.Embed()
             try:
                 if (self.bot.gifs.get_gif(name)['public']
@@ -48,22 +52,20 @@ class Gifs(commands.Cog):
                     gif_url = self.bot.gifs.get_gif(name)['url']
                     embed.set_image(url=gif_url)
                     await ctx.send(embed=embed)
-        else:
-            pass
 
-    @commands.Cog.listener()
-    async def on_message(self, ctx):
+    @commands.Cog.listener('on_message')
+    async def send_gif(self, message: discord.Message):
         """Read all message and check if it's a gif command."""
-        channel = ctx.channel
+        channel = message.channel
         # Find if custom command exist in dictionary
         embed = discord.Embed()
         for key in self.bot.gifs.gifs.keys():
             # Added simple hardcoded prefix
-            command = self.bot.prefix + key
-            if ctx.content.lower() == command:
+            command: str = self.bot.prefix + key
+            if message.content.lower() == command:
                 try:
                     if (self.bot.gifs.get_gif(key)['public']
-                            or ctx.channel.category_id == dcteam_category_id):
+                            or channel.category_id == dcteam_category_id):
                         gif_url = self.bot.gifs.get_gif(key)['url']
                         embed.set_image(url=gif_url)
                         await channel.send(embed=embed)

@@ -38,8 +38,6 @@ bot = commands.Bot(command_prefix=prefix, help_command=None,
                    description=None, case_insensitive=True,
                    intents=intents)
 
-my_giflist = GifJson("gifs.json")
-
 cogs_list = [cogs.Admin,
              cogs.BonjourMadame,
              cogs.Browse,
@@ -79,10 +77,21 @@ async def on_ready():
     bot.prefix = prefix
     bot.nsfw_channel = discord.utils.get(bot.guild.text_channels, name='nsfw')  # noqa:E501
     bot.log = CommandLog("logs.json")
-    bot.gifs = my_giflist
+    bot.gifs = GifJson("gifs.json")
     for cog in cogs_list:
         await bot.add_cog(cog(bot))
     await bot.tree.sync()
+
+
+@bot.event
+async def on_command_error(ctx, error):  # pylint: disable=unused-argument
+    """Handle the CommandNotFound errors."""
+    # !<name> is a valid gif, ignore the CommandNotFound Error
+    # code is reversed, error is raised/logged only if the command is not a gif
+    if (not isinstance(error, commands.CommandNotFound)
+            or error.args[0] not in [f'Command "{name}" is not found'
+                                     for name in bot.gifs.gifs]):
+        raise error
 
 
 setup_logging(Path(__file__).resolve().parent / 'logging.json')
