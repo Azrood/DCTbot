@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 """Youtube cog."""
 
+
 # Sample Python code for youtube.search.list
 # See instructions for running these code samples locally:
 # https://developers.google.com/explorer-help/guides/code_samples#python
 
 import asyncio
+import contextlib
 import html
+from typing import NamedTuple, List, Tuple
 
 import discord
 from discord.ext import commands
@@ -16,7 +19,16 @@ from utils.secret import token_youtube
 from utils.tools import string_is_int
 
 
-def search_youtube(user_input: str, number: int) -> list:
+TitleURL = Tuple[str, str]
+
+
+class Result(NamedTuple):
+    title: str
+    type_: str
+    id_: str
+
+
+def search_youtube(user_input: str, number: int) -> List[Result]:
     """Search on Youtube.
 
     Args:
@@ -46,35 +58,35 @@ def search_youtube(user_input: str, number: int) -> list:
     )
     response = request.execute()
 
-    list = response["items"]
+    items = response["items"]
 
     out = []
 
-    for li in list:
-        title = html.unescape(li['snippet']['title'])
+    for item in items:
+        title = html.unescape(item['snippet']['title'])
         try:
-            if li['id']['kind'] == "youtube#channel":
-                type = 'channel'
-                id = li['id']['channelId']
-            elif li['id']['kind'] == "youtube#playlist":
-                type = 'playlist'
-                id = li['id']['playlistId']
-            elif li['id']['kind'] == "youtube#video":
-                type = 'video'
-                id = li['id']['videoId']
+            if item['id']['kind'] == "youtube#channel":
+                type_ = 'channel'
+                id_ = item['id']['channelId']
+            elif item['id']['kind'] == "youtube#playlist":
+                type_ = 'playlist'
+                id_ = item['id']['playlistId']
+            elif item['id']['kind'] == "youtube#video":
+                type_ = 'video'
+                id_ = item['id']['videoId']
             else:
-                type = 'unknown'
-                id = "NoID"
+                type_ = 'unknown'
+                id_ = "NoID"
         except KeyError:  # pragma: no cover
-            type = 'unknown'
-            id = "NoID"
+            type_ = 'unknown'
+            id_ = "NoID"
 
-        out.append({'title': title, 'type': type, 'id': id})
+        out.append(Result(title=title, type_=type_, id_=id_))
 
     return out
 
 
-def youtube_top_link(user_input: str) -> tuple:
+def youtube_top_link(user_input: str) -> TitleURL:
     """Return title and url of 1st Youtube search.
 
     Args:
@@ -85,24 +97,21 @@ def youtube_top_link(user_input: str) -> tuple:
 
     """
     result = search_youtube(user_input, number=1)
-    try:
+    with contextlib.suppress(IndexError):
         url = get_youtube_url(result[0])
-        return result[0]['title'], url
-    except IndexError:
-        pass
+        return result[0].title, url
 
 
 def get_youtube_url(result) -> str:
     """Make youtube url of 'result' (video, playlist, or channel)."""
-    if result['type'] == 'video':
-        url = f"https://www.youtube.com/watch?v={result['id']}"
-    elif result['type'] == 'playlist':
-        url = f"https://www.youtube.com/playlist?list={result['id']}"
-    elif result['type'] == 'channel':
-        url = f"https://www.youtube.com/channel/{result['id']}"
-    else:  # pragma: no cover
-        url = None
-    return url
+    if result.type_ == 'channel':
+        return f"https://www.youtube.com/channel/{result.id_}"
+    elif result.type_ == 'playlist':
+        return f"https://www.youtube.com/playlist?list={result.id_}"
+    elif result.type_ == 'video':
+        return f"https://www.youtube.com/watch?v={result.id_}"
+    else:
+        return None
 
 
 class Youtube(commands.Cog):
@@ -139,8 +148,8 @@ class Youtube(commands.Cog):
                               "ou dites \"cancel\" pour annuler")
         for s in result:
             url = get_youtube_url(s)
-            embed.add_field(name=f"{result.index(s)+1}.{s['type']}",
-                            value=f"[{s['title']}]({url})", inline=False)
+            embed.add_field(name=f"{result.index(s)+1}.{s.type_}",
+                            value=f"[{s.title}]({url})", inline=False)
         self_message = await ctx.send(embed=embed)
 
         def check(message):

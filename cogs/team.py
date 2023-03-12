@@ -15,20 +15,13 @@ class Team(commands.Cog):
 
     @commands.command()
     @commands.has_any_role(*staff_role)
-    async def team(self, ctx):
+    async def team(self, ctx: commands.Context):
         """Give 'team' role to user list."""
-        member_list = ctx.message.mentions  # une liste d'objets
-        counter = 0
-        if not member_list:
-            pass
-        else:
+        if member_list := ctx.message.mentions:
             for member in member_list:
-                if self._role_dcteam in member.roles:  # le counter c'est pour voir si tous les membres mentionnés  # noqa: E501
-                    counter += 1
-                await member.add_roles(self._role_dcteam)  # sont dans la team, alors on n'affiche pas le message de bienvenue  # noqa: E501
-            if counter == len(member_list):
-                return None
-            await ctx.send(content="Bienvenue dans la Team !")
+                if self._role_dcteam not in member.roles:
+                    await member.add_roles(self._role_dcteam)
+                    await ctx.send(content="Bienvenue dans la Team !")
 
     @team.error
     async def team_error(self, ctx, error):

@@ -34,17 +34,15 @@ async def getcomics_directlink(comic_url: str) -> str:
     """Get download links in a getcomics post."""
     # BeautifulSoup will transform raw HTML in a tree easy to parse
     soup = await get_soup_html(comic_url)
-
     direct_download = soup.find('a', class_='aio-red')
 
     # temp_url is not the final cbz or cbr download url
-    temp_url = direct_download['href']
+    temp_url = direct_download.get('href')
 
     # We follow temp_url to find final URL
     await asyncio.sleep(1)
 
     session = aiohttp.ClientSession()
-
     res2 = await session.get(temp_url, allow_redirects=False, timeout=3, ssl=False)  # noqa:E501
     await session.close()
 
@@ -54,13 +52,8 @@ async def getcomics_directlink(comic_url: str) -> str:
     elif res2.status == 302:
         # print("302, Found Comic URL")
         return res2.headers['location']
-    elif res2.status == 404:  # pragma: no cover
-        # print('404, returning post url')
-        # in this case, return the getcomics post url
-        return comic_url
-    else:  # pragma: no cover
-        # in this case, return the getcomics post url
-        # print("unkwnown response code")
+    else:
+        # in every other cases (Error 404, etc...) we just return the post URL
         return comic_url
 
 

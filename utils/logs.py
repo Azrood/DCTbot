@@ -32,13 +32,13 @@ class CommandLog:
         # read
         self._file_read()
 
-    def _file_read(self):
+    def _file_read(self) -> dict:
         with open(self.file) as json_file:
             data = json.load(json_file)
         self.logs = data
         return data
 
-    def _file_write(self, data):
+    def _file_write(self, data: dict):
         with open(self.file, 'w') as outfile:
             json.dump(data, outfile, sort_keys=True, indent=4)
 
@@ -46,7 +46,7 @@ class CommandLog:
         days = list(self.logs.keys())
         return days[:num]
 
-    def _get_channel(self, date, channel):
+    def _get_channel(self, date: str, channel: str):
         try:
             return [(k, v['user'], v['command'])
                     for k, v in self.logs[date].items()
@@ -54,7 +54,7 @@ class CommandLog:
         except KeyError:  # pragma: no cover
             return None
 
-    def _get_command(self, date, command):
+    def _get_command(self, date: str, command: str):
         try:
             return [(k, v['user'], v['channel'])
                     for k, v in self.logs[date].items()
@@ -62,28 +62,29 @@ class CommandLog:
         except KeyError:  # pragma: no cover
             return None
 
-    def _get_user(self, date, user):
+    def _get_user(self, date: str, user: str):
         try:
             return [(k, v["command"], v["channel"])
                     for k, v in self.logs[date].items() if v['user'] == user]
         except KeyError:  # pragma: no cover
             return None
 
-    def _get_log_day(self, date):
+    def _get_log_day(self, date: str):
         try:
             return [(k, v["user"], v["command"], v["channel"])
                     for k, v in self.logs[date].items()]
         except KeyError:  # pragma: no cover
             return None
 
-    def _get_date_time(self, user, command, channel):
+    def _get_date_time(self, user: str, command: str, channel: str):
         try:
             return [(k, time) for k, v in self.logs.items() for time in v.keys()  # noqa:E501
                     if v[time] == {'channel': channel, 'user': user, 'command': command}]  # noqa:E501
         except KeyError:  # pragma: no cover
             return None
 
-    def log_write(self, date, time, channel, command, user):
+    def log_write(self,
+                  date: str, time: str, channel: str, command: str, user: str):
         """Write logs in json file. All parameters are `str`.
 
         `date` in format 'dd/mm/yyyy'
@@ -104,7 +105,7 @@ class CommandLog:
         """Return 'num' latest dates in the log file. Default to 10."""
         return self._get_dates(num)
 
-    def log_read(self, date, user, command, channel):
+    def log_read(self, date: str, user: str, command: str, channel: str):
         """Return logs in a list depending on the parameters passed."""
         # channel, user and command will be called "entries"
 

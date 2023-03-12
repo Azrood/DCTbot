@@ -10,19 +10,21 @@ from discord.ext import commands
 
 class Cards(commands.Cog):
     def __init__(self, bot):
-        self.help = "azrod\nbane\nrun\nsergei\nxanatos\nphoe"
         self.bot = bot
+        self.cards_dir = Path(__file__).resolve().parents[1] / "pictures" / "cards"
+        self.cards_list = [child.stem for child in self.cards_dir.iterdir()]
 
     @commands.hybrid_command()
     async def poke(self, ctx, people: str):
         """Send card made by Slyrax."""
         people = people.lower()
         if people == "help":  # probably needs improvements
-            embed = discord.Embed(title="Liste des cartes \nSyntaxe : !poke <nom>", description=self.help)  # use this to get by until improvement  # noqa: E501
+            embed = discord.Embed(title="Liste des cartes \nSyntaxe : !poke <nom>",
+                                  description="\n".join(self.cards_list))
             embed.set_footer(text="Merci à Slyrax pour les cartes !")
             await ctx.send(embed=embed)
 
-        else:
-            card_file = Path(__file__).resolve().parents[1] / "pictures" / "cards" / f"{people}.jpg"  # noqa: E501
-            f = discord.File(fp=card_file, filename=people+".jpg")  # discord.File can't handle f-strings apparently  # noqa: E501,E226
+        elif people in self.cards_list:
+            card_file = self.cards_dir / f"{people}.jpg"  # noqa: E501
+            f = discord.File(fp=card_file, filename=f"{people}.jpg")
             await ctx.send(file=f)

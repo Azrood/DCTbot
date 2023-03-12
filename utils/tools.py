@@ -10,7 +10,7 @@ from discord.utils import find as disc_find
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}  # noqa:E501
 
 
-def string_is_int(string):  # pragma: no cover
+def string_is_int(string: str) -> bool:  # pragma: no cover
     """Return if 'string' is an int or not (bool)."""
     try:
         int(string)
@@ -19,7 +19,7 @@ def string_is_int(string):  # pragma: no cover
         return False
 
 
-async def get_soup_lxml(url):
+async def get_soup_lxml(url: str) -> BeautifulSoup:
     """Return a BeautifulSoup soup from given url, Parser is lxml.
 
     Args:
@@ -38,7 +38,7 @@ async def get_soup_lxml(url):
     return BeautifulSoup(text, 'lxml')
 
 
-async def get_soup_html(url) -> BeautifulSoup:
+async def get_soup_html(url: str) -> BeautifulSoup:
     """Return a BeautifulSoup soup from given url, Parser is html.parser.
 
     Args:
@@ -74,7 +74,7 @@ def args_separator_for_log_function(guild, args):
     return [user, command, channel]
 
 
-async def get_soup_xml(url):
+async def get_soup_xml(url: str) -> BeautifulSoup:
     """Return a BeautifulSoup soup from given url, Parser is xml.
 
     Args:

@@ -15,14 +15,10 @@ async def get_comicsblog(numb: int):
         list: list of comicsblog news
 
     """
-    num = int(numb)
     c_blog_rss = "http://www.comicsblog.fr/comicsblog.rss"
 
     soup = await get_soup_html(c_blog_rss)
-    ls = soup.select('item')
-    out = ls[:num]
-
-    return out
+    return soup.select('item')[:numb]
 
 
 class Comicsblog(commands.Cog):
@@ -41,6 +37,7 @@ class Comicsblog(commands.Cog):
         embed = discord.Embed(title=f"les {num} derniers articles de comicsblog",  # noqa:E501
                               color=0xe3951a)
         for art in articles:
-            embed.add_field(name=art.find('title').text, value=art.find('guid').text,  # noqa:E501
+            embed.add_field(name=art.find('title').text,
+                            value=art.find('guid').text,
                             inline=False)
         await ctx.send(embed=embed)

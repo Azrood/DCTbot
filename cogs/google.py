@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 """Google cog."""
 
+
 # import os
 import aiohttp
+import contextlib
 import json
 from urllib.parse import quote_plus
+from typing import NamedTuple, List
 
 import discord
 from discord.ext import commands
@@ -12,7 +15,12 @@ from discord.ext import commands
 from utils.secret import token_youtube, DEVELOPER_CX
 
 
-async def search_google(user_input: str, number: int):
+class Result(NamedTuple):
+    title: str
+    url: str
+
+
+async def search_google(user_input: str, number: int) -> List[Result]:
     """Search on Google.
 
     Args:
@@ -20,7 +28,7 @@ async def search_google(user_input: str, number: int):
         number (int): number of responses
 
     Returns:
-        list: list of results (list of dicts with 'title' and 'link' keys)
+        list: list of results (list of namedtuple with 'title' and 'link' keys)
 
     """
     google_search_url = "https://www.googleapis.com/customsearch/v1"
@@ -30,9 +38,9 @@ async def search_google(user_input: str, number: int):
         'cx': DEVELOPER_CX,
         'safe': 'active',
         'hl': 'fr',
-        'num': int(number),
+        'num': number,
         'fields': 'items(kind,link,title)',
-        'key': token_youtube
+        'key': token_youtube,
     }
     session = aiohttp.ClientSession()
 
@@ -46,10 +54,10 @@ async def search_google(user_input: str, number: int):
     except KeyError:  # pragma: no cover
         json_data = []
 
-    return [{'title': j['title'], 'url': j['link']} for j in json_data]
+    return [Result(j['title'], j['link']) for j in json_data]
 
 
-async def google_top_link(user_input: str):
+async def google_top_link(user_input: str) -> Result:
     """Get first result of Google search.
 
     Args:
@@ -77,11 +85,9 @@ class Google(commands.Cog):
         Args:
             query (str): Search on google.
         """
-        try:
+        with contextlib.suppress(TypeError):
             result = await google_top_link(query)
-            await ctx.send(content=f"{result['title']}\n {result['url']}")
-        except TypeError:  # pragma: no cover
-            pass
+            await ctx.send(content=f"{result.title}\n {result.url}")
 
     @commands.hybrid_command()
     async def googlelist(self, ctx, num: int, *, args: str):
@@ -95,5 +101,5 @@ class Google(commands.Cog):
         embed = discord.Embed(title=f"Les {num} premiers résultats de la recherche",  # noqa: E501
                               color=0x3b5cbe)
         for r in result:
-            embed.add_field(name=r['title'], value=r['url'], inline=False)
+            embed.add_field(name=r.title, value=r.url, inline=False)
         await ctx.send(embed=embed)
