@@ -68,8 +68,8 @@ async def google_top_link(user_input: str) -> Result:
 
     """
     try:
-        result = await search_google(user_input, number=1)
-        return result[0]
+        results = await search_google(user_input, number=1)
+        return results[0]
     except IndexError:  # pragma: no cover
         return None
 
@@ -79,7 +79,7 @@ class Google(commands.Cog):
         self.bot = bot
 
     @commands.hybrid_command()
-    async def google(self, ctx, *, query: str):
+    async def google(self, ctx: commands.Context, *, query: str):
         """Send first Google search result.
 
         Args:
@@ -87,7 +87,7 @@ class Google(commands.Cog):
         """
         with contextlib.suppress(TypeError):
             result = await google_top_link(query)
-            await ctx.send(content=f"{result.title}\n {result.url}")
+            await ctx.send(content=f"{result.title}\n{result.url}")
 
     @commands.hybrid_command()
     async def googlelist(self, ctx, num: int, *, args: str):
@@ -97,9 +97,9 @@ class Google(commands.Cog):
             num (int): number of results desired.
             args (str): Search on google.
         """
-        result = await search_google(args, num)
+        results = await search_google(args, num)
         embed = discord.Embed(title=f"Les {num} premiers résultats de la recherche",  # noqa: E501
                               color=0x3b5cbe)
-        for r in result:
-            embed.add_field(name=r.title, value=r.url, inline=False)
+        for res in results:
+            embed.add_field(name=res.title, value=res.url, inline=False)
         await ctx.send(embed=embed)

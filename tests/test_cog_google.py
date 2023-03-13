@@ -1,3 +1,5 @@
+from typing import List
+
 import pytest
 import pytest_asyncio
 # from unittest import mock
@@ -12,28 +14,29 @@ from cogs import google
 #########################
 
 @pytest.fixture
-def search_result():
-    return [{"title": "Python Docs",
-             "url": "https://docs.python.org/"},
-            {"title": "Documentation - Our Documentation | Python.org",
-             "url": "https://www.python.org/doc/"}]
+def search_results() -> List[google.Result]:
+    return [google.Result(title="Python Docs",
+                          url="https://docs.python.org/"),
+            google.Result(title="Documentation - Our Documentation | Python.org",
+                          url="https://www.python.org/doc/")
+            ]
 
 
 @pytest.fixture(autouse=True)
-def mock_response(monkeypatch, search_result):
+def mock_response(monkeypatch, search_results):
 
     async def mock_resp(*args, **kwargs):
-        return search_result
+        return search_results
 
     monkeypatch.setattr(google, "search_google", mock_resp)
 
 
 @pytest.fixture
-def expected_embed(search_result):
+def expected_embed(search_results):
     embed = discord.Embed(title="Les 2 premiers résultats de la recherche",
                           color=0x3b5cbe)
-    for r in search_result:
-        embed.add_field(name=r['title'], value=r['url'], inline=False)
+    for res in search_results:
+        embed.add_field(name=res.title, value=res.url, inline=False)
 
     return embed
 
@@ -54,7 +57,7 @@ async def bot_google(bot):
 async def test_command_google():
 
     await dpytest.message('!google python doc')
-    assert dpytest.verify().message().content("Python Docs\n https://docs.python.org/")
+    assert dpytest.verify().message().content("Python Docs\nhttps://docs.python.org/")
 
 
 @pytest.mark.asyncio

@@ -21,8 +21,8 @@ async def test_google_top_link(monkeypatch):
             "link": "https://docs.python.org/"}
             ]}'''  # noqa
 
-        # Let's create fake ("Mock") response, which text() always
-        # returns txt string
+        # Let's create fake ("Mock") response, 
+        # which text() always returns txt string
         # See https://asynctest.readthedocs.io/en/latest/tutorial.mocking.html#mocking-of-coroutines  # noqa: E501
         mocked_resp = asynctest.Mock()
         mocked_resp.text = asynctest.CoroutineMock(return_value=txt)
@@ -39,8 +39,8 @@ async def test_google_top_link(monkeypatch):
 
     res = await google_top_link("python doc")
 
-    assert res['title'] == "Python Docs"
-    assert res['url'] == "https://docs.python.org/"
+    assert res.title == "Python Docs"
+    assert res.url == "https://docs.python.org/"
 
 
 @pytest.mark.asyncio
@@ -66,4 +66,4 @@ async def test_search_google(monkeypatch):
     res = await search_google("python3 doc", 3)
 
     assert len(res) == 3
-    assert res[0]["title"] == "3.8.2rc2 Documentation"
+    assert res[0].title == "3.8.2rc2 Documentation"

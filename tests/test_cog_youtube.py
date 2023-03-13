@@ -24,20 +24,20 @@ async def bot_youtube(bot, monkeypatch):
 
 @pytest.fixture
 def one_result():
-    return [{'title': 'Never gonna give you up',
-             'type': 'video',
-             'id': 'dQw4w9WgXcQ'}]
+    return [youtube.Result(title="Never gonna give you up",
+                           type_="video",
+                           id_="dQw4w9WgXcQ")]
 
 
 @pytest.fixture
 def two_results():
-    return [{'title': 'Pastime Paradise',
-             'type': 'video',
-             'id': '_H3Sv2zad6s'},
-            {'title': "Gangsta's Paradise",
-             'type': 'video',
-             'id': 'fPO76Jlnz6c'}
-            ]
+
+    return [youtube.Result(title="Pastime Paradise",
+                           type_="video",
+                           id_="_H3Sv2zad6s"),
+            youtube.Result(title="Gangsta's Paradise",
+                           type_="video",
+                           id_="fPO76Jlnz6c")]
 
 
 @pytest.fixture
@@ -45,10 +45,10 @@ def embed_first_result(two_results):
     embed = discord.Embed(color=0xFF0000)
     embed.set_footer(text="Tapez un nombre pour faire votre choix "
                      "ou dites \"cancel\" pour annuler")
-    for s in two_results:
-        url = youtube.get_youtube_url(s)
-        embed.add_field(name=f"{two_results.index(s)+1}.{s['type']}",
-                        value=f"[{s['title']}]({url})", inline=False)
+    for res in two_results:
+        url = youtube.get_youtube_url(res)
+        embed.add_field(name=f"{two_results.index(res)+1}.{res.type_}",
+                        value=f"[{res.title}]({url})", inline=False)
     return embed
 
 
@@ -57,10 +57,10 @@ def embed_two_results(two_results):
     embed = discord.Embed(color=0xFF0000)
     embed.set_footer(text="Tapez un nombre pour faire votre choix "
                      "ou dites \"cancel\" pour annuler")
-    for s in two_results:
-        url = youtube.get_youtube_url(s)
-        embed.add_field(name=f"{two_results.index(s)+1}.{s['type']}",
-                        value=f"[{s['title']}]({url})", inline=False)
+    for res in two_results:
+        url = youtube.get_youtube_url(res)
+        embed.add_field(name=f"{two_results.index(res)+1}.{res.type_}",
+                        value=f"[{res.title}]({url})", inline=False)
     return embed
 
 
@@ -110,8 +110,8 @@ async def test_command_youtube(monkeypatch, mock_wait_for, one_result):
     monkeypatch.setattr(youtube, "search_youtube", lambda *args, **kwargs: one_result)
 
     await dpytest.message('!youtube never gonna give you up')
-    assert dpytest.verify().message().content(f"{one_result[0]['title']}\n"
-                                              f"https://www.youtube.com/watch?v={one_result[0]['id']}")  # noqa: E501
+    assert dpytest.verify().message().content(f"{one_result[0].title}\n"
+                                              f"https://www.youtube.com/watch?v={one_result[0].id_}")  # noqa: E501
 
 
 @pytest.mark.asyncio
