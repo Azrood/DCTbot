@@ -1,3 +1,4 @@
+import contextlib
 import os
 import shutil
 import subprocess
@@ -65,29 +66,25 @@ def cleantest(c):
     # Find .pyc or .pyo files and delete them
     # exclude = ('venv', '.venv')
     p = Path('.')
-    genpyc = (i for i in p.glob('**/*.pyc'))
-    genpyo = (i for i in p.glob('**/*.pyo'))
-    artifacts = chain(genpyc, genpyo)
+    artifacts = p.glob('**/*.py[co]')
     for art in artifacts:
-        os.remove(art)
+        art.unlink()
 
     # Delete caches folders
-    cache1 = (i for i in p.glob('**/__pycache__'))
-    cache2 = (i for i in p.glob('**/.pytest_cache'))
-    cache3 = (i for i in p.glob('**/.mypy_cache'))
+    cache1 = p.glob('**/__pycache__')
+    cache2 = p.glob('**/.pytest_cache')
+    cache3 = p.glob('**/.mypy_cache')
     caches = chain(cache1, cache2, cache3)
     for cache in caches:
         shutil.rmtree(cache)
 
     # Delete coverage artifacts
-    try:
+    with contextlib.suppress(FileNotFoundError):
         os.remove('.coverage')
         shutil.rmtree('htmlcov')
-    except FileNotFoundError:
-        pass
 
 
-@task
+@ task
 def cleanbuild(c):
     """Clean dist/, build/ and egg-info/."""
     exclude = ('venv', '.venv')
@@ -100,19 +97,19 @@ def cleanbuild(c):
         shutil.rmtree(b)
 
 
-@task(cleantest, cleanbuild)
+@ task(cleantest, cleanbuild)
 def clean(c):
     """Equivalent to both cleanbuild and cleantest..."""
     pass
 
 
-@task
+@ task
 def test(c):
     """Run tests with pytest."""
     c.run("pytest tests/")
 
 
-@task
+@ task
 def coverage(c):
     """Run unit-tests using pytest, with coverage reporting."""
     # use the browser defined in varenv $BROWSER

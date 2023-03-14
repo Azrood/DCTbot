@@ -5,35 +5,34 @@
 import re
 from operator import itemgetter
 from string import ascii_uppercase
+from typing import Dict, List
 
 import aiohttp
 
 
-def get_sub_forums(html):
-    sub_forums = html.select("a.forumtitle")
-    if sub_forums:
+def get_sub_forums(htmlsoup) -> List[Dict]:
+    if sub_forums := htmlsoup.select("a.forumtitle"):
         return [{'name': s.text, 'url': s['href']} for s in sub_forums]
     return []
 
 
-def get_nb_topics(html):
+def get_nb_topics(htmlsoup) -> int:
     """Get number of topics in sub-forum."""
     try:
-        raw = html.select('div.pagination')[0].text
-        n = re.search(r"(?P<nb_topics>\d+?) sujet(s)?", raw).group('nb_topics')
+        raw = htmlsoup.select('div.pagination')[0].text
+        n = re.search(r"(?P<nb_topics>\d+?) sujet(s)?", raw)['nb_topics']
         return int(n)
     except AttributeError:
         return 0
 
 
-def get_topics(html):
-    topics = html.select("a.topictitle")
-    if topics:
+def get_topics(htmlsoup) -> List[Dict]:
+    if topics := htmlsoup.select("a.topictitle"):
         return [{'name': t.text, 'url': t['href']} for t in topics]
     return []
 
 
-async def get_all_topics(phpbb, html, url):
+async def get_all_topics(phpbb, html, url) -> List[Dict]:
     # First iteration, we allready have the html from the while loop
     n = get_nb_topics(html)
     topics = get_topics(html)
@@ -53,15 +52,13 @@ async def get_all_topics(phpbb, html, url):
     return sorted_topics
 
 
-def print_res_numbers(res_list, start_index=0):
+def print_res_numbers(res_list, start_index=0) -> None:
     if res_list:
         for i, res in enumerate(res_list, start_index):
-            # print(i, res['name'], res['url'])
             print(f"{i:.<5d}{res['name']:.<20s}{res['url']}")
 
 
-def print_res_letters(res_list, start_index=0):
+def print_res_letters(res_list, start_index=0) -> None:
     if res_list:
         for i, res in enumerate(res_list, start_index):
-            # print(i, res['name'], res['url'])
             print(f"{ascii_uppercase[i]:.<5s}{res['name']:.<20s}{res['url']}")

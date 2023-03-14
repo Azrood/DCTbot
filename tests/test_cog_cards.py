@@ -36,8 +36,11 @@ async def test_card():
 
 @pytest.mark.asyncio
 async def test_card_help():
+    cards_dir = Path(__file__).resolve().parents[1] / "pictures" / "cards"
+    cards_list = [child.stem for child in cards_dir.iterdir()]
+
     expected = discord.Embed(title="Liste des cartes \nSyntaxe : !poke <nom>",
-                             description="azrod\nbane\nrun\nsergei\nxanatos\nphoe")  # noqa: E501
+                             description='\n'.join(cards_list))  # noqa: E501
     expected.set_footer(text="Merci à Slyrax pour les cartes !")
 
     await dpytest.message('!poke help')

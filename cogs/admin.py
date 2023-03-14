@@ -121,6 +121,7 @@ class LogsEmbedGenerator():
 
     arg_lists is always ['user', 'command', 'channel']
     """
+
     def __init__(self, args_list, logs):
         self.user, self.command, self.channel = args_list
         self.logs = logs
@@ -133,7 +134,7 @@ class LogsEmbedGenerator():
 
     def generate_logs_embed(self):
         """Switch/case implementation. Use the right embed generator."""
-        return getattr(self, '_gen_' + str(self.n))()
+        return getattr(self, f'_gen_{str(self.n)}')()
 
     def _gen_0(self):  # [None, None, None]
         for v in self.logs:

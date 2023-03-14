@@ -102,7 +102,7 @@ def youtube_top_link(user_input: str) -> TitleURL:
         return result[0].title, url
 
 
-def get_youtube_url(result) -> str:
+def get_youtube_url(result: Result) -> str:
     """Make youtube url of 'result' (video, playlist, or channel)."""
     if result.type_ == 'channel':
         return f"https://www.youtube.com/channel/{result.id_}"
@@ -142,14 +142,14 @@ class Youtube(commands.Cog):
             query (str): search on youtube.
         """
         num = num if num <= 10 else 10
-        result = search_youtube(user_input=query, number=num)
+        results = search_youtube(user_input=query, number=num)
         embed = discord.Embed(color=0xFF0000)
         embed.set_footer(text="Tapez un nombre pour faire votre choix "
                               "ou dites \"cancel\" pour annuler")
-        for s in result:
-            url = get_youtube_url(s)
-            embed.add_field(name=f"{result.index(s)+1}.{s.type_}",
-                            value=f"[{s.title}]({url})", inline=False)
+        for res in results:
+            url = get_youtube_url(res)
+            embed.add_field(name=f"{results.index(res)+1}.{res.type_}",
+                            value=f"[{res.title}]({url})", inline=False)
         self_message = await ctx.send(embed=embed)
 
         def check(message):
@@ -165,8 +165,8 @@ class Youtube(commands.Cog):
                 await msg.delete(delay=1)
             else:
                 num = int(msg.content)
-                if 0 < num <= len(result):
-                    url = get_youtube_url(result[num - 1])
+                if 0 < num <= len(results):
+                    url = get_youtube_url(results[num - 1])
                     await ctx.send(content=f"{url}")
                     await ctx.message.delete(delay=2)
                     await self_message.delete(delay=None)
