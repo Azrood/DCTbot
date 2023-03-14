@@ -36,7 +36,7 @@ def make_numbers_list(input_list, start_index=0):
     return out
 
 
-def make_embed1(sub_forums, topics, active_topics_flag, topics_page):
+def make_embed1(sub_forums, topics, active_topics_flag, topics_page) -> discord.Embed:
     embed = discord.Embed()
     if sub_forums:
         forums_value = "\n".join(make_letters_list(sub_forums))
@@ -48,7 +48,7 @@ def make_embed1(sub_forums, topics, active_topics_flag, topics_page):
     return embed
 
 
-def make_embed2(nb_topics):
+def make_embed2(nb_topics: int) -> discord.Embed:
     if nb_topics > 10:
         choices = ("- une lettre/un nombre pour naviguer\n"
                    "- 'ù' pour remonter dans le dossier précédent\n"
@@ -56,12 +56,10 @@ def make_embed2(nb_topics):
                    "- ':' pour la page précédente de topics (10 d'avant)\n"
                    "- 'exit' pour sortir.\n")
     else:
-        choices = ("- un nombre pour naviguer dans un dossier\n"
+        choices = ("- une lettre/un nombre pour naviguer\n"
                    "- 'ù' pour remonter dans le dossier précédent\n"
                    "- 'exit' pour sortir.\n")
-    embed2 = discord.Embed(title="Entrez un choix :",
-                           description=choices)
-    return embed2
+    return discord.Embed(title="Entrez un choix :", description=choices)
 
 
 class Browse(commands.Cog):
@@ -75,6 +73,7 @@ class Browse(commands.Cog):
         phpbb = PhpBB(forum_host)
         async with ctx.channel.typing():
             is_logged = await phpbb.login(forum_user_name, forum_password)
+            logger.debug("Logge in the forum !")
         if not is_logged:
             logger.error("Not logged in forum.")
             return
