@@ -22,7 +22,7 @@ def get_nb_topics(htmlsoup) -> int:
         raw = htmlsoup.select('div.pagination')[0].text
         n = re.search(r"(?P<nb_topics>\d+?) sujet(s)?", raw)['nb_topics']
         return int(n)
-    except AttributeError:
+    except (AttributeError, TypeError):
         return 0
 
 
