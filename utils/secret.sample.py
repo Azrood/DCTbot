@@ -4,11 +4,11 @@ Rename file in 'secret.py'
 """
 
 
-token = "XXXXXXXXXXXXXXXXXXXX"  # str
+TOKEN = "XXXXXXXXXXXXXXXXXXXX"  # str
 dcteam_role_id = "XXXXXXXXXXXXXXXXX"  # int
 main_guild_id = "XXXXXXXXXXXXXXXXXX"  # int
 modo_role_id = "XXXXXXXXXXXXXXX"  # int
-token_youtube = "XXXXXXXXXXXXXXXXXXX"  # str
+TOKEN_YOUTUBE = "XXXXXXXXXXXXXXXXXXX"  # str
 DEVELOPER_CX = "XXXXXXXXXXXXXXXXXXXXXXXXXXX"  # str
 dcteam_category_id = "XXXXXXXXXXXXXXXXXx"  # int
 

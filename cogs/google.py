@@ -7,7 +7,7 @@ import aiohttp
 import contextlib
 import json
 from urllib.parse import quote_plus
-from typing import NamedTuple, List
+from typing import NamedTuple, List, Dict
 
 import discord
 from discord.ext import commands
@@ -50,7 +50,7 @@ async def search_google(user_input: str, number: int) -> List[Result]:
     await session.close()
 
     try:
-        json_data = json.loads(text)["items"]
+        json_data: List[Dict] = json.loads(text)["items"]
     except KeyError:  # pragma: no cover
         json_data = []
 

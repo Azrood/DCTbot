@@ -21,27 +21,27 @@ class Notifications(commands.Cog):
         self.bot: commands.Bot = bot
 
     @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
+    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
         """Read all the reactions added (even those not in cache)
             and filter by messageID to check the message where the reaction
             was removed and give the user whose reaction was removed
             a specific role
         """
-        user = self.bot.guild.get_member(payload.user_id)
+        user: discord.Member = self.bot.guild.get_member(payload.user_id)
 
         # video_game emoji -> free games notification subscribe
         if (payload.emoji.name == "\U0001f3ae"
                 and payload.message_id == react_role_msg_id):
-            freegame_role = discord.utils.get(self.bot.guild.roles,
-                                              name="jeux gratuits")
+            freegame_role: discord.Role = discord.utils.get(self.bot.guild.roles,
+                                                            name="jeux gratuits")
             await user.add_roles(freegame_role)
             await user.send(content=freegame_on)
 
         # ring_bell emoji -> new releases notification subscribe
         if (payload.emoji.name == "\U0001f514"
                 and payload.message_id == react_role_msg_id):
-            header_role = discord.utils.get(self.bot.guild.roles,
-                                            name="header release")
+            header_role: discord.Role = discord.utils.get(self.bot.guild.roles,
+                                                          name="header release")
             await user.add_roles(header_role)
             await user.send(content=newrelease_on)
 
@@ -49,8 +49,8 @@ class Notifications(commands.Cog):
         if (payload.emoji.name == "\U0000274C"
                 and payload.message_id == 654272251276820501):
             roles = user.roles[1:]
-            keupains_role = discord.utils.get(self.bot.guild.roles,
-                                              name="Keupains")
+            keupains_role: discord.Role = discord.utils.get(self.bot.guild.roles,
+                                                            name="Keupains")
             await user.remove_roles(*roles)
             await user.add_roles(keupains_role)
             await user.send(content="Keupains pour toujours et à jamais !")
@@ -58,16 +58,16 @@ class Notifications(commands.Cog):
         # elf -> jeu de role
         if (payload.emoji.name == "\U0001F9DD"
                 and payload.message_id == react_role_msg_id):
-            new_role = discord.utils.get(self.bot.guild.roles,
-                                         name="jeuderole")
+            new_role: discord.role = discord.utils.get(self.bot.guild.roles,
+                                                       name="jeuderole")
             await user.add_roles(new_role)
             await user.send(content=rpg_on)
 
         # man_mage -> Magic
         if (payload.emoji.name == "\U0001F9D9"
                 and payload.message_id == react_role_msg_id):
-            new_role = discord.utils.get(self.bot.guild.roles,
-                                         name="magiciens")
+            new_role: discord.role = discord.utils.get(self.bot.guild.roles,
+                                                       name="magiciens")
             await user.add_roles(new_role)
             await user.send(content=magic_on)
 
@@ -83,31 +83,31 @@ class Notifications(commands.Cog):
         # video_game emoji -> free games notification unsubscribe
         if (payload.emoji.name == "\U0001f3ae"
                 and payload.message_id == react_role_msg_id):
-            freegame_role = discord.utils.get(self.bot.guild.roles,
-                                              name="jeux gratuits")
+            freegame_role: discord.role = discord.utils.get(self.bot.guild.roles,
+                                                            name="jeux gratuits")
             await user.remove_roles(freegame_role)
             await user.send(content=freegame_off)
 
         # ring_bell emoji -> new releases notification unsubscribe
         if (payload.emoji.name == "\U0001f514"
                 and payload.message_id == react_role_msg_id):
-            header_role = discord.utils.get(self.bot.guild.roles,
-                                            name="header release")
+            header_role: discord.role = discord.utils.get(self.bot.guild.roles,
+                                                          name="header release")
             await user.remove_roles(header_role)
             await user.send(content=newrelease_off)
 
         # elf emoji -> no more jeuderole
         if (payload.emoji.name == "\U0001F9DD"
                 and payload.message_id == react_role_msg_id):
-            old_role = discord.utils.get(self.bot.guild.roles,
-                                         name="jeuderole")
+            old_role: discord.role = discord.utils.get(self.bot.guild.roles,
+                                                       name="jeuderole")
             await user.remove_roles(old_role)
             await user.send(content=rpg_off)
 
         # man_mage emoji -> no more Les Magiciens
         if (payload.emoji.name == "\U0001F9D9"
                 and payload.message_id == react_role_msg_id):
-            old_role = discord.utils.get(self.bot.guild.roles,
-                                         name="magiciens")
+            old_role: discord.role = discord.utils.get(self.bot.guild.roles,
+                                                       name="magiciens")
             await user.remove_roles(old_role)
             await user.send(content=magic_off)

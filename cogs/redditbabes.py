@@ -25,17 +25,14 @@ class RedditBabes(commands.Cog):
         # allready posted babes list
         logger.info("Entering hourly task.")
         nsfw_channel_history: list = [mess async for mess in discord.utils.get(self.bot.guild.text_channels, name='nsfw').history(limit=200)]  # noqa: E501
-        last_bot_messages = [
-            message.content
-            for message in nsfw_channel_history
-            if message.author == self.bot.user
-            ]
+        last_bot_messages = [message.content
+                             for message in nsfw_channel_history
+                             if message.author == self.bot.user]
         logger.info("Messages fetched.")
         # Reddit client
-        reddit = asyncpraw.Reddit(
-            client_id=reddit_client_id,
-            client_secret=reddit_client_secret,
-            user_agent=reddit_user_agent)
+        reddit = asyncpraw.Reddit(client_id=reddit_client_id,
+                                  client_secret=reddit_client_secret,
+                                  user_agent=reddit_user_agent)
 
         logger.info("Reddit ok.")
 
