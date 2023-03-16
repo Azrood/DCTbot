@@ -14,9 +14,12 @@ import cogs
 from utils.bot_logging import setup_logging
 from utils.logs import CommandLog
 from utils.gif_json import GifJson
-from utils.secret import token, dcteam_role_id, main_guild_id, modo_role_id
+from utils.secret import TOKEN, dcteam_role_id, main_guild_id, modo_role_id
 
-prefix = '!'
+setup_logging(Path(__file__).resolve().parent / 'logging.json')
+logger = logging.getLogger(__name__)
+
+PREFIX = '!'
 
 # --debug option
 parser = argparse.ArgumentParser()
@@ -24,9 +27,9 @@ parser.add_argument("-d", "--debug",
                     help="change prefix to '?'", action="store_true")
 args = parser.parse_args()
 if args.debug:
-    print("You are in debug mode.")
-    print("Prefix is now '?'")
-    prefix = '?'
+    logger.info("You are in debug mode.")
+    logger.info("Prefix is now '?'")
+    PREFIX = '?'
 # done with parsing options with argparser
 
 intents = discord.Intents.default()
@@ -34,7 +37,7 @@ intents.members = True
 intents.message_content = True
 
 
-bot = commands.Bot(command_prefix=prefix, help_command=None,
+bot = commands.Bot(command_prefix=PREFIX, help_command=None,
                    description=None, case_insensitive=True,
                    intents=intents)
 
@@ -63,18 +66,18 @@ cogs_list = [cogs.Admin,
 @bot.event
 async def on_ready():
     """Log in Discord."""
-    print('Logged in as')
-    print(bot.user.name)
-    print(bot.user.id)
-    print('------')
+    logger.info('Logged in as')
+    logger.info(bot.user.name)
+    logger.info(bot.user.id)
+    logger.info('------')
     bot.guild = bot.get_guild(main_guild_id)  # se lier au serveur à partir de l'ID
     try:
-        bot.role_dcteam = bot.guild.get_role(dcteam_role_id)
-        bot.role_modo = bot.guild.get_role(modo_role_id)
+        bot.role_dcteam: discord.Role = bot.guild.get_role(dcteam_role_id)
+        bot.role_modo: discord.Role = bot.guild.get_role(modo_role_id)
     except AttributeError:
         bot.role_dcteam = 0
         bot.role_modo = 0
-    bot.prefix = prefix
+    bot.prefix = PREFIX
     bot.nsfw_channel = discord.utils.get(bot.guild.text_channels, name='nsfw')
     bot.log = CommandLog("logs.json")
     bot.gifs = GifJson("gifs.json")
@@ -93,18 +96,14 @@ async def on_ready():
 #                                      for name in bot.gifs.gifs]):
 #         raise error
 
-
-setup_logging(Path(__file__).resolve().parent / 'logging.json')
-logger = logging.getLogger(__name__)
-
-logger.info("This is an INFO message on the root logger.")
+# logger.info("This is an INFO message on the root logger.")
 # logger.warning("This is a WARNING message of the root logger")
 # logger.error("This is a ERROR message of the root logger")
 # logger.critical("This is a CRITICAL message of the root logger")
 
 try:
-    logger.info(f"New bot ran with discord.py version : {discord.__version__}")
-    bot.run(token)
+    logger.info("New bot ran with discord.py version : %s", discord.__version__)
+    bot.run(TOKEN)
 except Exception:
-    logger.critical(f"bot crashed with discord.py version : {discord.__version__}")
+    logger.critical("bot crashed with discord.py version : %s", discord.__version__)
     logger.critical("Unexpected critical error", exc_info=True)
