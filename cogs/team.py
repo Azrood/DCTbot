@@ -8,7 +8,7 @@ from utils.secret import staff_role
 
 
 class Team(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
         self._role_dcteam = bot.role_dcteam
         self.log = bot.log
@@ -30,7 +30,7 @@ class Team(commands.Cog):
 
     @commands.command(aliases=['clean'])
     @commands.has_any_role(*staff_role)
-    async def clear(self, ctx, nbr_msg: int):
+    async def clear(self, ctx: commands.Context, nbr_msg: int):
         """Clear n messages."""
         messages = [message async for message in ctx.channel.history(limit=nbr_msg + 1)]
         await ctx.channel.delete_messages(messages)

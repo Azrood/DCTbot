@@ -15,13 +15,15 @@ async def test_google_top_link(monkeypatch):
     """Test google_top_link."""
 
     async def mock_resp(*args, **kwargs):
-        txt = '''{"items": [
+        txt = '''
+        {"items": [
             {"kind": "customsearch#result", 
             "title": "Python Docs", 
             "link": "https://docs.python.org/"}
-            ]}'''  # noqa
+            ]
+        }'''  # noqa
 
-        # Let's create fake ("Mock") response, 
+        # Let's create fake ("Mock") response
         # which text() always returns txt string
         # See https://asynctest.readthedocs.io/en/latest/tutorial.mocking.html#mocking-of-coroutines  # noqa: E501
         mocked_resp = asynctest.Mock()

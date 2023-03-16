@@ -67,7 +67,7 @@ class Browse(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def browse(self, ctx):
+    async def browse(self, ctx):  # noqa: C901
         """Browse de forum.
         """
         phpbb = PhpBB(forum_host)

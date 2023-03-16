@@ -53,7 +53,7 @@ class BonjourMadame(commands.Cog):
         if book:
             try:
                 p = Path(__file__).parent / "bonjour_exclude.txt"
-                with open(p, mode='r', encoding='utf-8') as f:
+                with open(p, encoding='utf-8') as f:
                     excludes = f.read().splitlines()
             except FileNotFoundError:
                 logger.error("cogs/bonjour_excludes.txt is missing")

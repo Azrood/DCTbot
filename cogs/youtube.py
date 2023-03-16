@@ -15,14 +15,14 @@ import discord
 from discord.ext import commands
 import googleapiclient.discovery
 
-from utils.secret import token_youtube
+from utils.secret import TOKEN_YOUTUBE
 from utils.tools import string_is_int
 
 
 TitleURL = Tuple[str, str]
 
 
-class Result(NamedTuple):
+class Result(NamedTuple):  # pylint: disable=missing-class-docstring
     title: str
     type_: str
     id_: str
@@ -45,17 +45,16 @@ def search_youtube(user_input: str, number: int) -> List[Result]:
 
     api_service_name = "youtube"
     api_version = "v3"
-    DEVELOPER_KEY = token_youtube
+    DEVELOPER_KEY = TOKEN_YOUTUBE
 
     youtube = googleapiclient.discovery.build(
         api_service_name, api_version, developerKey=DEVELOPER_KEY,
         cache_discovery=False)
 
-    request = youtube.search().list(  # pylint: disable=no-member
-        part="snippet",
-        maxResults=number,
-        q=user_input
-    )
+    request = youtube.search().list(part="snippet",  # pylint: disable=no-member
+                                    maxResults=number,
+                                    q=user_input
+                                    )
     response = request.execute()
 
     items = response["items"]
@@ -106,15 +105,18 @@ def get_youtube_url(result: Result) -> str:
     """Make youtube url of 'result' (video, playlist, or channel)."""
     if result.type_ == 'channel':
         return f"https://www.youtube.com/channel/{result.id_}"
-    elif result.type_ == 'playlist':
+    if result.type_ == 'playlist':
         return f"https://www.youtube.com/playlist?list={result.id_}"
-    elif result.type_ == 'video':
+    if result.type_ == 'video':
         return f"https://www.youtube.com/watch?v={result.id_}"
-    else:
-        return None
+    return None
 
 
 class Youtube(commands.Cog):
+    """Youtube cog.
+    Commands are youtube and youtubelist
+    """
+
     def __init__(self, bot):
         self.bot = bot
 
