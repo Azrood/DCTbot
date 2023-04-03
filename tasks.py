@@ -42,14 +42,12 @@ def get_platform():
 def get_index_path():
     """Get full path for ./htmlcov/index.html file."""
     platform = get_platform()
-    if platform == "wsl":
-        # TODO: this part with .strip().replace() is ugly...
-        process = subprocess.run(['wslpath', '-w', '.'], capture_output=True, text=True)
-        pathstr = process.stdout.strip().replace('\\', '/')
-        path = Path(pathstr) / 'htmlcov/index.html'
-    else:
-        path = Path('.').resolve() / 'htmlcov' / 'index.html'
-    return path
+    if platform != "wsl":
+        return Path('.').resolve() / 'htmlcov' / 'index.html'
+    # TODO: this part with .strip().replace() is ugly...
+    process = subprocess.run(['wslpath', '-w', '.'], capture_output=True, text=True)
+    pathstr = process.stdout.strip().replace('\\', '/')
+    return Path(pathstr) / 'htmlcov/index.html'
 
 
 # TASKS------------------------------------------------------------------------

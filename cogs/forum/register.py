@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 """Register cog."""
 
+
 import asyncio
+import contextlib
 from collections import namedtuple
 import json
 import logging
@@ -26,7 +28,7 @@ DB_FILE = "register.db"
 DB_PATH = Path(__file__).resolve().parent / DB_FILE
 
 
-def quote_id(id):
+def quote_id(id: int) -> str:
     """Add quotes around intger
 
     Args:
@@ -40,10 +42,12 @@ def quote_id(id):
         '"35483543"'
 
     """
-    return '"' + str(id) + '"'
+    return f'"{id}"'
 
 
-async def send_token(forum_member, discord_member, token):
+async def send_token(forum_member: str,
+                     discord_member: discord.Member,
+                     token: str):
     """Send token via forum MP
 
     Args:
@@ -93,7 +97,7 @@ class Register(commands.Cog):
         logger.info("database has been updated")
 
     @commands.command()
-    async def register(self, ctx):
+    async def register(self, ctx: commands.Context):
         """Allow someone to register itself in the database.
 
         Phase 1: the bot send instructions (discord private message)
@@ -117,7 +121,7 @@ class Register(commands.Cog):
             return m.author == ctx.author and m.channel == dmchannel
 
         try:
-            msg = await self.bot.wait_for('message', check=check, timeout=60)
+            msg: discord.Message = await self.bot.wait_for('message', check=check, timeout=60)
         except asyncio.TimeoutError:
             logger.warning("%20s tries to register, but timeout in sending his name", ctx.author)  # noqa: E501
 
@@ -156,7 +160,7 @@ class Register(commands.Cog):
 
         # Phase 4 : receiving and checking token ##############################
         try:
-            msg2 = await self.bot.wait_for('message', check=check, timeout=300)
+            msg2: discord.Message = await self.bot.wait_for('message', check=check, timeout=300)
         except asyncio.TimeoutError:
             logger.warning("%20s tries to register, but timeout in sending his token", ctx.author)  # noqa: E501
 
@@ -260,17 +264,15 @@ class Register(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_member_join(self, member):
+    async def on_member_join(self, member: discord.Member):
         dmchannel = member.dm_channel
         table_name = quote_id(member.guild.id)
-        try:
-            row = self.db.table(table_name).get(int(member.id))
+        with contextlib.suppress(NotFoundError):
+            row = self.db.table(table_name).get(member.id)
             role_id_list = json.loads(row.get('discord_roles'))
             role_list = [Role(id=i) for i in role_id_list]
             await member.add_roles(*role_list)
             await dmchannel.send("Tes rôles t'ont été rendus.")
-        except NotFoundError:
-            pass
 
     async def cog_command_error(self, ctx, error):
         logger.error(error)
