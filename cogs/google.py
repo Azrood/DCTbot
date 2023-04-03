@@ -12,7 +12,7 @@ from typing import NamedTuple, List, Dict
 import discord
 from discord.ext import commands
 
-from utils.secret import token_youtube, DEVELOPER_CX
+from utils.secret import TOKEN_YOUTUBE, DEVELOPER_CX
 
 
 class Result(NamedTuple):
@@ -40,7 +40,7 @@ async def search_google(user_input: str, number: int) -> List[Result]:
         'hl': 'fr',
         'num': number,
         'fields': 'items(kind,link,title)',
-        'key': token_youtube,
+        'key': TOKEN_YOUTUBE,
     }
     session = aiohttp.ClientSession()
 
