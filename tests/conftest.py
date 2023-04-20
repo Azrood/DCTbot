@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import os
 import glob
 
@@ -56,7 +57,5 @@ def pytest_sessionfinish(session, exitstatus):
     # Delete json log file created by the tests
     print("\n-------------------\nClean test log.json\n")
     log_test_file = "utils/test_log.json"
-    try:
+    with contextlib.suppress(FileNotFoundError):
         os.remove(log_test_file)
-    except FileNotFoundError:
-        pass

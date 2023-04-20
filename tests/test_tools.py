@@ -10,7 +10,7 @@ async def test_args_separator(bot):
 
     user = "TestUser0"
     command = "ban"
-    channel = "Channel_0"
+    channel = "TextChannel_0"
 
     dpytest.configure(bot)
 
