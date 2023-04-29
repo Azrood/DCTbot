@@ -10,7 +10,7 @@ from utils.gif_json import GifJson
 def test_get_gif():
     """Test get_gif."""
     gifs = GifJson("gifs.sample.json")
-    my_gif = gifs.get_gif("your_gif_name")
+    my_gif: dict = gifs.get_gif("your_gif_name")
     assert my_gif['url'] == "your_gif_url"
 
 

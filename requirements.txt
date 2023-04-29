@@ -1,9 +1,9 @@
 discord.py==2.2.2
 bs4
-google-api-python-client
+google-api-python-client>=2.86.0
 lxml
 praw
-pillow
+pillow>=9.5.0
 git+https://github.com/Sergeileduc/pyphpbb-sl.git@v0.11.1
 requests-html
 sqlite-utils==3.*

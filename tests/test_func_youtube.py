@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*-coding:utf-8 -*-
 """Unit tests."""
+from pathlib import Path
 
 # import aiohttp
-import os
 import pytest
 # from unittest.mock import MagicMock
 # import asynctest
@@ -13,16 +13,18 @@ from googleapiclient.http import RequestMockBuilder
 from cogs.youtube import youtube_top_link
 
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+DATA_DIR = Path(__file__).parent / "data"
 
 
-def datafile(filename):
-    return os.path.join(DATA_DIR, filename)
+def datafile(filename: str) -> Path:
+    return DATA_DIR / filename
 
 
-@pytest.fixture
-def api_discovery_json():
-    return open(datafile("discovery.json"), encoding='utf-8').read()
+@ pytest.fixture
+def api_discovery_json() -> str:
+    with open(datafile("discovery.json"), encoding='utf-8') as f:
+        content = f.read()
+    return content
 
 
 def test_youtube_top_link(monkeypatch, api_discovery_json):

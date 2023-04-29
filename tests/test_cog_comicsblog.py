@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 from bs4 import BeautifulSoup
 import pytest
@@ -9,11 +9,11 @@ import discord.ext.test as dpytest
 from cogs import comicsblog
 
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+DATA_DIR = Path(__file__).parent / "data"
 
 
-def datafile(filename):
-    return os.path.join(DATA_DIR, filename)
+def datafile(filename: str) -> Path:
+    return DATA_DIR / filename
 
 
 #########################

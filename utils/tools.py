@@ -34,7 +34,6 @@ async def get_soup_lxml(url: str) -> BeautifulSoup:
         async with session.get(url, timeout=3, ssl=False, headers=headers) as resp:
             text = await resp.text()
         await session.close()
-    # BeautifulSoup will transform raw HTML in a tree easy to parse
     return BeautifulSoup(text, 'lxml')
 
 
