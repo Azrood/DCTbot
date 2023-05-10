@@ -4,7 +4,7 @@ google-api-python-client>=2.86.0
 lxml
 praw
 pillow>=9.5.0
-git+https://github.com/Sergeileduc/pyphpbb-sl.git@v0.11.1
+git+https://github.com/Sergeileduc/pyphpbb-sl.git@v0.12.0
 requests-html
 sqlite-utils==3.*
 

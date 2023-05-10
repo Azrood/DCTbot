@@ -5,6 +5,7 @@
 import asyncio
 import logging
 from string import ascii_uppercase
+from typing import List
 from urllib.parse import urljoin
 
 import aiohttp
@@ -12,38 +13,40 @@ import discord
 from discord.ext import commands
 from pyphpbb_sl import PhpBB
 
-from cogs.forum.parseforum import get_all_topics, get_nb_topics, get_sub_forums
+from cogs.forum.parseforum import (get_all_topics, get_nb_topics,
+                                   get_sub_forums, TopicOrForum)
 from utils.secret import forum_host, forum_password, forum_user_name
 
 logger = logging.getLogger(__name__)
 
 
-def make_letters_list(input_list, start_index: int = 0):
+def make_letters_list(input_list: List[TopicOrForum], start_index: int = 0):
     out = []
     if input_list:
-        out.extend(f"{ascii_uppercase[i]:.<5s}{res['name']}"
+        out.extend(f"{ascii_uppercase[i]:.<5s}{res.name}"
                    for i, res in enumerate(input_list, start_index))
     return out
 
 
-def make_numbers_list(input_list, start_index=0):
+def make_numbers_list(input_list: List[TopicOrForum], start_index=0) -> list:
     out = []
     if input_list:
-        out.extend(
-            f"{i:.<5d}{res['name']}"
-            for i, res in enumerate(input_list, start_index)
-        )
+        out.extend(f"{i:.<5d}{res.name}"
+                   for i, res in enumerate(input_list, start_index))
     return out
 
 
-def make_embed1(sub_forums, topics, active_topics_flag, topics_page) -> discord.Embed:
+def make_embed1(sub_forums: List[TopicOrForum],
+                topics: List[TopicOrForum],
+                active_topics_flag,
+                topics_page: int) -> discord.Embed:
     embed = discord.Embed()
     if sub_forums:
-        forums_value = "\n".join(make_letters_list(sub_forums))
+        forums_value: str = "\n".join(make_letters_list(sub_forums))
         embed.add_field(name='Forums', value=forums_value, inline=False)
     if topics and not active_topics_flag:
-        topics_value = "\n".join(make_numbers_list(topics[topics_page * 10:(topics_page + 1) * 10],  # noqa: E226
-                                                   start_index=1))
+        topics_value: str = "\n".join(make_numbers_list(topics[topics_page * 10:(topics_page + 1) * 10],  # noqa: E226
+                                                        start_index=1))
         embed.add_field(name='Topics', value=topics_value, inline=False)
     return embed
 
@@ -79,7 +82,7 @@ class Browse(commands.Cog):
             return
         current_url = "viewforum.php?f=11"
         last_url = []
-        topics_page = 0
+        topics_page: int = 0
         nb_topics = 0
         while True:  # Infinite loop for user inputs
             url = urljoin(forum_host, current_url)
@@ -141,8 +144,8 @@ class Browse(commands.Cog):
                 if choice.isdigit():
                     choice = int(choice)
                     t = topics[topics_page * 10 + choice - 1]  # noqa: E226
-                    url = urljoin(forum_host, t['url'])
-                    embed5 = discord.Embed(title=f"{t['name']}",
+                    url = urljoin(forum_host, t.url)
+                    embed5 = discord.Embed(title=f"{t.name}",
                                            color=0x882640,
                                            url=url)
                     await ctx.send(embed=embed5)
@@ -156,7 +159,7 @@ class Browse(commands.Cog):
                         current_url = "viewforum.php?f=11"
                 else:
                     last_url.append(current_url)
-                    current_url = sub_forums[ascii_uppercase.index(choice.upper())].get('url')
+                    current_url = sub_forums[ascii_uppercase.index(choice.upper())].url
 
             except asyncio.TimeoutError:
                 await ctx.send("Tu as pris trop de temps pour répondre !",
