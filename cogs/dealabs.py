@@ -28,9 +28,10 @@ async def get_free_games() -> List[Game]:
 
     # construct a list of tuple [(title,url)] with games from the result set
     try:
-        games_list = [Game(title=r[1].text, url=f"<{r[2].text}>")  # the < > are for preventing the embed in discord
-                      for r in res if "jeu" in r[0].text.lower()]
-        return games_list
+        return [Game(title=r[1].text, url=f"<{r[2].text}>")  # the < > are for preventing the embed in discord
+                for r in res
+                if "jeu" in r[0].text.lower()
+                ]
     except IndexError:
         return []
 
@@ -54,12 +55,10 @@ class Dealabs(commands.Cog):
                                   for message in free_game_channel_history
                                   if message.author == self.bot.user]
 
-        # filter the free game list retrieved by dealabs from games already posted
-        games_not_posted = ["\n".join(game) + "\n"
-                            for game in free_game_list
-                            if game.title not in "".join(last_posted_free_games)]
-
-        if games_not_posted:
+        if games_not_posted := ["\n".join(game) + "\n"
+                                for game in free_game_list
+                                if game.title not in "".join(last_posted_free_games)
+                                ]:
             await discord.utils.get(
                 self.bot.guild.text_channels,
                 name="jeux-video-gratuits"
