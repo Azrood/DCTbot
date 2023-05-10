@@ -82,7 +82,7 @@ def cleantest(c):
         shutil.rmtree('htmlcov')
 
 
-@ task
+@task
 def cleanbuild(c):
     """Clean dist/, build/ and egg-info/."""
     exclude = ('venv', '.venv')
@@ -95,19 +95,20 @@ def cleanbuild(c):
         shutil.rmtree(b)
 
 
-@ task(cleantest, cleanbuild)
+@task(cleantest, cleanbuild)
 def clean(c):
     """Equivalent to both cleanbuild and cleantest..."""
     pass
 
 
-@ task
+@task
 def test(c):
     """Run tests with pytest."""
+    c.run("python --version")
     c.run("pytest tests/")
 
 
-@ task
+@task
 def coverage(c):
     """Run unit-tests using pytest, with coverage reporting."""
     # use the browser defined in varenv $BROWSER
@@ -117,3 +118,8 @@ def coverage(c):
     c.run('coverage report -m')
     c.run('coverage html')
     webbrowser.open(path.as_uri())
+
+
+@task
+def run(c):
+    c.run("python botdct.py")

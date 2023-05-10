@@ -3,16 +3,32 @@
 """Some functions to parse forum using bs4."""
 
 import re
-from operator import itemgetter
+from dataclasses import dataclass
 from string import ascii_uppercase
-from typing import Dict, List
+from typing import List
 
 import aiohttp
 
 
-def get_sub_forums(htmlsoup) -> List[Dict]:
+@dataclass
+class TopicOrForum:
+    """Class for topic information."""
+    name: str
+    url: str
+
+    def __lt__(self, other: 'TopicOrForum') -> bool:
+        return self.name < other.name
+
+
+def get_sub_forums(htmlsoup) -> List[TopicOrForum]:
     if sub_forums := htmlsoup.select("a.forumtitle"):
-        return [{'name': s.text, 'url': s['href']} for s in sub_forums]
+        return [TopicOrForum(name=s.text, url=s['href']) for s in sub_forums]
+    return []
+
+
+def get_topics(htmlsoup) -> List[TopicOrForum]:
+    if topics := htmlsoup.select("a.topictitle"):
+        return [TopicOrForum(name=t.text, url=t['href']) for t in topics]
     return []
 
 
@@ -26,15 +42,9 @@ def get_nb_topics(htmlsoup) -> int:
         return 0
 
 
-def get_topics(htmlsoup) -> List[Dict]:
-    if topics := htmlsoup.select("a.topictitle"):
-        return [{'name': t.text, 'url': t['href']} for t in topics]
-    return []
-
-
-async def get_all_topics(phpbb, html, url) -> List[Dict]:
+async def get_all_topics(phpbb, html, url) -> List[TopicOrForum]:
     # First iteration, we allready have the html from the while loop
-    n = get_nb_topics(html)
+    n: int = get_nb_topics(html)
     topics = get_topics(html)
     n -= 40
     start = 40
@@ -48,8 +58,7 @@ async def get_all_topics(phpbb, html, url) -> List[Dict]:
         topics += new_topics
         n -= 40
         start += 40
-    sorted_topics = sorted(topics, key=itemgetter('name'))
-    return sorted_topics
+    return sorted(topics)
 
 
 def print_res_numbers(res_list, start_index=0) -> None:
