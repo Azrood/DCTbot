@@ -56,8 +56,8 @@ def _make_header(n: int, dirpath: Path) -> Path:
     n is 1, 2, 3 or 4 for different headers.
 
     Args:
-        n (int): index of the image (0 to 8)
-        dirpath (Path): Path to the folder of ressources
+        n (int): index of the image (0 to 8).
+        dirpath (Path): Path to the folder of ressources.
 
     Returns:
         Path: Path of the 3x3 out image
