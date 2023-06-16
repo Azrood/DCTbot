@@ -1,4 +1,4 @@
-discord.py==2.2.2
+discord.py==2.3.0
 bs4
 google-api-python-client>=2.86.0
 lxml
