@@ -2,6 +2,7 @@ import asyncio
 import contextlib
 import os
 import glob
+import platform
 
 import pytest
 import pytest_asyncio
@@ -9,6 +10,10 @@ import discord
 import discord.ext.commands as commands
 import discord.ext.test as dpytest
 from discord.client import _LoopSentinel
+
+
+if platform.system() == 'Windows':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 @pytest_asyncio.fixture
