@@ -33,7 +33,6 @@ async def bot():
 
 @pytest_asyncio.fixture(autouse=True)
 async def cleanup():
-    yield
     await dpytest.empty_queue()
 
 

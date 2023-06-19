@@ -37,7 +37,7 @@ async def test_team_fail(bot):
 async def test_team_success(bot):
     team_role_name = staff_role[0]  # DCT-team
 
-    dpytest.configure(bot, num_members=2)
+    dpytest.configure(bot, members=2)
 
     bot.log = CommandLog("test_log.json")
 
@@ -68,7 +68,7 @@ async def test_team_empty_mentions(bot):
     """Test "team!" command with no mentions."""
     team_role_name = staff_role[0]  # DCT-team
 
-    dpytest.configure(bot, num_members=2)
+    dpytest.configure(bot, members=2)
 
     bot.log = CommandLog("test_log.json")
 
@@ -95,7 +95,7 @@ async def test_team_member_allready_in_team(bot):
     """Test !team with one member allready in team."""
     team_role_name = staff_role[0]  # DCT-team
 
-    dpytest.configure(bot, num_members=3)
+    dpytest.configure(bot, members=3)
 
     bot.log = CommandLog("test_log.json")
 
