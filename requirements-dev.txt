@@ -3,8 +3,8 @@
 asynctest
 pytest
 pytest_asyncio
-dpytest==0.6.8
+dpytest ~= 0.7
 coverage
-flake8>=3.7.9
+flake8 ~= 6.0
 pylint
 invoke
