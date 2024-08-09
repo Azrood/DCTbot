@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 """Cog to get daily on bonjourmadame picture."""
 
+# Instructions :
+# put a file named redditbabes.txt in the directory
+# each line will be a subreddit that you want to get hourly
+
 import logging
 from pathlib import Path
 
