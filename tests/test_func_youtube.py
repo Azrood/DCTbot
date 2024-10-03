@@ -20,7 +20,7 @@ def datafile(filename: str) -> Path:
     return DATA_DIR / filename
 
 
-@ pytest.fixture
+@pytest.fixture
 def api_discovery_json() -> str:
     with open(datafile("discovery.json"), encoding='utf-8') as f:
         content = f.read()
