@@ -2,6 +2,7 @@ import asyncio
 import contextlib
 import os
 import glob
+import platform
 
 import pytest
 import pytest_asyncio
@@ -11,8 +12,12 @@ import discord.ext.test as dpytest
 from discord.client import _LoopSentinel
 
 
+if platform.system() == 'Windows':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+
 @pytest_asyncio.fixture
-async def bot(request, event_loop):
+async def bot():
     intents = discord.Intents.default()
     intents.members = True
     intents.message_content = True
@@ -28,7 +33,6 @@ async def bot(request, event_loop):
 
 @pytest_asyncio.fixture(autouse=True)
 async def cleanup():
-    yield
     await dpytest.empty_queue()
 
 

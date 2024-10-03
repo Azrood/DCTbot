@@ -11,7 +11,7 @@ from utils.secret import mods_role
 
 @pytest.mark.asyncio
 async def test_kick_fail(bot):
-    dpytest.configure(bot, num_members=2)
+    dpytest.configure(bot, members=2)
     bot.log = CommandLog("test_log.json")
     await bot.add_cog(Mod(bot))
     modo_role_name = mods_role[0]  # Moderator
@@ -31,7 +31,7 @@ async def test_kick_fail(bot):
 
 @pytest.mark.asyncio
 async def test_kick_success(bot):
-    dpytest.configure(bot, num_members=2)
+    dpytest.configure(bot, members=2)
     bot.log = CommandLog("test_log.json")
     await bot.add_cog(Mod(bot))
 
